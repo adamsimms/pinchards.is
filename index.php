@@ -31,21 +31,31 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    
+
     <script src="vendor/exifjs/exif.js"></script>
-    
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/favicon/manifest.json">
+    <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/favicon/favicon.ico">
+    <meta name="msapplication-config" content="/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
 </head>
 
 <body id="page-top">
-    <?php        
-        
+    <?php
+
         if (isset($_GET['fn']) && !empty($_GET['fn'])) {
             $filename = $_GET['fn'];
         }
-        
+
         include 'getphoto.php';
     ?>
-    
+
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
         <a href="gallery.php" class = "link-to-gallery">
             <div class = "union">
@@ -61,26 +71,26 @@
             </div>
         </a>
         <div class = "nav_info">
-            <a href="info.php">i</a>
+            <a href="info.php"><img src="img/icon-info.svg" /></a>
         </div>
         <div class = "title">
-            <a href="index.php?fn=<?php echo $prev_filename; ?>" 
+            <a href="index.php?fn=<?php echo $prev_filename; ?>"
                 <?php
                     if($prev_filename == "")
-                        echo 'style = "visibility: hidden;"'; 
+                        echo 'style = "visibility: hidden;"';
                 ?>
             >
                 <div class = "arrow left"></div>
-            </a>            
-            <a href="index.php">pinchards.is</a>            
-            <a href="index.php?fn=<?php echo $next_filename; ?>" 
+            </a>
+            <a href="index.php">pinchards.is</a>
+            <a href="index.php?fn=<?php echo $next_filename; ?>"
                 <?php
                     if($next_filename == "")
-                        echo 'style = "visibility: hidden;"'; 
+                        echo 'style = "visibility: hidden;"';
                 ?>
             >
                 <div class = "arrow right"></div>
-            </a>            
+            </a>
         </div>
     </nav>
     <div class = "preview">
@@ -90,11 +100,11 @@
             <div class = "col-md-5 container detail_container">
                 <div class = "detail_content_view">
                     <div>
-                        <div class = "detail_rect title_rect"></div>
+                        <div class = "detail_rect title_rect"><img src="img/icon-number.svg" /></div>
                         <div class = "title">
                             <?php
                                 $filename_array = explode(".", $filename);
-                                $splited_file_name = "";                                
+                                $splited_file_name = "";
                                 for( $i = 0; $i < count($filename_array)-1; $i++ ) {
                                     $splited_file_name .= $filename_array[$i];
                                 }
@@ -103,9 +113,9 @@
                         </div>
                     </div>
                     <div class = "datetime_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-date.svg" /></div>
                         <div class = "inner_data">
-                            <?php                            
+                            <?php
                                 $datetime = DateTime::createFromFormat('Y:m:d H:i:s', $datetime);
                                 $converted_date = date_format($datetime, "l, F jS, Y @ g:i A");
                                 echo $converted_date;
@@ -113,7 +123,7 @@
                         </div>
                     </div>
                     <div class = "inner_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-gopro.svg" /></div>
                         <div class = "inner_data">
                             <?php
                                 if ($make) {
@@ -121,13 +131,13 @@
                                 } else {
                                     echo "Make: <br>";
                                 }
-                                
+
                                 if ($model) {
                                     echo "Model: " . $model . "<br>";
                                 } else {
                                     echo "Model: <br>";
                                 }
-                                
+
                                 if($focal_length != '') {
                                     $focal_length_array = explode("/", $focal_length);
                                     $focal_value = number_format($focal_length_array[0] / $focal_length_array[1], 2);
@@ -135,59 +145,61 @@
                                 } else {
                                     echo "Focal Length: <br>";
                                 }
-                                
+
                                 if($exposure_time != '' && $fnumber != '' && $iso_speed_ratings != '') {
                                     $exposure_array = explode("/", $exposure_time);
                                     $exposure_value = number_format($exposure_array[1] / $exposure_array[0], 0);
-                                    
+
                                     $fnumber_array = explode("/", $fnumber);
                                     $fnumber_value = number_format($fnumber_array[0] / $fnumber_array[1], 1);
                                     echo "Exposure: " . "1/" . $exposure_value . " sec, " . "f/" . $fnumber_value . "; ISO " . $iso_speed_ratings . "<br>";
                                 } else {
                                     echo "Exposure: <br>";
                                 }
-                                
+
                                 if ($image_width != '' && $image_height != '') {
                                     echo "Image Size: " . $image_width . " x " . $image_height . "<br>";
                                 } else {
                                     echo "Image Size: <br>";
                                 }
-                                
+
                                 if ($xresolution != '' && $yresolution != '') {
                                     $resolution_array = explode("/", $xresolution);
                                     $resolution_value = number_format($resolution_array[0] / $resolution_array[1], 2);
-                                    echo "Resolution: " . $resolution_value . " Pixel per Inch" . "<br>";    
+                                    echo "Resolution: " . $resolution_value . " Pixel per Inch" . "<br>";
                                 } else {
                                     echo "Resolution: <br>";
                                 }
-                                
+
 //                                if ($str_flash != '') {
 //                                    echo "Flash: " . $str_flash . "<br>";
 //                                } else {
 //                                    echo "Flash: <br>";
-//                                }                                
+//                                }
                             ?>
                         </div>
                     </div>
                     <div class = "inner_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-raspberry.svg" /></div>
                         <div class = "inner_data">
                             <?php
-                                if ($software != '') {
+                                echo "Photographer: Raspberry Pi 3 Model B";
+
+                                /* if ($software != '') {
                                     echo "Photographer: " . $software;
                                 } else {
                                     echo "Photographer: ";
-                                }                                
+                                } */
                             ?>
                         </div>
                     </div>
                     <div class = "inner_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-geolocation.svg" /></div>
                         <div class = "inner_data">
-                            <?php 
-                                if ($gps_latitude_degree != '' && $gps_latitude_min != '' && $gps_latitude_sec != '' && 
-                                        $gps_longitude_degree != '' && $gps_longitude_min != '' && $gps_longitude_sec != '') {                                    
-                                    echo "Position: " . $gps_latitude_degree . "&deg; " . $gps_latitude_min . "&acute; " . $gps_latitude_sec . "&quot; N, " . 
+                            <?php
+                                if ($gps_latitude_degree != '' && $gps_latitude_min != '' && $gps_latitude_sec != '' &&
+                                        $gps_longitude_degree != '' && $gps_longitude_min != '' && $gps_longitude_sec != '') {
+                                    echo "Position: " . $gps_latitude_degree . "&deg; " . $gps_latitude_min . "&acute; " . $gps_latitude_sec . "&quot; N, " .
                                                     $gps_longitude_degree . "&deg; " . $gps_longitude_min . "&acute; " . $gps_longitude_sec . "&quot; W<br>";
                                 } else {
 //                                    echo "Position: <br>";
@@ -197,13 +209,13 @@
                                     $gps_longitude_degree = "53";
                                     $gps_longitude_min = "29";
                                     $gps_longitude_sec = "9.11";
-                                    echo "Position: " . $gps_latitude_degree . "&deg; " . $gps_latitude_min . "&acute; " . $gps_latitude_sec . "&quot; N, " . 
+                                    echo "Position: " . $gps_latitude_degree . "&deg; " . $gps_latitude_min . "&acute; " . $gps_latitude_sec . "&quot; N, " .
                                                     $gps_longitude_degree . "&deg; " . $gps_longitude_min . "&acute; " . $gps_longitude_sec . "&quot; W<br>";
                                 }
                                 if (empty($gps_altitude)) {
                                     $gps_altitude = "5.27/1";
                                 }
-                                
+
                                 if ($gps_altitude != '') {
                                     $alt_array = explode("/", $gps_altitude);
                                     $alt_value = number_format($alt_array[0] / $alt_array[1], 2);
@@ -219,15 +231,15 @@
             <div class = "col-md-7 container mapcontainer">
                 <div id="googleMap"></div>
             </div>
-            
+
         </div>
     </div>
-    
+
 <script>
     function myMap() {
         var lat =  "<?php echo $lat; ?>";
         var lon = "<?php echo $lon; ?>";
-        
+
         if (!lat || !lon) {
             lat = 49.2025694;
             lon = -53.48586388888953;
@@ -241,7 +253,7 @@
         marker.setMap(map);
     }
 </script>
-    
+
 
     <!-- jQuery -->
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -256,42 +268,42 @@
 
     <!-- Theme JavaScript -->
     <script src="js/pinchard.min.js"></script>
-    
-    <script src="https://maps.googleapis.com/maps/api/js?key=REDACTED_GOOGLE_MAPS_KEY&callback=myMap"></script>    
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=REDACTED_GOOGLE_MAPS_KEY&callback=myMap"></script>
 
 </body>
 
 </html>
 
-<script>    
+<script>
     $(document).ready(function() {
-        
+
         var diff = 0;
         if ($(".detail_view").height() - $(".btn_arrow").height() > $(document).height() / 3 * 2) {
-            diff = $(document).height() / 3 * 2;            
+            diff = $(document).height() / 3 * 2;
             $('.preview').addClass("overflow_shown");
         }
         else  {
-            diff = $(".detail_view").height() - $(".btn_arrow").height();            
+            diff = $(".detail_view").height() - $(".btn_arrow").height();
             $('.preview').removeClass("overflow_shown");
         }
-                
+
         $('.btn_arrow').on("click", function(){
-            if($('.detail_view').hasClass("open")) {                
+            if($('.detail_view').hasClass("open")) {
                 $('.detail_view').animate({
                     marginTop: "+=" + diff
-                }, 500, "easeInOutCubic", function() {                    
+                }, 500, "easeInOutCubic", function() {
                     $(".detail_view").removeClass('open');
                     $(".btn_arrow").removeClass("down_arrow");
                 });
             } else {
                 $('.detail_view').animate({
                     marginTop: "-=" + diff
-                }, 500, "easeInOutCubic", function() {                    
+                }, 500, "easeInOutCubic", function() {
                     $(".detail_view").addClass('open');
                     $(".btn_arrow").addClass("down_arrow");
                 });
-            }                
-        });        
+            }
+        });
     });
 </script>
