@@ -6,11 +6,11 @@
 
 @font-face {
     font-family: 'circular-std';
-    src: url('../fonts/CircularStd-Book.otf');   
+    src: url('../fonts/CircularStd-Book.otf');
 }
 @font-face {
     font-family: 'courier-new';
-    src: url('../fonts/cour.ttf');   
+    src: url('../fonts/cour.ttf');
 }
 
 html,
@@ -84,7 +84,7 @@ aside {
   transition: all 0.35s;
   text-align: center;
 }
-.navbar-default img {    
+.navbar-default img {
     display: inline-block;
     max-width: 100%;
     height: 50px;
@@ -102,9 +102,9 @@ aside {
     padding: 11px;
     font-size: 19px;
     font-weight: 700;
-    -webkit-user-select: none;  
-    -moz-user-select: none;    
-    -ms-user-select: none;      
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 
@@ -113,20 +113,20 @@ aside {
     text-decoration: none;
 }
 .navbar-default .title > a:hover, .navbar-default .title > a:focus {
-    color: rgba(0, 0, 0, 1);    
+    color: rgba(0, 0, 0, 1);
 }
 
 .navbar-default .title .arrow {
-    display: inline-block; 
+    display: inline-block;
     width: 24px;
     height: 24px;
-    vertical-align: top;    
+    vertical-align: top;
     border: solid 1px #d4d4d4 !important;
     background-size: 6px;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
-    border-radius: 3px;    
+    border-radius: 3px;
     margin-top: 2px;
 }
 
@@ -143,29 +143,29 @@ aside {
 .navbar-default .nav_info {
     font-size: 24px;
     font-style: italic;
-    font-weight: 700;    
+    font-weight: 700;
     position: absolute;
     right: 10px;
     height: 100%;
-    padding: 0 10px;    
+    padding: 0 10px;
     line-height: 49px;
 }
 
 .navbar-default .nav_info > a {
-    color: rgba(0, 0, 0, 0.8);    
+    color: rgba(0, 0, 0, 0.8);
     text-decoration: none;
 }
 .navbar-default .nav_info > a:hover, .navbar-default .nav_info > a:focus {
-    color: rgba(0, 0, 0, 1);    
+    color: rgba(0, 0, 0, 1);
 }
 
 /* Union */
 .navbar-default .union {
     position: absolute;
     width: 21px;
-    height: 21px;    
+    height: 21px;
     left: 14px;
-    top: 14px; 
+    top: 14px;
     cursor: pointer;
 }
 .navbar-default .union_vector {
@@ -175,7 +175,7 @@ aside {
     height: 23.607%;
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 1px;
-    
+
     -webkit-transition: all 0.35s;
     -moz-transition: all 0.35s;
     transition: all 0.35s;
@@ -189,7 +189,7 @@ aside {
     left: 0;
     top: 0;
 }
-.navbar-default .union_vector2 {    
+.navbar-default .union_vector2 {
     left: 0;
     right: 0;
     margin: auto;
@@ -220,7 +220,7 @@ aside {
 }
 .navbar-default .union_vector7 {
     left: 0;
-    bottom: 0;    
+    bottom: 0;
 }
 .navbar-default .union_vector8 {
     left: 0;
@@ -230,7 +230,7 @@ aside {
 }
 .navbar-default .union_vector9 {
     right: 0;
-    bottom: 0;    
+    bottom: 0;
 }
 
 @media (min-width: 768px) {
@@ -284,7 +284,7 @@ aside {
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
-    background-position: center;    
+    background-position: center;
     background-repeat: no-repeat;
     overflow-y: hidden;
 }
@@ -296,11 +296,11 @@ aside {
     height: 16px;
     background-image: url('../img/arrow_up.png');
     /*background: rgba(0, 0, 0, 1) url('../img/arrow_up.png');*/
-    background-size: 17px 7px;    
+    background-size: 17px 7px;
     background-repeat: no-repeat;
     background-position: center;
     cursor: pointer;
-    
+
     -webkit-transition: all 0.35s;
     -moz-transition: all 0.35s;
     transition: all 0.35s;
@@ -317,7 +317,7 @@ aside {
 .detail_view {
     width: 100%;
     background-color: white;
-    margin-top: calc( 100vh - 50px - 16px);    
+    margin-top: calc( 100vh - 50px - 16px);
     overflow: auto;
     position: absolute;
 }
@@ -334,10 +334,12 @@ aside {
     display: inline-block;
     width: 24px;
     height: 24px;
-    vertical-align: top;     
+    vertical-align: top;
     margin-right: 8px;
-    background-color: #C4C4C4;
+    margin-top: 3px;
     border-radius: 2px;
+    text-align: center;
+    opacity: .8;
 }
 .detail_content_view .detail_rect.title_rect {
     margin-top: 16px;
@@ -365,7 +367,7 @@ aside {
 }
 
 .detail_view .mapcontainer {
-    padding: 32px; 
+    padding: 32px;
     text-align: center;
 }
 .detail_view .mapcontainer #googleMap {
@@ -387,7 +389,7 @@ aside {
 }
 .photo-box-caption {
     color: black;
-    opacity: 0;    
+    opacity: 0;
     font-weight: 700;
     display: block;
     background: rgba(255,255,255,0.7);
@@ -444,11 +446,11 @@ aside {
 
 .ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
     height: 32px;
-    margin: 0px 2px;    
+    margin: 0px 2px;
     /*text-align-last: center;*/
     border-color: #d4d4d4;
     border-radius: 3px;
-    color: rgba(0, 0, 0, 0.8);    
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .ui-datepicker select.ui-datepicker-month {
@@ -467,9 +469,9 @@ aside {
     left: calc(50% + 3px);
     content: "";
     z-index: 98;
- }    
- 
- 
+ }
+
+
 .ui-datepicker-title:after {
     width: 0;
     height: 0;
@@ -504,7 +506,7 @@ aside {
 }
 
 .ui-datepicker-year {
-    width: 65px !important;    
+    width: 65px !important;
     padding-left: 3px;
 }
 
@@ -574,16 +576,16 @@ option {
 #preview_image {
     position: absolute;
     top: 50px;
-    width: 100%; 
-    height: 100%; 
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
 .picker_area {
     width: 100%;
     height: 50px;
-    background-color: #fbfbfb; 
-    border-bottom: solid 1px #e5e5e5; 
+    background-color: #fbfbfb;
+    border-bottom: solid 1px #e5e5e5;
     position: fixed;
     right: 0;
     left: 0;
@@ -641,14 +643,14 @@ option {
     padding: 16px 0px;
 }
 .how_section .code_area {
-    font-family: "courier-new";    
+    font-family: "courier-new";
     padding-top: 8px;
     padding-bottom: 24px;
     padding-left: 24px;
     padding-right: 24px;
 }
 
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
     .how_section .code_area {
         padding-left: 6%;
         padding-right: 6%;
@@ -667,33 +669,33 @@ option {
     text-align: center;
     padding-right: calc(5% + 7.5px);
     padding-left: calc(5% + 7.5px);
-    padding-top: 16px; 
+    padding-top: 16px;
     padding-bottom: 16px;
 }
 .who_section .people_row .people_col_3 {
-    text-align: center; 
+    text-align: center;
     padding-left: 10%;
     padding-top: 16px;
     padding-bottom: 16px;
 }
 .who_section .people_row .people {
-    background-image: url('../photo/1.jpg');    
-    background-size: cover; 
-    background-repeat: no-repeat; 
-    width: 100%; 
-    padding-top: 100%; 
-    position: relative; 
+    background-image: url('../photo/1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
     border-radius: 50%;
 }
 .who_section .people_row .name {
-    font-weight: 700; 
+    font-weight: 700;
     margin-top: 16px;
 }
 .who_section .people_row .job {
     font-style: italic;
 }
 .who_section .people_row .link, .contact_section .link {
-    text-decoration: underline; 
+    text-decoration: underline;
     color: rgba(0, 0, 0, 0.7);
 }
 .who_section .people_row .link:hover, .contact_section .link:hover {
@@ -704,7 +706,7 @@ option {
     padding-bottom: 100px;
 }
 .contact_section .copyright {
-    margin-top: 45px; 
+    margin-top: 45px;
     color: #959595;
 }
 
@@ -746,12 +748,12 @@ option {
 }
 
 @-webkit-keyframes animatebottom {
-  from { bottom:-100px; opacity:0 } 
+  from { bottom:-100px; opacity:0 }
   to { bottom:0px; opacity:1 }
 }
 
-@keyframes animatebottom { 
-  from{ bottom:-100px; opacity:0 } 
+@keyframes animatebottom {
+  from{ bottom:-100px; opacity:0 }
   to{ bottom:0; opacity:1 }
 }
 

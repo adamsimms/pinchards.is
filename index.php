@@ -100,7 +100,7 @@
             <div class = "col-md-5 container detail_container">
                 <div class = "detail_content_view">
                     <div>
-                        <div class = "detail_rect title_rect"></div>
+                        <div class = "detail_rect title_rect"><img src="img/icon-number.svg" /></div>
                         <div class = "title">
                             <?php
                                 $filename_array = explode(".", $filename);
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                     <div class = "datetime_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-date.svg" /></div>
                         <div class = "inner_data">
                             <?php
                                 $datetime = DateTime::createFromFormat('Y:m:d H:i:s', $datetime);
@@ -123,7 +123,7 @@
                         </div>
                     </div>
                     <div class = "inner_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-gopro.svg" /></div>
                         <div class = "inner_data">
                             <?php
                                 if ($make) {
@@ -180,7 +180,7 @@
                         </div>
                     </div>
                     <div class = "inner_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-raspberry.svg" /></div>
                         <div class = "inner_data">
                             <?php
                                 if ($software != '') {
@@ -192,7 +192,7 @@
                         </div>
                     </div>
                     <div class = "inner_area">
-                        <div class = "detail_rect"></div>
+                        <div class = "detail_rect"><img src="img/icon-geolocation.svg" /></div>
                         <div class = "inner_data">
                             <?php
                                 if ($gps_latitude_degree != '' && $gps_latitude_min != '' && $gps_latitude_sec != '' &&
