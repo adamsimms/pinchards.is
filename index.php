@@ -71,7 +71,7 @@
             </div>
         </a>
         <div class = "nav_info">
-            <a href="info.php">i</a>
+            <a href="info.php"><img src="img/icon-info.svg" /></a>
         </div>
         <div class = "title">
             <a href="index.php?fn=<?php echo $prev_filename; ?>"
