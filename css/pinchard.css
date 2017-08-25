@@ -9,6 +9,10 @@
     src: url('../fonts/CircularStd-Book.otf');
 }
 @font-face {
+    font-family: 'circular-bold';
+    src: url('../fonts/CircularStd-Bold.otf');
+}
+@font-face {
     font-family: 'courier-new';
     src: url('../fonts/cour.ttf');
 }
@@ -98,6 +102,7 @@ aside {
 .navbar-default .title {
     height: 49px;
     padding: 11px;
+    font-family: 'circular-bold';
     font-size: 19px;
     font-weight: 700;
     -webkit-user-select: none;
