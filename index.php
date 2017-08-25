@@ -183,11 +183,13 @@
                         <div class = "detail_rect"><img src="img/icon-raspberry.svg" /></div>
                         <div class = "inner_data">
                             <?php
-                                if ($software != '') {
+                                echo "Photographer: Raspberry Pi 3 Model B";
+
+                                /* if ($software != '') {
                                     echo "Photographer: " . $software;
                                 } else {
                                     echo "Photographer: ";
-                                }
+                                } */
                             ?>
                         </div>
                     </div>
