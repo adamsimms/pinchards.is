@@ -131,11 +131,11 @@ aside {
     cursor: pointer;
     border-radius: 3px;
     margin-top: 2px;
-    opacity: .6;
+    opacity: .4;
 }
 
 .navbar-default .title .arrow:hover {
-    opacity: 1;
+    opacity: .6;
 }
 
 .navbar-default .title .arrow.left {
@@ -498,19 +498,26 @@ aside {
     top: 3px;
     width: 32px !important;
     height: 32px !important;
-    border: solid 1px #d4d4d4 !important;
-    background-size: 8px;
+    border: solid 1px #000000 !important;
+    background-size: 12px;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
+    opacity: .15;
+}
+
+.ui-datepicker .ui-datepicker-prev:hover, .ui-datepicker .ui-datepicker-next:hover {
+    opacity: .6;
 }
 
 .ui-datepicker .ui-datepicker-prev {
-    background-image: url('../img/arrow_left.png');
+    background-image: url('../img/arrow.svg');
+    transform: rotate(90deg);
 }
 
 .ui-datepicker .ui-datepicker-next {
-    background-image: url('../img/arrow_right.png');
+    background-image: url('../img/arrow.svg');
+    transform: rotate(-90deg);\
 }
 
 .ui-datepicker-year {
