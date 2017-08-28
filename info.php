@@ -60,15 +60,14 @@
     </nav>
     <div class = "about_section">
         <div class = "container">
-            <div class = "col-sm-1">
-                <div class = "left_label">
-                    ABOUT
-                </div>
-            </div>
-            <div class = "col-sm-11">
-                <div>
+            <div class = "col-sm-8 col-sm-offset-2">
+                <h3>ABOUT</h3>
+                <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ac rutrum ipsum. Proin efficitur diam nec nisl luctus luctus. Praesent velit metus, rutrum at leo eget, molestie rutrum mauris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla viverra purus a iaculis. Curabitur eget magna nec ipsum laoreet gravida malesuada at lectus. Aliquam tincidunt tortor id ipsum convallis, id bibendum libero viverra. Fusce bibendum quis massa tincidunt tempor. Pellentesque eu mauris vel urna lacinia aliquet at et lorem.
-                </div>
+                </p>
+
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20855.569930035457!2d-53.48462861918841!3d49.20157937004537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4b75e272b66fd9bf%3A0xe011372b0d414175!2sPinchards+Island%2C+New-Wes-Valley%2C+NL+A0G+3L0%2C+Canada!5e0!3m2!1sen!2sgr!4v1503767433902" width="100%" height="600" frameborder="0" style="border:0" allowfullscreen></iframe>
+
                 <div class = "sub_container">
                     <div class = "sub_content">
                         "Donec posuere nunc eu leo vehicula fermentum. Nulla facilisi. Nulla eleifend sollicitudin ullamcorper. Nullam at lorem metus. Nunc pulvinar pretium leo, sit amet venenatis eros sodales in. Nullam tempus eu diam quis ultricies."
@@ -97,14 +96,13 @@
             </div>
         </div>
     </div>
+    
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20855.569930035457!2d-53.48462861918841!3d49.20157937004537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4b75e272b66fd9bf%3A0xe011372b0d414175!2sPinchards+Island%2C+New-Wes-Valley%2C+NL+A0G+3L0%2C+Canada!5e0!3m2!1sen!2sgr!4v1503767433902" width="100%" height="600" frameborder="0" style="border:0" allowfullscreen></iframe>
+
     <div class = "how_section">
         <div class = "container">
-            <div class = "col-sm-1">
-                <div class = "left_label">
-                    HOW
-                </div>
-            </div>
-            <div class = "col-sm-11">
+            <div class = "col-sm-8 col-sm-offset-2">
+                <h3>HOW</h3>
                 <div>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ac rutrum ipsum. Proin efficitur diam nec nisl luctus luctus. Praesent velit metus, rutrum at leo eget, molestie rutrum mauris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque fringilla viverra purus a iaculis.
                 </div>
@@ -127,7 +125,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#60;h1 id=&#34;focus-text&#34;&#62;Designing iPhone app for client&#60;/h1&#62;<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#60;a href=&#34;javascript:;&#34; id=&#34;focus-completed&#34;&#62;COMPLETED&#60;/a&#62;<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#60;span id=&#34;focus-status&#34;&#62;4 hours 23 mins&#60;/span&#62;<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#60;h2&#62;&#34;Work until you can work no more.&#34; - Steve Jobs&#60;/h2&#62;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#60;h3&#62;&#34;Work until you can work no more.&#34; - Steve Jobs&#60;/h3&#62;<br>
                     &#60;/div&#62;
                 </div>
                 <div>
@@ -139,30 +137,26 @@
     </div>
     <div class = "who_section">
         <div class = "container">
-            <div class = "col-sm-1">
-                <div class = "left_label">
-                    WHO
-                </div>
-            </div>
-            <div class = "col-sm-11">
+            <div class = "col-sm-8 col-sm-offset-2">
+                <h3>WHO</h3>
                 <div>
                     Donec posuere nunc eu leo vehicula fermentum. Nulla facilisi. Nulla eleifend sollicitudin ullamcorper. Nullam at lorem metus. Nunc pulvinar pretium leo, sit amet venenatis eros sodales in. Nullam tempus eu diam quis ultricies. Cras mollis pharetra gravida. Pellentesque vel magna enim. Nullam placerat imperdiet tellus, et egestas nisi porta ullamcorper. Etiam rhoncus neque sit amet venenatis sagittis. Curabitur ac feugiat urna.
                 </div>
                 <div class = "row people_row">
                     <div class = "col-sm-4 people_col_1">
-                        <div class = "people"></div>
-                        <div class = "name">Angela Gabereaux</div>
-                        <div class = "job">Photographer, Designer</div>
-                        <a href="http://adamsim.ms/" class = "link">www.adamsim.ms</a>
+                        <div class = "people"><img src="/img/people/adam-simms.jpg" /></div>
+                        <div class = "name">Adam Simms</div>
+                        <div class = "job">Photographer</div>
+                        <a href="http://adamsim.ms/" target="_blank" class = "link">www.adamsim.ms</a>
                     </div>
                     <div class = "col-sm-4 people_col_2">
-                        <div class = "people"></div>
+                        <div class = "people"><img src="/img/people/angela-gabereaux.jpg" /></div>
                         <div class = "name">Angela Gabereaux</div>
                         <div class = "job">Programmer</div>
-                        <a href="http://www.angelagabereaux.com/" class = "link">www.angelagabereaux.com</a>
+                        <a href="http://www.angelagabereaux.com/" target="_blank" class = "link">www.angelagabereaux.com</a>
                     </div>
                     <div class = "col-sm-4 people_col_3">
-                        <div class = "people"></div>
+                        <div class = "people"><img src="/img/people/adam-simms.jpg" /></div>
                         <div class = "name">Roger Knight</div>
                         <div class = "job">Constructor</div>
                     </div>
@@ -172,12 +166,8 @@
     </div>
     <div class = "contact_section">
         <div class = "container">
-            <div class = "col-sm-1">
-                <div class = "left_label">
-                    CONTACT
-                </div>
-            </div>
-            <div class = "col-sm-11">
+            <div class = "col-sm-8 col-sm-offset-2">
+                <h3>CONTACT</h3>
                 <div>
                     <a href="mailto:info@pinchards.is" class = "link">info@pinchards.is</a>
                 </div>
