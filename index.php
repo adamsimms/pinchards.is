@@ -47,7 +47,7 @@
 </head>
 
 <body id="page-top">
-        
+<?php            
         ini_set('allow_url_fopen', 'on');
         
     if (isset($_GET['fn']) && !empty($_GET['fn'])) {
