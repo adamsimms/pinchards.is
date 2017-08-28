@@ -1,5 +1,38 @@
 <?php    
 
+//require_once('vender/aws/S3.php');
+//require 'vendor/aws/S3.php';
+//$s3 = new S3('REDACTED_AWS_ACCESS_KEY_ID', 'REDACTED_AWS_SECRET_ACCESS_KEY');
+// 
+//$bucket_contents = $s3->getBucket('shutter-island');
+//foreach ($bucket_contents as $file){
+//    if ($file['size']) {
+//        $dt = new DateTime();
+//        $dt ->setTimestamp($file['time']);
+//            echo $dt->format('d') . "<br>";
+//    }
+//}
+
+
+//$url = 'http://d3kq73uimqeic8.cloudfront.net/';
+//$xml = simplexml_load_file($url) or die("Error: Cannot create object");
+//$array = array();
+//foreach($xml->children() as $content) {
+//    if ($content->Key) {
+//        $array[] = array(
+//                    "filename"=>$content->Key,
+//                    "timestamp"=>$content->LastModified,
+//                    );
+//        echo $content->LastModified . "<br>";
+//    }
+//}
+
+
+//$json = file_get_contents('http://d3kq73uimqeic8.cloudfront.net/');
+//$obj = json_encode($json);
+//echo $obj;
+        
+/*
     
     $files = glob("photo/*.*");
     
@@ -102,5 +135,5 @@
     
     $returnArray = array("array"=>$array, "validYearArray"=>$validYearArray, "validMonthArray"=>$validMonthArray);
     echo json_encode($returnArray);
-     
+  */   
 ?>

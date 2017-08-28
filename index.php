@@ -37,14 +37,283 @@
 </head>
 
 <body id="page-top">
-    <?php        
+    <?php // var_dump(ini_get('allow_url_fopen')); ?>
+<?php        
+        ini_set('allow_url_fopen', 'on');
         
-        if (isset($_GET['fn']) && !empty($_GET['fn'])) {
-            $filename = $_GET['fn'];
+    if (isset($_GET['fn']) && !empty($_GET['fn'])) {
+        $filename = $_GET['fn'];
+    }
+//get array start        
+    $cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
+//    $xml = simplexml_load_file($cdnurl) or die("Error: Cannot create object");
+    
+    
+//$url = "http://www.some-url";
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $cdnurl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$xmlresponse = curl_exec($ch);
+$xml=simplexml_load_string($xmlresponse);
+
+
+    
+    
+    $array = array();
+    $supported_image = array(
+    'gif',
+    'jpg',
+    'jpeg',
+    'png'
+    );
+
+    foreach($xml->children() as $content) {
+        if ($content->Key) {
+            $ext = strtolower(pathinfo($content->Key, PATHINFO_EXTENSION));
+            if (in_array($ext, $supported_image)) {
+                $dateString = $content->Key;                
+                $dateString = explode("_", $dateString)[0];                
+                $date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $dateString);//$content->LastModified
+                $date = date_format($date,"Y/m/d H:i:s");
+                $array[] = array(
+                        "filename"=>$content->Key,
+                        "date"=>$date,
+                        );
+            }
         }
+    }
+    usort($array, function($a, $b) {
+        return $a['date'] > $b['date'];
+    });
+// get prev and next filename 
+    if (isset($filename) && !empty($filename) && $filename != "" ) {
+        for( $i = 0 ; $i < count($array); $i++ ) {
+            if ($array[$i]['filename'] == $filename) {
+                if ($i > 1) {
+                    $prev_filename = $array[$i - 1]['filename'];
+                }
+                if ($i < count($array) - 1) {
+                    $next_filename = $array[$i + 1]['filename'];
+                }
+                $datetime = $array[$i]['date'];
+                break;
+            }
+        }
+    } else {//get last element of filename        
+        $filename = end($array)['filename'];
+        $datetime = end($array)['date'];
+        if (count($array) > 1 && (!isset($prev_filename) || empty($prev_filename) || $prev_filename == "" ))
+            $prev_filename = $array[count($array)-2]['filename'];
+    }
+//    echo "filename = " . $filename;
+//require_once('vender/aws/S3.php');
+require 'vendor/aws/S3.php';
+$s3 = new S3('REDACTED_AWS_ACCESS_KEY_ID', 'REDACTED_AWS_SECRET_ACCESS_KEY');
+ $result_1 = $s3->getObject('shutter-island',$filename, "./photo/tmp.jpg"  );
+ $exif = exif_read_data("./photo/tmp.jpg", 0, true);
+ 
         
-        include 'getphoto.php';
-    ?>
+//$filename_iter = "";
+//if (isset($exif['FILE']['FileName'])) {
+//    $filename_iter = $exif_iter['FILE']['FileName'];
+//}
+if (isset($exif['IFD0']['Make'])) {
+        $make = $exif['IFD0']['Make'];        
+}
+if (isset($exif['IFD0']['Make'])) {
+        $make = $exif['IFD0']['Make'];
+    }
+
+    $model = "";
+    if (isset($exif['IFD0']['Model'])) {
+        $model = $exif['IFD0']['Model'];
+    }
+
+    $focal_length = "";
+    if (isset($exif['EXIF']['FocalLength'])) {
+        $focal_length = $exif['EXIF']['FocalLength'];
+    }
+
+    $exposure_time = "";
+    if (isset($exif['EXIF']['ExposureTime'])) {
+        $exposure_time = $exif['EXIF']['ExposureTime'];
+    }
+
+    $fnumber = "";
+    if (isset($exif['EXIF']['FNumber'])) {
+        $fnumber = $exif['EXIF']['FNumber'];
+    }        
+
+    $iso_speed_ratings = "";
+    if (isset($exif['EXIF']['ISOSpeedRatings'])) {
+        $iso_speed_ratings = $exif['EXIF']['ISOSpeedRatings'];
+    }
+
+    $image_width = "";
+    $image_height = "";
+    if (isset($exif['COMPUTED']['Width'])) {
+        $image_width = $exif['COMPUTED']['Width'];
+    } else if (isset($exif['EXIF']['ExifImageWidth'])) {
+        $image_width = $exif['EXIF']['ExifImageWidth'];
+    }        
+    if (isset($exif['IFD0']['Height'])) {
+        $image_height = $exif['IFD0']['Height'];
+    } else if (isset($exif['EXIF']['ExifImageLength'])) {
+        $image_height = $exif['EXIF']['ExifImageLength'];
+    }
+
+    $xresolution = "";
+    $yresolution = "";
+    if (isset($exif['IFD0']['XResolution'])) {
+        $xresolution = $exif['IFD0']['XResolution'];
+    } else if (isset($exif['THUMBNAIL']['XResolution'])) {
+        $xresolution = $exif['THUMBNAIL']['XResolution'];
+    }        
+    if (isset($exif['IFD0']['YResolution'])) {
+        $yresolution = $exif['IFD0']['YResolution'];
+    } else if (isset($exif['THUMBNAIL']['YResolution'])) {
+        $yresolution = $exif['THUMBNAIL']['YResolution'];
+    }
+
+    $flash = "";
+    $str_flash = "";
+    if (isset($exif['EXIF']['Flash'])) {
+        $flash = $exif['EXIF']['Flash'];
+    }
+
+    if (($flash & 0x0) != 0) {
+        $str_flash = "No Flash";
+    } else if (($flash & 0x1) != 0) {
+        $str_flash = "Fired";    
+    } else if (($flash & 0x5) != 0) {
+        $str_flash = "Fired, Return not detected";    
+    } else if (($flash & 0x7) != 0) {
+        $str_flash = "Fired, Return detected";    
+    } else if (($flash & 0x8) != 0) {
+        $str_flash = "On, Did not fire";    
+    } else if (($flash & 0x9) != 0) {
+        $str_flash = "On, Fired";    
+    } else if (($flash & 0xd) != 0) {
+        $str_flash = "On, Return not detected";    
+    } else if (($flash & 0xf) != 0) {
+        $str_flash = "On, Return detected";    
+    } else if (($flash & 0x10) != 0) {
+        $str_flash = "Off, Did not fire";    
+    } else if (($flash & 0x14) != 0) {
+        $str_flash = "Off, Did not fire, Return not detected";    
+    } else if (($flash & 0x18) != 0) {
+        $str_flash = "Auto, Did not fire";    
+    } else if (($flash & 0x19) != 0) {
+        $str_flash = "Auto, Fired";    
+    } else if (($flash & 0x1d) != 0) {
+        $str_flash = "Auto, Fired, Return not detected";    
+    } else if (($flash & 0x1f) != 0) {
+        $str_flash = "Auto, Fired, Return detected";    
+    } else if (($flash & 0x20) != 0) {
+        $str_flash = "No flash function";    
+    } else if (($flash & 0x30) != 0) {
+        $str_flash = "Off, No flash function";    
+    } else if (($flash & 0x41) != 0) {
+        $str_flash = "Fired, Red-eye reduction";    
+    } else if (($flash & 0x45) != 0) {
+        $str_flash = "Fired, Red-eye reduction, Return not detected";    
+    } else if (($flash & 0x47) != 0) {
+        $str_flash = "Fired, Red-eye reduction, Return detected";    
+    } else if (($flash & 0x49) != 0) {
+        $str_flash = "On, Red-eye reduction";    
+    } else if (($flash & 0x4d) != 0) {
+        $str_flash = "On, Red-eye reduction, Return not detected";    
+    } else if (($flash & 0x4f) != 0) {
+        $str_flash = "On, Red-eye reduction, Return detected";    
+    } else if (($flash & 0x50) != 0) {
+        $str_flash = "Off, Red-eye reduction";    
+    } else if (($flash & 0x58) != 0) {
+        $str_flash = "Auto, Did not fire, Red-eye reduction";    
+    } else if (($flash & 0x59) != 0) {
+        $str_flash = "Auto, Fired, Red-eye reduction";    
+    } else if (($flash & 0x5d) != 0) {
+        $str_flash = "Auto, Fired, Red-eye reduction, Return not detected";    
+    } else if (($flash & 0x5f) != 0) {
+        $str_flash = "Auto, Fired, Red-eye reduction, Return detected";    
+    }
+
+    $software = "";
+    if (isset($exif['IFD0']['Software'])) {
+        $software = $exif['IFD0']['Software'];
+    }
+
+    $gps_latitude_degree = $gps_latitude_min = $gps_latitude_sec = "";
+    $gps_longitude_degree = $gps_longitude_min = $gps_longitude_sec = "";        
+
+    $gps_latitude_ref = "";
+    $gps_longitude_ref = "";
+    $gps_altitude = "";
+    $lon = "";
+    $lat = "";
+
+
+
+    if (isset($exif['GPS']['GPSLatitude'])) {
+        $gps_latitude_array = $exif['GPS']['GPSLatitude'];
+        $gps_latitude_degree = explode('/',$gps_latitude_array[0])[0];
+        $gps_latitude_min = explode('/',$gps_latitude_array[1])[0];            
+        $gps_latitude_sec = number_format(explode('/',$gps_latitude_array[2])[0] / explode('/',$gps_latitude_array[2])[1], 2);
+    }
+    if (isset($exif['GPS']['GPSLongitude'])) {
+        $gps_longitude_array = $exif['GPS']['GPSLongitude'];
+        $gps_longitude_degree = explode('/',$gps_longitude_array[0])[0];
+        $gps_longitude_min = explode('/',$gps_longitude_array[1])[0];
+        $gps_longitude_sec = number_format(explode('/',$gps_longitude_array[2])[0] / explode('/',$gps_longitude_array[2])[1], 2);
+    }
+    if (isset($exif['GPS']['GPSAltitude'])) {
+        $gps_altitude = $exif['GPS']['GPSAltitude'];
+    }
+    if (isset($exif['GPS']['GPSLatitudeRef'])) {
+        $gps_longitude_ref = $exif['GPS']['GPSLatitudeRef'];
+    }
+    if (isset($exif['GPS']['GPSLongitudeRef'])) {
+        $gps_longitude_ref = $exif['GPS']['GPSLongitudeRef'];
+    }
+
+    if (isset($exif['GPS']['GPSLatitude']) && isset($exif['GPS']['GPSLongitude'])) {
+        $lon = getGps($exif['GPS']["GPSLongitude"], $exif['GPS']['GPSLongitudeRef']);
+        $lat = getGps($exif['GPS']["GPSLatitude"], $exif['GPS']['GPSLatitudeRef']);
+    }
+        
+function getGps($exifCoord, $hemi) {
+
+    $degrees = count($exifCoord) > 0 ? gps2Num($exifCoord[0]) : 0;
+    $minutes = count($exifCoord) > 1 ? gps2Num($exifCoord[1]) : 0;
+    $seconds = count($exifCoord) > 2 ? gps2Num($exifCoord[2]) : 0;
+
+    $flip = ($hemi == 'W' or $hemi == 'S') ? -1 : 1;
+
+    return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
+
+}
+
+function gps2Num($coordPart) {
+
+    $parts = explode('/', $coordPart);
+
+    if (count($parts) <= 0)
+        return 0;
+
+    if (count($parts) == 1)
+        return $parts[0];
+
+    return floatval($parts[0]) / floatval($parts[1]);
+}
+        
+//$bucket_contents = $s3->getBucket('shutter-island');
+//foreach ($bucket_contents as $file) {
+//    if ($file['size']) {
+//        $dt = new DateTime();
+//        $dt ->setTimestamp($file['time']);
+//            echo $dt->format('d') . "<br>";
+//    }
+//}
+?>
     
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
         <a href="gallery.php" class = "link-to-gallery">
@@ -66,7 +335,7 @@
         <div class = "title">
             <a href="index.php?fn=<?php echo $prev_filename; ?>" 
                 <?php
-                    if($prev_filename == "")
+                    if(!isset($prev_filename) || empty($prev_filename) || $prev_filename == "" )
                         echo 'style = "visibility: hidden;"'; 
                 ?>
             >
@@ -75,7 +344,7 @@
             <a href="index.php">pinchards.is</a>            
             <a href="index.php?fn=<?php echo $next_filename; ?>" 
                 <?php
-                    if($next_filename == "")
+                    if(!isset($next_filename) || empty($next_filename) || $next_filename == "" )
                         echo 'style = "visibility: hidden;"'; 
                 ?>
             >
@@ -84,7 +353,15 @@
         </div>
     </nav>
     <div class = "preview">
-        <img src="<?php echo "photo/" . $filename; ?>" id="preview_image"/>
+        <!--<img src="<?php echo "http://d3kq73uimqeic8.cloudfront.net/" . $filename; ?>" id="preview_image"/>-->
+        <!--<img src="<?php echo "photo/1.jpg"; ?>" id="preview_image"/>-->
+        <div class="placeholder" data-large="<?php echo "http://d3kq73uimqeic8.cloudfront.net/" . $filename; ?>" id="preview_image">
+            <img src="photo/3.jpg" class="img-small">
+            <div style="padding-bottom: 66.6%;"></div>
+        </div>
+        
+        
+        
         <div class = "detail_view">
             <div class ="btn_arrow"></div>
             <div class = "col-md-5 container detail_container">
@@ -94,19 +371,21 @@
                         <div class = "title">
                             <?php
                                 $filename_array = explode(".", $filename);
-                                $splited_file_name = "";                                
+                                $splited_file_name = "";
                                 for( $i = 0; $i < count($filename_array)-1; $i++ ) {
                                     $splited_file_name .= $filename_array[$i];
                                 }
-                                echo $splited_file_name;
+                                $final_title = explode("GOPR", $splited_file_name);
+                                
+                                echo $final_title[1];
                             ?>
                         </div>
                     </div>
                     <div class = "datetime_area">
                         <div class = "detail_rect"></div>
                         <div class = "inner_data">
-                            <?php                            
-                                $datetime = DateTime::createFromFormat('Y:m:d H:i:s', $datetime);
+                            <?php
+                                $datetime = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
                                 $converted_date = date_format($datetime, "l, F jS, Y @ g:i A");
                                 echo $converted_date;
                             ?>
@@ -224,6 +503,27 @@
     </div>
     
 <script>
+    window.onload = function() {
+
+        var placeholder = document.querySelector('.placeholder'),
+            small = placeholder.querySelector('.img-small')
+
+        // 1: load small image and show it
+        var img = new Image();
+        img.src = small.src;
+        img.onload = function () {
+         small.classList.add('loaded');
+        };
+
+        // 2: load large image
+        var imgLarge = new Image();
+        imgLarge.src = placeholder.dataset.large; 
+        imgLarge.onload = function () {
+          imgLarge.classList.add('loaded');
+        };
+        placeholder.appendChild(imgLarge);
+  }
+
     function myMap() {
         var lat =  "<?php echo $lat; ?>";
         var lon = "<?php echo $lon; ?>";
@@ -232,7 +532,7 @@
             lat = 49.2025694;
             lon = -53.48586388888953;
         }
-
+        
         var myCenter = new google.maps.LatLng(lat,lon);
         var mapCanvas = document.getElementById("googleMap");
         var mapOptions = {center: myCenter, zoom: 14};
@@ -263,9 +563,9 @@
 
 </html>
 
-<script>    
+<script>
+    
     $(document).ready(function() {
-        
         var diff = 0;
         if ($(".detail_view").height() - $(".btn_arrow").height() > $(document).height() / 3 * 2) {
             diff = $(document).height() / 3 * 2;            

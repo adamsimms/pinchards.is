@@ -927,7 +927,7 @@
           }
     }
 
-    EXIF.getData = function(img, callback) {
+    EXIF.getData = function(img, callback) {        
 //        if ((self.Image && img instanceof self.Image)
 //            || (self.HTMLImageElement && img instanceof self.HTMLImageElement)
 //            && !img.complete)
@@ -935,10 +935,10 @@
         if (img.complete === false) { return false; }
 
         if (!imageHasData(img)) {
-            getImageData(img, callback);
+            getImageData(img, callback);            
         } else {
             if (callback) {
-                callback.call(img);
+                callback.call(img);                
             }
         }
         return true;
