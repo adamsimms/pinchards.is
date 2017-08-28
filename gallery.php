@@ -26,8 +26,6 @@
     <!-- Theme CSS -->
     <link href="css/pinchard.css" rel="stylesheet">
 
-
-
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -73,6 +71,7 @@
     <!-- jQuery -->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/jquery-ui/jquery-ui.min.js"></script>
+
     <!-- Bootstrap Core JavaScript -->
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
@@ -95,18 +94,16 @@
     } else {
         $current_month = date('m');
         $current_year = date('Y');
-//        echo "phpcurr_month = " . $current_month;
+        // echo "phpcurr_month = " . $current_month;
     }
     ini_set('allow_url_fopen', 'on');
     $cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
-//    $xml = simplexml_load_file($cdnurl) or die("Error: Cannot create object");
+    // $xml = simplexml_load_file($cdnurl) or die("Error: Cannot create object");
     $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $cdnurl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$xmlresponse = curl_exec($ch);
-$xml=simplexml_load_string($xmlresponse);
-
-
+    curl_setopt($ch, CURLOPT_URL, $cdnurl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $xmlresponse = curl_exec($ch);
+    $xml=simplexml_load_string($xmlresponse);
 
     $array = array();
     $supported_image = array(
@@ -126,7 +123,7 @@ $xml=simplexml_load_string($xmlresponse);
                 $dateString = explode("_", $dateString)[0];
                 $date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $dateString);//$content->LastModified
 
-//                $date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $content->LastModified);
+                // $date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $content->LastModified);
                 $formatted_date = date_format($date,"Y/m/d H:i:s");
                 $year = date_format($date, "Y");
                 $month = date_format($date, "m");
@@ -176,7 +173,6 @@ $xml=simplexml_load_string($xmlresponse);
     }
 }, false);
 
-
     var array = <?php echo json_encode($array) ?>;
 
     $('#photo_container').empty();
@@ -209,7 +205,7 @@ $xml=simplexml_load_string($xmlresponse);
 
                     html += '<div class="col-md-5ths col-sm-6 col-xs-12 photoElement">';
                         html += '<a href = "index.php?fn=' + photo['filename'][0] + '" class = "photoBox">';
-                            html += '<img src = "photo/thumbnail.jpg" data-src="' + cdnurl + photo['filename'][0] + '" class="img-responsive" alt="" style = "width: 100%">';                            
+                            html += '<img src = "photo/thumbnail.jpg" data-src="' + cdnurl + photo['filename'][0] + '" class="img-responsive" alt="" style = "width: 100%">';
                             html += '<div class="photo-box-caption">';
                                 html += '<div class="photo-box-caption-content">';
                                     html += formatAMPM(date);
@@ -308,7 +304,6 @@ $xml=simplexml_load_string($xmlresponse);
                     var old_date = parseDate(photo['datetime']);
                     var new_date = formatDate(old_date);
 
-
                                 html += '<div class="col-md-5ths col-sm-6 col-xs-12 photoElement">';
                                     html += '<a href = "index.php?fn=' + photo['filename'] + '" class = "photoBox">';
                                         html += '<img src="photo/' + photo['filename'] + '" class="img-responsive" alt="">';
@@ -338,9 +333,6 @@ $xml=simplexml_load_string($xmlresponse);
     defaultDate.setMonth(<?php echo $current_month-1; ?>);
     defaultDate.setYear(<?php echo $current_year; ?>);
 
-
-
-
     $('#monthpicker').datepicker({
         dateFormat: "mm/yy",
         changeMonth: true,
@@ -358,8 +350,6 @@ $xml=simplexml_load_string($xmlresponse);
             month_index++;
             var monthval = pad(month_index);
 
-
-
             if (e.target.className == "ui-datepicker-year") {
                 loadPhotos(monthval + "-" + yearval, "1");
             } else {
@@ -368,11 +358,11 @@ $xml=simplexml_load_string($xmlresponse);
     });
 
     $('#monthpicker').datepicker('option', 'onChangeMonthYear', function(year, month) {
-//        loadPhotos(month + "-" + year, "0");
+      // loadPhotos(month + "-" + year, "0");
     })
 
     var temp_date = $("#monthpicker").datepicker('getDate');
-//    console.log("temp" + temp_date);
+      // console.log("temp" + temp_date);
 
     $('#monthpicker').datepicker('option', 'onChangeMonthYear', function(year, month) {
             var url = window.location.href.split('?')[0] + '?cury=' + year + '&curm=' + month;
@@ -390,7 +380,7 @@ $xml=simplexml_load_string($xmlresponse);
         for (var i = 0; i < validMonthArray.length; i++) {
             var month_value = pad(parseInt(this.value) + 1);
             temp_date = <?php echo $current_year; ?> + "-" + month_value;
-//            console.log("ttttempdate = " + temp_date);
+            // console.log("ttttempdate = " + temp_date);
             if(validMonthArray[i] != temp_date) {
                 $(".ui-datepicker-month option[value='" + this.value + "']").remove();//prop('disabled', true);//remove();
             }
@@ -399,7 +389,7 @@ $xml=simplexml_load_string($xmlresponse);
     $(".ui-datepicker-year > option").each(function() {
         for (var i = 0; i < validMonthArray.length; i++) {
             var year_value = pad(parseInt(this.value) );
-//            console.log("year_value = " + year_value);
+            // console.log("year_value = " + year_value);
             if(validMonthArray[i].split("-")[0] != year_value) {
                 $(".ui-datepicker-year option[value='" + this.value + "']").remove();
             }
@@ -409,20 +399,19 @@ $xml=simplexml_load_string($xmlresponse);
 
 
     $( ".ui-datepicker-prev" ).click(function(e) {
-//        console.log( "Handler for .click() called." );
+        // console.log( "Handler for .click() called." );
         e.stopImmediatePropagation();
         e.stopPropagation();
         e.preventDefault();
         return false;
     });
     $( ".ui-datepicker-next" ).click(function(e) {
-//        console.log( "Handler for .click() called." );
+        // console.log( "Handler for .click() called." );
         e.stopImmediatePropagation();
         e.stopPropagation();
         e.preventDefault();
         return false;
     });
-
 
         $(window).scroll(function() {
             var offsetTop = $('.photos').offset().top;
@@ -448,9 +437,6 @@ $xml=simplexml_load_string($xmlresponse);
             }
         });
     });
-
-
-
 </script>
 
 <script>
