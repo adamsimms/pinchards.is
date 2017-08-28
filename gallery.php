@@ -10,7 +10,7 @@
     <meta name="author" content="">
 
     <title>Pinchard's Island</title>
-    
+
     <link href="vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -25,8 +25,8 @@
 
     <!-- Theme CSS -->
     <link href="css/pinchard.css" rel="stylesheet">
-    
-    
+
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,13 +54,13 @@
             </div>
         </a>
         <div class = "nav_info">
-            <a href="info.php">i</a>
+            <a href="info.php"><img src="img/icon-info.svg" /></a>
         </div>
         <div class = "title">
             <a href="index.php">pinchards.is</a>
         </div>
     </nav>
-    <div class = "picker_area">            
+    <div class = "picker_area">
             <div id="monthpicker"></div>
     </div>
     <!--<div id="loader"></div>-->
@@ -71,7 +71,7 @@
     </div>
 
     <!-- jQuery -->
-    <script src="vendor/jquery/jquery.min.js"></script>    
+    <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/jquery-ui/jquery-ui.min.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -83,6 +83,7 @@
 
     <!-- Theme JavaScript -->
     <script src="js/pinchard.min.js"></script>
+
 </body>
 
 </html>
@@ -227,16 +228,16 @@ $xml=simplexml_load_string($xmlresponse);
         hours = hours ? hours : 12; // the hour '0' should be '12'
         minutes = minutes < 10 ? '0'+minutes : minutes;
         var strTime = hours + ':' + minutes + ' ' + ampm;
-        
+
         return strTime;
     }
-    
+
     function formatDate(date) {
         var time = formatAMPM(new Date(date));
-            
+
         return time;
     }
-    
+
     function parseDate(s) {
         var b = s.split(/\D/);
         return new Date(b[0],b[1]-1,b[2],b[3],b[4],b[5]);
@@ -254,13 +255,13 @@ $xml=simplexml_load_string($xmlresponse);
             method:'post',
             success:function(result){
                 $('.ui-datepicker-month').css('color', 'rgba(0, 0, 0, 0.8)');
-                
+
                 var data = JSON.parse(result);
                 var array = data['array'];
                 var validYearArray = data['validYearArray'];
                 var validMonthArray = data['validMonthArray'];
-                
-                
+
+
                 $(".ui-datepicker-month > option").each(function() {
                     
                     for (var i = 0; i < validMonthArray.length; i++) {
@@ -271,43 +272,43 @@ $xml=simplexml_load_string($xmlresponse);
                     }
                 });
                 $(".ui-datepicker-year > option").each(function() {
-                    for (var i = 0; i < validYearArray.length; i++) {                        
-                        var year_value = pad(parseInt(this.value) + 1);                        
+                    for (var i = 0; i < validYearArray.length; i++) {
+                        var year_value = pad(parseInt(this.value) + 1);
                         if(validYearArray.indexOf(this.value) == -1) {
-                            $(".ui-datepicker-year option[value='" + this.value + "']").remove(); 
+                            $(".ui-datepicker-year option[value='" + this.value + "']").remove();
                         }
                     }
                 });
-                
+
                 $('#photo_container').empty();
-                
+
                 var prev_day = "0";
                 var html = "";
                 row_num = 0;
                 for(var index = 0; index < array.length; index++)
                 {
                     var photo = array[index];
-                    
+
                     var day = ((photo["datetime"].split(" "))[0].split(":"))[2];
                     if (day != prev_day) {
                         if (prev_day != "") {//it's not first, add close divs
                             html += '</div></div>';
                         }
                         prev_day = day;
-                        
+
                         html += '<div class="row">';
                             html += '<div class = "day">';
                                 html += day;
                             html += '</div>';
                             html += '<div class = "photos" id="photos">';
-                            
+
                             row_num++;
                     }
-                    
+
                     var old_date = parseDate(photo['datetime']);
                     var new_date = formatDate(old_date);
-                    
-                
+
+
                                 html += '<div class="col-md-5ths col-sm-6 col-xs-12 photoElement">';
                                     html += '<a href = "index.php?fn=' + photo['filename'] + '" class = "photoBox">';
                                         html += '<img src="photo/' + photo['filename'] + '" class="img-responsive" alt="">';
@@ -321,9 +322,9 @@ $xml=simplexml_load_string($xmlresponse);
                 }
                 $('#photo_container').append(html);
             }
-        });  
+        });
     }
-    
+
     function pad(d) {
         return (d < 10) ? '0' + d.toString() : d.toString();
     }
@@ -351,9 +352,25 @@ $xml=simplexml_load_string($xmlresponse);
         defaultDate: defaultDate
     }).on("input change", function (e) {
 
+            var yearval = $('.ui-datepicker-year').val();
+
+            var month_index = $('.ui-datepicker-month').val();
+            month_index++;
+            var monthval = pad(month_index);
+
+
+
+            if (e.target.className == "ui-datepicker-year") {
+                loadPhotos(monthval + "-" + yearval, "1");
+            } else {
+                loadPhotos(monthval + "-" + yearval, "0");
+            }
     });
-    
-    
+
+    $('#monthpicker').datepicker('option', 'onChangeMonthYear', function(year, month) {
+//        loadPhotos(month + "-" + year, "0");
+    })
+
     var temp_date = $("#monthpicker").datepicker('getDate');
 //    console.log("temp" + temp_date);
     
@@ -410,25 +427,41 @@ $xml=simplexml_load_string($xmlresponse);
         $(window).scroll(function() {
             var offsetTop = $('.photos').offset().top;
             var scrollTop = $(window).scrollTop();
-            
+
             if (scrollTop > 0) {
                 var found = 0;
-                
+
                 for( var i = (row_num - 1) ; i >= 0 ; i-- ) {
-                
+
                     var val = $('#photo_container .row:eq('+i+') .photos').position().top - 132 - 20;
-                    
+
                     if (val < scrollTop && !found ) {
                         $('#photo_container .row:eq('+i+') .day').addClass('floating');
                         $('#photo_container .row:eq('+i+') .photos').addClass('floating');
                         found = 1;
-                        
+
                     } else {
                         $('#photo_container .row:eq('+i+') .day').removeClass('floating');
-                        $('#photo_container .row:eq('+i+') .photos').removeClass('floating');                        
+                        $('#photo_container .row:eq('+i+') .photos').removeClass('floating');
                     }
                 }
             }
         });
     });
+
+
+
+</script>
+
+<script>
+    var myVar;
+
+    function myFunction() {
+        myVar = setTimeout(showPage, 3000);
+    }
+
+    function showPage() {
+      $("#loader").hide();
+      $('.content_area').show();
+}
 </script>

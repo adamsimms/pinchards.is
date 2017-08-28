@@ -24,7 +24,7 @@
 
     <!-- Theme CSS -->
     <link href="css/pinchard.css" rel="stylesheet">
-    
+
     <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.css" />
     <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.gallery.css" />
 
@@ -33,7 +33,7 @@
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->    
+    <![endif]-->
 </head>
 
 <body id="page-top">
@@ -52,7 +52,7 @@
             </div>
         </a>
         <div class = "nav_info">
-            <a href="info.php">i</a>
+            <a href="info.php"><img src="img/icon-info.svg" /></a>
         </div>
         <div class = "title">
             <a href="index.php">pinchards.is</a>
@@ -80,7 +80,7 @@
                 <div>
                     Proin euismod vulputate orci, et posuere felis cursus ut. Duis consectetur tristique nisl, in eleifend mauris interdum eget. Ut dictum sapien eu posuere egestas. Mauris diam diam, fermentum ac finibus ac, ultrices in arcu. Nam vitae est consectetur ante pretium molestie. Cras aliquet tristique leo ac fermentum. Ut vel elementum lectus, et consectetur turpis. Proin scelerisque, ligula nec vestibulum venenatis, enim eros tincidunt felis, at congue dolor eros sit amet augue. Suspendisse vel accumsan massa. Maecenas luctus nunc ex, pulvinar posuere turpis vestibulum eget. Duis felis metus, aliquam ut ligula ac, mollis tempus lectus. Nullam quis feugiat massa, nec tincidunt justo. Nunc finibus fermentum neque. Curabitur rhoncus elit eu metus varius, non congue elit ornare. Aenean luctus eget leo et luctus.
                 </div>
-                
+
                 <div class = "row about_images">
                     <div class = "col-sm-4">
                         <a class="gallery" href="photo/1.jpg"><img src="photo/1.jpg" class="img-responsive info_img" alt=""/></a>
@@ -90,11 +90,11 @@
                         <a class="gallery" href="photo/1.jpg"><img src="photo/1.jpg" class="img-responsive info_img" alt="" /></a>
                     </div>
                     <div class = "col-sm-4">
-                        <a class="gallery" href="photo/1.jpg"><img src="photo/1.jpg" class="img-responsive info_img" alt="" /></a>                        
+                        <a class="gallery" href="photo/1.jpg"><img src="photo/1.jpg" class="img-responsive info_img" alt="" /></a>
                     </div>
                 </div>
-                
-            </div>            
+
+            </div>
         </div>
     </div>
     <div class = "how_section">
@@ -112,7 +112,7 @@
                 <div>
                     Donec posuere nunc eu leo vehicula fermentum. Nulla facilisi. Nulla eleifend sollicitudin ullamcorper. Nullam at lorem metus. Nunc pulvinar pretium leo, sit amet venenatis eros sodales in. Nullam tempus eu diam quis ultricies. Cras mollis pharetra gravida. Pellentesque vel magna enim. Nullam placerat imperdiet tellus, et egestas nisi porta ullamcorper. Etiam rhoncus neque sit amet venenatis sagittis. Curabitur ac feugiat urna.
                 </div>
-                
+
                     <div class = "row">
                         <div class = "col-sm-6">
                             <img src="photo/1.jpg" class="img-responsive info_img" alt="">
@@ -121,7 +121,7 @@
                             <img src="photo/1.jpg" class="img-responsive info_img" alt="">
                         </div>
                     </div>
-                
+
                 <div class = "code_area">
                     &#60;div id=&#34;muted&#34;&#62;<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#60;h1 id=&#34;focus-text&#34;&#62;Designing iPhone app for client&#60;/h1&#62;<br>
@@ -150,7 +150,7 @@
                 </div>
                 <div class = "row people_row">
                     <div class = "col-sm-4 people_col_1">
-                        <div class = "people"></div>                        
+                        <div class = "people"></div>
                         <div class = "name">Angela Gabereaux</div>
                         <div class = "job">Photographer, Designer</div>
                         <a href="http://adamsim.ms/" class = "link">www.adamsim.ms</a>
@@ -183,11 +183,11 @@
                 </div>
                 <div class ="copyright">
                     Copyright @2017
-                </div>   
+                </div>
             </div>
         </div>
     </div>
-        
+
 
     <!-- jQuery -->
     <script src="vendor/jquery/jquery.min.js"></script>
@@ -203,7 +203,7 @@
     <!-- Theme JavaScript -->
     <script src="js/pinchard.min.js"></script>
     <script src="./vendor/lightbox/featherlight.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./vendor/lightbox/featherlight.gallery.js" type="text/javascript" charset="utf-8"></script>    
+    <script src="./vendor/lightbox/featherlight.gallery.js" type="text/javascript" charset="utf-8"></script>
 
     <script>
         $(document).ready(function(){
