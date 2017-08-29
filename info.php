@@ -184,12 +184,11 @@
                 <p>Holds and insulates the Raspberry Pi with add-ons and the USB hotspot.
 
                 <h4><strong>130 Watt Solar Power System</strong></h4>
-                <p>We worked with Newfound Energies, Inc. in St. John’s Newfoundland to help design a solar panel system that would intermittently power the system we were desinging. Because Pinchard’s Island receives approximately 1
-                1.5 hours of sunlight during the winter, we decided to go with a larger solar power system in hopes that it would be enough to power the system during the winter, allow for the charging of other devices (laptops, phones, etc) during the summer, and an investment in system that could be used for future projects.
+                <p>We worked with Newfound Energies, Inc. in St. John’s Newfoundland to help design a solar panel system that would intermittently power the system we were designing. Because Pinchard’s Island receives approximately 1-1.5 hours of sunlight during the winter, we decided to go with a larger solar power system in hopes that it would be enough to power the system during the winter, allow for the charging of other devices (laptops, phones, etc) during the summer, and an investment in system that could be used for future projects.
 
                 <ul>
-                  <li>130-watt solar panel pointed at ±20 degrees towards the path of the sun during the winter. Ajusted to ±60 degrees in the summer.</li>
-                  <li>40 amp solar charg econtroller</li>
+                  <li>130-watt solar panel pointed at ±20 degrees towards the path of the sun during the winter. Adjusted to ±60 degrees in the summer.</li>
+                  <li>40 amp solar charge controller</li>
                   <li>1500-watt inverter</li>
                   <li>Four 6 volt, 385 amp hour deep cycle batteries</li>
                   <li>30 amp automatic transfer switch</li>
@@ -221,7 +220,7 @@
 
                 <img src="img/info/solar-install.jpg" class="img-responsive info_img" alt="Solar Power Install" />
 
-                <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island I was confsued about what would be the best thing to capture; the landscape, the ocean, something else entirely. I was reliant on the outside structure of the cabin to orient the frame and through a process of elimination I was able to make a decision. Pointing the camera towards the south was directly inline with the path of the sun causing the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoids the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window and reminds me of the inside view from the cabin window.</p>
+                <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island I was confused about what would be the best thing to capture; the landscape, the ocean, something else entirely. I was reliant on the outside structure of the cabin to orient the frame and through a process of elimination I was able to make a decision. Pointing the camera towards the south was directly inline with the path of the sun causing the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoids the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window and reminds me of the inside view from the cabin window.</p>
 
                 <img src="img/info/cam-do.jpg" class="img-responsive info_img" alt="Cam Do Enclosure" />
 
@@ -251,20 +250,17 @@
                 <div class = "row people_row">
                     <div class = "col-sm-4 people_col_1">
                         <div class = "people"><img src="/img/people/adam-simms.jpg" /></div>
-                        <div class = "name">Adam Simms</div>
-                        <div class = "job">is a Photographer pursuing his Masters in Studio Arts, Concentration Photography at Concordia University. </div>
-                        <a href="http://adamsim.ms/" target="_blank" class = "link">adamsim.ms</a>
+                        <div class = "job"><strong>Adam Simms</strong> is a Photographer pursuing his MFA in Studio Arts, with a Concentration Photography at Concordia University. </div>
+                        <a href="http://adamsim.ms/" target="_blank" class="link">www</a>
                     </div>
                     <div class = "col-sm-4 people_col_2">
                         <div class = "people"><img src="/img/people/angela-gabereaux.jpg" /></div>
-                        <div class = "name">Angela Gabereaux</div>
-                        <div class = "job">is software developer, system architech, hacker, maker, media artist and teacher.</div>
-                        <a href="http://www.angelagabereaux.com/" target="_blank" class = "link">angelagabereaux.com</a>
+                        <div class = "job"><strong>Angela Gabereaux</strong> is software developer, system architech, hacker, maker, media artist and teacher.</div>
+                        <a href="http://www.angelagabereaux.com/" target="_blank" class="link">www</a>
                     </div>
                     <div class = "col-sm-4 people_col_3">
                         <div class = "people"><img src="/img/people/roger-knight.jpg" /></div>
-                        <div class = "name">Roger Knight</div>
-                        <div class = "job">Roger is a heavy equipment operator and carpenter. </div>
+                        <div class = "job"><strong>Roger Knight</strong> Roger is a heavy equipment operator and carpenter. </div>
                     </div>
                 </div>
             </div>
