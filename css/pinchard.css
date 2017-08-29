@@ -606,8 +606,8 @@ option {
 #preview_image {
     position: absolute;
     top: 50px;
-    width: 104%; 
-    height: 100%; 
+    width: 104%;
+    height: 100%;
     object-fit: cover;
 }
 
@@ -720,6 +720,7 @@ option {
 }
 .who_section .people_row .job {
     font-style: italic;
+    font-size: 14px;
 }
 .who_section .people_row .link, .contact_section .link {
     text-decoration: underline;
@@ -735,7 +736,7 @@ option {
 .contact_section .copyright {
     margin-top: 45px;
     color: #959595;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 /* Center the loader */
