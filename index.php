@@ -318,22 +318,8 @@
 ?>
 
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-        <a href="gallery.php" class = "link-to-gallery">
-            <div class = "union">
-                <div class = "union_vector union_vector1"></div>
-                <div class = "union_vector union_vector2"></div>
-                <div class = "union_vector union_vector3"></div>
-                <div class = "union_vector union_vector4"></div>
-                <div class = "union_vector union_vector5"></div>
-                <div class = "union_vector union_vector6"></div>
-                <div class = "union_vector union_vector7"></div>
-                <div class = "union_vector union_vector8"></div>
-                <div class = "union_vector union_vector9"></div>
-            </div>
-        </a>
-        <div class = "nav_info">
-            <a href="info.php"><img src="img/icon-info.svg" /></a>
-        </div>
+        <a href="gallery.php" class = "link-to-gallery nav_cloudberry"></a>
+        <a class="nav_info" href="info.php"></a>
         <div class = "title">
             <a href="index.php?fn=<?php echo $prev_filename; ?>"
                 <?php

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="15px" height="7px" viewBox="0 0 15 7" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 46.2 (44496) - http://www.bohemiancoding.com/sketch -->
+    <title>arrow_hover</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="arrow_hover" fill-rule="nonzero" fill="#F05F40">
+            <g id="path0_stroke-link" transform="translate(7.310000, 3.500000) rotate(90.000000) translate(-7.310000, -3.500000) translate(3.810000, -3.500000)">
+                <path d="M1.828283,0.439691 C1.518833,-0.01776 0.897139,-0.13773 0.439691,0.171717 C-0.01776,0.481167 -0.13773,1.102861 0.171717,1.560309 L1.828283,0.439691 Z M5,6.91304 L5.83571,7.46222 L6.20188,6.905 L5.82828,6.35273 L5,6.91304 Z M0.164295,12.4508 C-0.13901,12.9124 -0.01073,13.5324 0.450822,13.8357 C0.9123695,14.139 1.532403,14.0107 1.835705,13.5492 L0.164295,12.4508 Z M0.171717,1.560309 L4.17172,7.47335 L5.82828,6.35273 L1.828283,0.439691 L0.171717,1.560309 Z M4.16429,6.36387 L0.164295,12.4508 L1.835705,13.5492 L5.83571,7.46222 L4.16429,6.36387 Z" id="path0_stroke"></path>
+            </g>
+        </g>
+    </g>
+</svg>
