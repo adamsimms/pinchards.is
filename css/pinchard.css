@@ -742,6 +742,7 @@ option {
     width: 100%;
     position: relative;
     border-radius: 50%;
+    min-height: 164px;
 }
 .who_section .people_row .name {
     font-weight: 700;
