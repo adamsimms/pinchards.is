@@ -51,7 +51,6 @@
     <div class = "how_section">
         <div class = "container">
             <div class = "col-sm-8 col-sm-offset-2">
-                <h3>So, what is this?</h3>
                 <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
 
                 <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Moments.” The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
