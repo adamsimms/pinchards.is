@@ -52,9 +52,9 @@
         <div class = "container">
             <div class = "col-sm-8 col-sm-offset-2">
                 <h3>So, what is this?</h3>
-                <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and automatically uploads the images via a cellular network to this website.</p>
+                <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
 
-                <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Moments.” The island Island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
+                <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Moments.” The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
                 <p>The view is static–in the sense that camera is always capturing the same frame; however, the lighting of the frame can vary drastically from one image to another. These photographs are a continuation of the moments the locals spend in the cabin glancing out the window at the surrounding landscape. </p>
             </div>
@@ -68,11 +68,11 @@
               <div class = "col-sm-8 col-sm-offset-2">
                 <h3>Okay, but why Pinchard's Island?</h3>
 
-                <p><a href="http://adamsim.ms/" target="_blank">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank">Pinchard’s Island</a> and its previous residents for several years, but the harsh conditions and the extreme remoteness of this island made it impossible to access the island to take images over long periods of time across different seasons. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
+                <p><a href="http://adamsim.ms/" target="_blank">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank">Pinchard’s Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
 
                 <img src="https://static1.squarespace.com/static/50e5fc10e4b0291e3b9b75c6/588f654e725e2506f4c22cd9/588f68e56a4963c410121736/1485793514975/10_adam_simms_sisters.jpg" class="img-responsive info_img" alt="Pinchard's Island Sisters" />
 
-                <p>Shortly after Newfoundland joined Canada as it’s 10th province, Pinchard’s Island was <a href="http://adamsim.ms/resettlement/" target="_blank">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to rewrite the future of resettlement by reviving old ways of life and create new traditions.<p>
+                <p>Shortly after Newfoundland joined Canada as it’s 10th province, Pinchard’s Island was <a href="http://adamsim.ms/resettlement/" target="_blank">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to rewrite the future of resettlement by reviving traditions and create new ones.<p>
               </div>
           </div>
       </div>
@@ -89,14 +89,14 @@
           </div>
       </div>
 
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20855.569930035457!2d-53.48462861918841!3d49.20157937004537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4b75e272b66fd9bf%3A0xe011372b0d414175!2sPinchards+Island%2C+New-Wes-Valley%2C+NL+A0G+3L0%2C+Canada!5e0!3m2!1sen!2sgr!4v1503767433902" width="100%" height="600" frameborder="0" style="border:0" allowfullscreen></iframe>
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20855.569930035457!2d-53.48462861918841!3d49.20157937004537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4b75e272b66fd9bf%3A0xe011372b0d414175!2sPinchards+Island%2C+New-Wes-Valley%2C+NL+A0G+3L0%2C+Canada!5e0!3m2!1sen!2sgr!4v1503767433902" width="100%" height="500" frameborder="0" style="border:0" allowfullscreen></iframe>
 
       <div class = "how_section">
           <div class = "container">
               <div class = "col-sm-8 col-sm-offset-2">
                 <h3>How?</h3>
 
-                <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together on a project. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
+                <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together on the project. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
 
                 <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.<p>
 
@@ -117,7 +117,7 @@
 
                 <img src="img/info/notebook.jpg" class="img-responsive info_img" alt="Notebook" />
 
-                <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below you’ll find a system map and an outline of all the hardware and software used to create Cloudberry.</p>
+                <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below you’ll find a system diagram and an outline of all the hardware and software used to create Cloudberry.</p>
 
                 <h3>The Cloudberry System</h3>
               </div>
@@ -135,7 +135,7 @@
                 <p>We initially wanted to use the GoPro HERO5, but the Cam Do enclosure did not support the GoPro HERO5 at the time. Creating a DIY weatherproof enclosure didn’t add any benefit since the image quality between GoPro HERO4 and GoPro HERO5 is the same; therefore, we made the decision to go with the GoPro HERO4.</p><br />
 
                 <h4><strong><a href="https://cam-do.com/collections/schedulers/products/blink-gopro-time-lapse-controller" target="_blank">Cam Do Blink Interval Timer</a></strong></h4>
-                <p>The interval timer turns on the GoPro HERO4 every hour between 8 AM and 8 PM. The GoPro is modified with the <a href="https://cam-do.com/products/csi-pro-firmware" target="_blank">Pro-csiController</a> firmware from Cam Do and when the camera turns on it runs a custom `autoexec` script to take a photo, turn on the GoPro WiFi and then put the camera in standby mode to conserve power. In the event that something goes wrong, such as no power for a period of time, the interval timer will attempt to turn on the camera every day. As long as the camera WiFi is enabled we can wake and control the camera remotely via the Raspberry Pi.</p><br />
+                <p>The interval timer turns on the GoPro every hour between 8 AM and 8 PM. The GoPro is modified with the <a href="https://cam-do.com/products/csi-pro-firmware" target="_blank">Pro-csiController</a> firmware from Cam Do and runs a custom `autoexec` script to take a photo, turn on the GoPro WiFi and then put the camera in standby mode to conserve power. In the event that something goes wrong, such as no power for a period of time, the interval timer will attempt to turn on the camera when suffiecent power is available. As long as the camera WiFi is enabled we can wake and control the camera remotely via the Raspberry Pi.</p><br />
 
                 <h4><strong><a href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b/" target="_blank">Raspberry Pi 3 Model B</a></strong></h4>
                 <p>Standard Raspberry Pi with a <a href="https://www.adafruit.com/product/1583" target="_blank">16GB Noobs SD Card</a> running <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank">Raspbian OS</a>.</p><br />
@@ -146,8 +146,7 @@
                   <li>Wakes up the GoPro via WiFi.</li>
                 	<li>Downloads and deletes the latest images from the GoPro.</li>
                 	<li>Uploads the images to an Amazon Web Services S3 Bucket and deletes the images from the Raspberry Pi.</li>
-                	<li>Puts the GoPro HERO4 into standby mode to conserve power.</li>
-                	<li>Shuts down the Raspberry Pi to conserve power.</li>
+                	<li>Puts the GoPro into standby mode and shuts down the Raspberry Pi to conserve power.</li>
                 </ol><br /><br />
 
                 <h4><strong><a href="https://store.arduino.cc/usa/arduino-pro-mini" target="_blank">Arduino Pro Mini</a> + <a href="https://www.adafruit.com/product/904" target="_blank">High Side DC Current Sensor Breakout Board</a></strong></h4>
@@ -157,13 +156,13 @@
                 <p>Since the Raspberry Pi is managed remotely the WatchDog monitors the health of the Raspberry Pi and automatically restarts the system in the event of a malfunction.</p><br />
 
                 <h4><strong><a href="http://www.bell.ca/Mobility/Products/Huawei-E8372-Turbo-Stick" target="_blank">HAUWEI LTE E8372</a> USB Hotspot</strong></h4>
-                <p>The USB hotspot is connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. This allows us to connect to the internet via USB and reserve the Raspberry Pi WiFi to connect to the GoPro HERO4 WiFi. At ±6mb per photo, 13 photos per day, we’re using ±2.3gb per month.</p><br />
+                <p>The USB hotspot is connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. This allows us to connect to the internet via USB and reserve the Raspberry Pi WiFi to connect to the GoPro WiFi. At ±6mb per photo, 13 photos per day, we’re using ±2.3gb per month.</p><br />
 
                 <h4><strong>USB cables, extensions, and repeaters</strong></h4>
                 <p>All cables were weatherproof with plastic tubing and electrical tape.</p><br />
 
                 <h4><strong><a href="https://cam-do.com/collections/enclosures/products/dry-enclosure-hero-3-black" target="_blank">GoPro Weatherproof Enclosure</a> with <a href="https://cam-do.com/collections/accessories/products/ram-swivel-mount-kit-for-outdoor-enclosure" target="_blank">Swivle Mount Kit</a> from Cam Do</strong></h4>
-                <p>Home of the GoPro HERO4. We made several modifications to the enclosure:</p>
+                <p>Home of the GoPro. We made several modifications to the enclosure:</p>
                 <ul>
                   <li>The case has an opening on the top, which seemed problematic considering the harsh environment. We deduced to silicone the entire top opening to avoid potential leaking.</li>
                   <li>We drilled a hole in the bottom of the case to connect a USB cord with a repeater to power the GoPro. We applied silicone the USB cable around the entire opening of the hole to prevent potential leaking.</li>
@@ -193,10 +192,10 @@
                 <p>Allows us to connect and control to the Raspberry Pi remotely via the command line interface.</p><br />
 
                 <h4><strong><a href="https://aws.amazon.com/" target="_blank">Amazon Web Services</a></strong></h4>
-                <p>S3 Bucket for the storing the photographs with CloudFront to delivering the content.</p><br />
+                <p>S3 Bucket for the storing the photographs with CloudFront to deliver the images to this website.</p><br />
 
                 <h4><strong><a href="https://github.com/KonradIT/goprowifihack" target="_blank">GoPro WiFi Hack</a> from KonradIT</strong></h4>
-                <p>A series of wifi commands that enable to to control the GoPro HERO4 remotely.</p><br />
+                <p>A series of wifi commands that enable to to control the GoPro remotely.</p><br />
               </div>
           </div>
       </div>
@@ -207,21 +206,21 @@
           <div class = "container">
               <div class = "col-sm-8 col-sm-offset-2">
                 <h3>Installation</h3>
-                <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments. We had to balance cable lengths, accessibility, the architecture of the cabin and predict the potential weather problems. Based on our research of solar irradiance for the geocoordinates of the cabin, we decided to tilt the solar panel at an angle of 20 degrees since the summer was coming to an end and the winter months would prove to be the most challenging for sunlight. We had to position the solar panel with the architecture of the roof and slightly over the heave to prevent the build up of ice and snow, but this was risky since it was difficult to tightly secure the panel to the roof in the event of high winds and slightly positions the panel out of the sun’s path.</p>
+                <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments. We had to consider cable lengths, accessibility,  architecture of the cabin and predict the potential weather problems. Based on our research of solar irradiance for the geocoordinates of the cabin, we decided to tilt the solar panel at an angle of 20 degrees since the summer was coming to an end and the winter months would prove to be the most challenging for sunlight. We also had  instal the panel slightly over the heave of the roof to prevent the build up of ice and snow, but this was risky since it was difficult to tightly secure the panel to the roof in the event of high winds and slightly positions the panel out of the sun’s path.</p>
 
                 <img src="img/info/solar-install.jpg" class="img-responsive info_img" alt="Solar Power Install" />
 
-                <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island I was confused about what would be the best thing to capture; the landscape, the ocean, something else entirely. I was reliant on the outside structure of the cabin to orient the frame and through a process of elimination I was able to make a decision. Pointing the camera towards the south was directly inline with the path of the sun causing the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoids the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window and reminds me of the inside view from the cabin window.</p>
+                <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island, we were confused about what would be the best thing to capture; the landscape, the ocean, something else entirely. We were reliant on the outside structure of the cabin to orient the frame and through a process of elimination, we made a decision. Pointing the camera towards the south was directly in line with the path of the sun caused the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoided the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window and reminds us of the inside view from the cabin window.</p>
 
                 <img src="img/info/cam-do.jpg" class="img-responsive info_img" alt="Cam Do Enclosure" />
 
-                <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island, we were confused about what would be the best frame to capture; the landscape, the ocean, something else entirely. I was reliant on the outside structure of the cabin to orient the frame and through a process of elimination, we were able to make a decision. Pointing the camera towards the south would capture the path of the sun causing the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoids the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window reminds us of the view from inside the cabin window.</p>
+                <p>Next, it was time to assemble the camera components together and test. We connected the Cam Do interval timer to the GoPro and powered camera via USB cable and repeater plugged into the solar power. The new USB cords we introduced were causing the camera to detect a USB power mode when the camera was turned on, which conflicted with the `autoexec` script that we wrote to take the photo, turn on WiFi and put the camera in standby mode. After half a day of troubleshooting, we had to rewrite the script to re-sequence the code to control the camera and go through a series of tests that component.</p>
 
-                <p>Once we stabilized the camera component, we introduced the Raspberry Pi and its add-ons. The initial test had this component of the system performing well; the WittyPi was booting and shutting down the Raspberry Pi on schedule, the Raspberry Pi was connecting to the GoPro HERO4 WiFi enabling us to access the camera and the USB hotspot was providing the internet to upload the images to the AWS S3 Bucket. However, once we settled the Raspberry Pi and its add-ons in the Nanuk case, it significantly impacted the WiFi signal to the point where we were not able to maintain a connection to the GoPro HERO4 via WiFi. This resulted in us completely rewiring the power to this component of the system to allow the Raspberry Pi be positioned as close to the camera as possible to improve the WiFi signal strength.</p>
+                <p>Once we stabilized the camera component, we introduced the Raspberry Pi and its add-ons. The initial test had this component of the system performing well; the WittyPi was booting and shutting down the Raspberry Pi on schedule, the Raspberry Pi was connecting to the GoPro WiFi enabling us to access the camera and the USB hotspot was providing the internet to upload the images to the AWS S3 Bucket. However, once we settled the Raspberry Pi and its add-ons in the Nanuk case, it significantly impacted the WiFi signal to the point where we were not able to maintain a connection to the GoPro via WiFi. This resulted in us completely rewiring the power to this component of the system to allow the Raspberry Pi be positioned as close to the camera as possible to improve the WiFi signal strength.</p>
 
                 <img src="img/info/pi.jpg" class="img-responsive info_img" alt="Cloudberry" />
 
-                <p>Once the entire system was in place, we monitored everything for a full day cycle before locking up all of the cases and leaving the island. </p>
+                <p>Once the entire system was in place, we monitored everything for a full day cycle before locking up all of the cases and leaving the island.</p>
             </div>
         </div>
     </div>
