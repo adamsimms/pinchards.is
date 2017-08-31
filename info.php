@@ -248,7 +248,7 @@
                     </div>
                     <div class = "col-sm-4 people_col_3">
                         <div class = "people"><img src="/img/people/roger-knight.jpg" /></div>
-                        <div class = "job"><strong>Roger Knight</strong> Roger is a heavy equipment operator and carpenter. </div>
+                        <div class = "job"><strong>Roger Knight</strong> is a heavy equipment operator and carpenter. </div>
                     </div>
                 </div>
             </div>
