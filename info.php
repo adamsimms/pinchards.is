@@ -97,9 +97,9 @@
 
                 <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together on the project. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
 
-                <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.<p>
+                <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.</p>
 
-                <p>We used <a href="http://www.trello.com/" target="_blank">Trello</a> to plan every aspect of the project, communicate, and document ongoing research:<p>
+                <p>We used <a href="http://www.trello.com/" target="_blank">Trello</a> to plan every aspect of the project, communicate, and document ongoing research:</p>
 
               </div>
           </div>
@@ -110,8 +110,6 @@
       <div class = "how_section">
           <div class = "container">
               <div class = "col-sm-8 col-sm-offset-2">
-
-
                 <p>Designing a system that worked was only the start of the project. Every slight adjustment that we made to the system, such as moving from electricity to solar power, putting the USB hotspot in a case or using different USB cables introduced new problems that we had to constantly monitor and resolve. Once we felt confident in our system, we had to be realistic that once the system was installed on the island, we would not be able to physically be there to troubleshoot any problem that might arise. This forced us to evaluate the entire solution and implement different components to help reduce the risk factor of the project.</p>
 
                 <img src="img/info/notebook.jpg" class="img-responsive info_img" alt="Notebook" />
