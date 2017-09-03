@@ -172,7 +172,7 @@ aside {
     opacity: .6;
 }
 
-.navbar-default .nav_cloudberry:hover, .navbar-default .nav_cloudberry:focus {
+.navbar-default .nav_cloudberry.active, .navbar-default .nav_cloudberry:hover, .navbar-default .nav_cloudberry:focus {
     background: url(../img/icon-cloudberry_hover.svg) no-repeat;
     background-size: contain;
     opacity: 1;
@@ -189,7 +189,7 @@ aside {
     opacity: .6;
 }
 
-.navbar-default .nav_info:hover, .navbar-default .nav_info:focus {
+.navbar-default .nav_info.active, .navbar-default .nav_info:hover, .navbar-default .nav_info:focus {
     background: url(../img/icon-info_hover.svg) no-repeat;
     background-size: contain;
     opacity: 1;

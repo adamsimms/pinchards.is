@@ -39,7 +39,7 @@
 <body id="page-top">
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
         <a href="gallery.php" class = "link-to-gallery nav_cloudberry"></a>
-        <a class="nav_info" href="info.php"></a>
+        <a class="nav_info active" href="info.php"></a>
         </div>
         <div class = "title">
             <a href="index.php">pinchards.is</a>
