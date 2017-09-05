@@ -95,7 +95,7 @@
               <div class = "col-sm-8 col-sm-offset-2">
                 <h3>How?</h3>
 
-                <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together on the project. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
+                <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
 
                 <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.</p>
 
@@ -235,7 +235,7 @@
                 <div class = "row people_row">
                     <div class = "col-sm-4 people_col_1">
                         <div class = "people"><img src="/img/people/adam-simms.jpg" /></div>
-                        <div class = "job"><strong>Adam Simms</strong> is a Photographer pursuing his MFA in Studio Arts, with a Concentration Photography at Concordia University. </div>
+                        <div class = "job"><strong>Adam Simms</strong> is a Photographer pursuing his MFA in Studio Arts, Photography at Concordia University. </div>
                         <a href="http://adamsim.ms/" target="_blank" class="link">www</a>
                     </div>
                     <div class = "col-sm-4 people_col_2">
