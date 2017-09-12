@@ -24,6 +24,9 @@
 
     <!-- Theme CSS -->
     <link href="css/pinchard.css" rel="stylesheet">
+    
+    <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.css" />
+    <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.gallery.css" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
