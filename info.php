@@ -160,7 +160,7 @@
                 </ol><br /><br />
 
                 <h4><strong><a href="https://store.arduino.cc/usa/arduino-pro-mini" target="_blank">Arduino Pro Mini</a> + <a href="https://www.adafruit.com/product/904" target="_blank">High Side DC Current Sensor Breakout Board</a></strong></h4>
-                <p>We added a power-monitoring meter to avoid power issues that might corrupt the SD Card if the Raspberry Pi shuts down unexpectedly. In the event that the power supply is low, the Arduino triggers the WittPi 2 to shut down the Raspberry Pi until there is sufficient battery to power the device.</p><br />
+                <p>We added a power-monitoring meter to avoid power issues that might corrupt the SD Card if the Raspberry Pi shuts down unexpectedly. In the event that the power supply is low, the Arduino triggers the WittyPi 2 to shut down the Raspberry Pi until there is sufficient battery to power the device.</p><br />
 
                 <h4><strong><a href="http://www.switchdoc.com/dual-watchdog-timer/" target="_blank">WatchDog</a> from Switch Doc</strong></h4>
                 <p>Since the Raspberry Pi is managed remotely the WatchDog monitors the health of the Raspberry Pi and automatically restarts the system in the event of a malfunction.</p><br />
