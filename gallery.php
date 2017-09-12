@@ -96,7 +96,8 @@
         // echo "phpcurr_month = " . $current_month;
     }
     ini_set('allow_url_fopen', 'on');
-    $cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
+    //$cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
+    $cdnurl = 'http://d35wkpjsrmtk40.cloudfront.net/';
     // $xml = simplexml_load_file($cdnurl) or die("Error: Cannot create object");
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $cdnurl);
@@ -146,8 +147,8 @@
         return $a['date'] > $b['date'];
     });
     usort($validMonthArray, function($a, $b) {
-        $a_date = DateTime::createTimeFormat('Y-m', $a);
-        $b_date = DateTime::createTimeFormat('Y-m', $b);
+        $a_date = DateTime::createFromFormat('Y-m', $a);
+        $b_date = DateTime::createFromFormat('Y-m', $b);
         return $a_date > $b_date;
     });
 
@@ -179,7 +180,8 @@
     var html = "";
     var row_num = 0;
     var selectedDate = 0;
-    var cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
+    //var cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
+    var cdnurl = 'http://d35wkpjsrmtk40.cloudfront.net/';
 
     for( var index = 0 ; index < array.length ; index++ ) {
 
@@ -380,7 +382,8 @@
             var month_value = pad(parseInt(this.value) + 1);
             temp_date = <?php echo $current_year; ?> + "-" + month_value;
             // console.log("ttttempdate = " + temp_date);
-            if(validMonthArray[i] != temp_date) {
+            //if(validMonthArray[i] != temp_date) {
+            if( validMonthArray.indexOf(temp_date) == -1 ) {
                 $(".ui-datepicker-month option[value='" + this.value + "']").remove();//prop('disabled', true);//remove();
             }
         }
