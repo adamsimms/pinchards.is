@@ -10,6 +10,8 @@
     <meta name="author" content="">
 
     <title>Pinchard's Island</title>
+    
+    <link href="vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
 
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
