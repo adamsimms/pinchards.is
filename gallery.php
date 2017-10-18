@@ -121,6 +121,10 @@
             if (in_array($ext, $supported_image)) {
                 $dateString = $content->Key;
                 $dateString = explode("_", $dateString)[0];
+                 // Remove any folder-name and front slash
+                if(strrpos($dateString,"/")){
+                    $dateString = substr($dateString, strrpos($dateString,"/")+1);  
+                }
                 $date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $dateString);//$content->LastModified
 
                 // $date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $content->LastModified);
