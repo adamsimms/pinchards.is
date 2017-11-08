@@ -87,6 +87,10 @@
 </html>
 
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ include('functions_inc.php');
     if (isset($_GET['cury']) && !empty($_GET['cury']) && isset($_GET['curm']) && !empty($_GET['curm']) ) {
         $current_year = $_GET['cury'];
         $current_month = $_GET['curm'];
@@ -114,12 +118,17 @@
     );
     $validYearArray = array();
     $validMonthArray = array();
+       $objects = $s3->getIterator('ListObjects', array(
+        "Bucket" => "shutter-island-thumbnails",
+        //"Prefix" => ''
+    ));
 
-    foreach($xml->children() as $content) {
-        if ($content->Key) {
-            $ext = strtolower(pathinfo($content->Key, PATHINFO_EXTENSION));
+    foreach($objects as $content) {
+    //foreach($xml->children() as $content) {
+        if ($content['Key']) {
+            $ext = strtolower(pathinfo($content['Key'], PATHINFO_EXTENSION));
             if (in_array($ext, $supported_image)) {
-                $dateString = $content->Key;
+                $dateString = $content['Key'];
                 $dateString = explode("_", $dateString)[0];
                  // Remove any folder-name and front slash
                 if(strrpos($dateString,"/")){
@@ -134,7 +143,7 @@
 
                 if(($month == $current_month) && ($year == $current_year)) {
                     $array[] = array(
-                            "filename"=>$content->Key,
+                            "filename"=>$content['Key'],
                             "date"=>$formatted_date,
                             );
                 }
@@ -209,8 +218,8 @@
         }
 
                     html += '<div class="col-md-5ths col-sm-6 col-xs-12 photoElement">';
-                        html += '<a href = "index.php?fn=' + photo['filename'][0] + '" class = "photoBox">';
-                            html += '<img src = "photo/thumbnail.jpg" data-src="' + cdnurl + photo['filename'][0] + '" class="img-responsive" alt="" style = "width: 100%">';
+                        html += '<a href = "index.php?fn=' + photo['filename'] + '" class = "photoBox">';
+                            html += '<img src = "photo/thumbnail.jpg" data-src="' + cdnurl + photo['filename']+ '" class="img-responsive" alt="" style = "width: 100%">';
                             html += '<div class="photo-box-caption">';
                                 html += '<div class="photo-box-caption-content">';
                                     html += formatAMPM(date);
