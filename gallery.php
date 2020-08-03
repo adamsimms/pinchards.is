@@ -142,7 +142,6 @@ ini_set('display_errors', 1);
     <meta name="theme-color" content="#ffffff">
 
 <style>
-    /* Needs to be moved to stylesheet */
     .content_area{
         padding:32px 0px 8px 0px !important;
         border: none;
@@ -179,12 +178,14 @@ img.lazy{
         border: none;
 }
 
+
 img.lazy {
     animation: fadein 4s;
     -moz-animation: fadein 4s; /* Firefox */
     -webkit-animation: fadein 4s; /* Safari and Chrome */
     -o-animation: fadein 4s; /* Opera */
 }
+
 
 @keyframes fadein {
     from {
@@ -194,7 +195,6 @@ img.lazy {
         opacity:1;
     }
 }
-    
 @-moz-keyframes fadein { /* Firefox */
     from {
         opacity:0;
@@ -203,7 +203,6 @@ img.lazy {
         opacity:1;
     }
 }
-    
 @-webkit-keyframes fadein { /* Safari and Chrome */
     from {
         opacity:0;
@@ -212,7 +211,6 @@ img.lazy {
         opacity:1;
     }
 }
-    
 @-o-keyframes fadein { /* Opera */
     from {
         opacity:0;
