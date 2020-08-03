@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$display = 0;
+$display = 0.01;
 $fade = 6;
 
 if (isset($_GET['display']) && !empty($_GET['display'])) {
@@ -92,8 +92,6 @@ usort($array, function ($a, $b) {
 
 <head>
 
-
-
 <script src="../vendor/jquery/jquery.min.js"></script>
 <script src="../vendor/jquery-ui/jquery-ui.min.js"></script>
 <script src="../vendor/jquery/jquery.min.js"></script>
@@ -108,6 +106,7 @@ usort($array, function ($a, $b) {
     #slideshow img {
         width: 100%;
         position: absolute;
+        top: -180px;
     }
 </style>
 
