@@ -9,8 +9,8 @@ use Aws\Exception\AwsException;
 
 $s3 = S3Client::factory(array(
 	'credentials' => array(
-		'key'    => 'REDACTED_AWS_ACCESS_KEY_ID',
-		'secret' => 'REDACTED_AWS_SECRET_ACCESS_KEY'
+		'key'    => 'KEY',
+		'secret' => 'SECRET'
 		),
 	'region' => 'us-east-1',
 	'version'=>'2006-03-01'
