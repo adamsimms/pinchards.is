@@ -24,7 +24,7 @@
 
     <!-- Theme CSS -->
     <link href="css/pinchard.css" rel="stylesheet">
-    
+
     <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.css" />
     <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.gallery.css" />
 
@@ -66,7 +66,7 @@
             <div class = "col-sm-8 col-sm-offset-2">
                 <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
 
-                <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Moments.” The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
+                <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Memories.” The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
                 <p>The view is static–in the sense that camera is always capturing the same frame; however, the lighting of the frame can vary drastically from one image to another. These photographs are a continuation of the moments the locals spend in the cabin glancing out the window at the surrounding landscape. </p>
             </div>
@@ -84,7 +84,7 @@
 
                 <img src="https://static1.squarespace.com/static/50e5fc10e4b0291e3b9b75c6/588f654e725e2506f4c22cd9/588f68e56a4963c410121736/1485793514975/10_adam_simms_sisters.jpg" class="img-responsive info_img" alt="Pinchard's Island Sisters" />
 
-                <p>Shortly after Newfoundland joined Canada as it’s 10th province, Pinchard’s Island was <a href="http://adamsim.ms/resettlement/" target="_blank">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to rewrite the future of resettlement by reviving traditions and create new ones.<p>
+                <p>Shortly after Newfoundland joined Canada as it’s 10th province, Pinchard’s Island was <a href="http://adamsim.ms/resettlement/" target="_blank">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and create new ones.<p>
               </div>
           </div>
       </div>
@@ -362,7 +362,7 @@
                 });
         });
     </script>
-            
+
     <!-- Google Analytics -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

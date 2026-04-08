@@ -79,9 +79,12 @@ foreach ($objects as $content) {
         }
     }
 }
-usort($array, function ($a, $b) {
-    return $a['date'] > $b['date'];
-});
+// usort($array, function ($a, $b) {
+//     return $a['date'] > $b['date'];
+// });
+
+usort($array, fn($a, $b) => $a['date'] <=> $b['date']);
+
 
 //var_dump($array)
 

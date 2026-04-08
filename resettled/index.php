@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Resettled Communites</title>
+    <title>Resettled Communities</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -46,7 +46,7 @@
         <a href="../gallery.php" class = "link-to-gallery nav_cloudberry"></a>
         <a class="nav_info" href="info.php"></a>
         <div class = "title">
-            <a href="#">Resettled</a>
+            <a href="#">Resettled Communities</a>
     </nav>
 
     <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1-gIU1rTeKAwvGmqoiJZefa8p-qc" width="100%" height="100%" frameborder="0" style="border:0" allowfullscreen></iframe>
