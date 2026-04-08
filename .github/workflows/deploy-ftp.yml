@@ -1,11 +1,11 @@
-# Push to master → sync to DreamHost (or any FTP) via GitHub Actions.
+# Push to main → sync to DreamHost (or any FTP) via GitHub Actions.
 # Add repo secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, FTP_SERVER_DIR (optional).
 name: Deploy FTP
 
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:

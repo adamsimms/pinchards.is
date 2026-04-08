@@ -28,7 +28,7 @@ The PHP app reads **`AWS_ACCESS_KEY_ID`** and **`AWS_SECRET_ACCESS_KEY`** via `g
 
 ## Deploy on push (GitHub → FTP)
 
-On **push to `master`**, [.github/workflows/deploy-ftp.yml](.github/workflows/deploy-ftp.yml) runs and syncs the repo to your host with [FTP-Deploy-Action](https://github.com/SamKirkland/FTP-Deploy-Action).
+On **push to `main`**, [.github/workflows/deploy-ftp.yml](.github/workflows/deploy-ftp.yml) runs and syncs the repo to your host with [FTP-Deploy-Action](https://github.com/SamKirkland/FTP-Deploy-Action).
 
 In the GitHub repo: **Settings → Secrets and variables → Actions → New repository secret**, add:
 
