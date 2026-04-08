@@ -8,7 +8,7 @@ www.pinchards.is
 |------|---------|
 | **Core pages** | `index.php`, `gallery.php`, `info.php`, `slider.php`, `getphotos.php` at repo root (web document root). |
 | **`lib/`** | `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
-| **Public assets** | `css/`, `js/`, `img/`, `fonts/`, `favicon/`, `vendor/`, `photo/` (runtime cache for `tmp.jpg`). |
+| **Public assets** | `css/`, `js/`, `images/` (site art + `images/photo/` for EXIF temp `tmp.jpg`, thumbnails, and local gallery assets), `fonts/`, `favicon/`, `vendor/`. |
 | **Source / design** | Theme styles: edit `css/pinchard.css` directly. `design/` — Sketch/SVG sources (not served). |
 | **Mini-sites** | Self-contained folders (`jam/`, `trees/`, `resettled/`, `adrift/`, `waves/`, `bkp/`, …): deployed with the site, not second-class; leave their structure as-is unless you intentionally refactor them. |
 

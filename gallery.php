@@ -137,7 +137,7 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
         }
 
         img.lazy {
-            background-image: url('./img/loading.gif');
+            background-image: url('./images/loading.gif');
             background-repeat: no-repeat;
             background-position: 50% 50%;
             background-size: 18px 18px;

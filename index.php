@@ -92,10 +92,10 @@
     $result_1 = $s3->getObject([
         'Bucket' => $cfg['s3_bucket_full'],
         'Key' => $filename,
-        'SaveAs' => __DIR__ . '/photo/tmp.jpg',
+        'SaveAs' => __DIR__ . '/images/photo/tmp.jpg',
     ]);
 
-    $exif = exif_read_data(__DIR__ . '/photo/tmp.jpg', 0, true);
+    $exif = exif_read_data(__DIR__ . '/images/photo/tmp.jpg', 0, true);
 
     $make = $exif['IFD0']['Make'] ?? '';
     $model = $exif['IFD0']['Model'] ?? '';
@@ -217,7 +217,7 @@
     </nav>
     <div class="preview">
         <div class="placeholder" data-large="<?= htmlspecialchars($cfg['cdn_url_full'] . $filename, ENT_QUOTES, 'UTF-8') ?>" id="preview_image">
-            <img src="photo/thumbnail.jpg" class="img-small">
+            <img src="images/photo/thumbnail.jpg" class="img-small">
             <div style="padding-bottom: 66.6%;"></div>
         </div>
 
@@ -226,7 +226,7 @@
             <div class="col-md-5 container detail_container">
                 <div class="detail_content_view">
                     <div>
-                        <div class="detail_rect title_rect"><img src="img/icon-number.svg" /></div>
+                        <div class="detail_rect title_rect"><img src="images/icon-number.svg" /></div>
                         <div class="title">
                             <?php
                             $filename_array = explode(".", $filename);
@@ -241,7 +241,7 @@
                         </div>
                     </div>
                     <div class="datetime_area">
-                        <div class="detail_rect"><img src="img/icon-date.svg" /></div>
+                        <div class="detail_rect"><img src="images/icon-date.svg" /></div>
                         <div class="inner_data">
                             <?php
                             $datetime = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
@@ -251,7 +251,7 @@
                         </div>
                     </div>
                     <div class="inner_area">
-                        <div class="detail_rect"><img src="img/icon-gopro.svg" /></div>
+                        <div class="detail_rect"><img src="images/icon-gopro.svg" /></div>
                         <div class="inner_data">
                             <?php
                             if ($make) {
@@ -302,7 +302,7 @@
                         </div>
                     </div>
                     <div class="inner_area">
-                        <div class="detail_rect"><img src="img/icon-raspberry.svg" /></div>
+                        <div class="detail_rect"><img src="images/icon-raspberry.svg" /></div>
                         <div class="inner_data">
                             <?php
                             echo "Photographer: Raspberry Pi 3 Model B";
@@ -315,7 +315,7 @@
                         </div>
                     </div>
                     <div class="inner_area">
-                        <div class="detail_rect"><img src="img/icon-geolocation.svg" /></div>
+                        <div class="detail_rect"><img src="images/icon-geolocation.svg" /></div>
                         <div class="inner_data">
                             <?php
                             if (

@@ -59,7 +59,7 @@
         </div>
     </nav>
 
-    <img src="img/info/pano.jpg" class="img-responsive info_img" alt="Cabin">
+    <img src="images/info/pano.jpg" class="img-responsive info_img" alt="Cabin">
 
     <div class = "how_section">
         <div class = "container">
@@ -73,7 +73,7 @@
           </div>
       </div>
 
-      <img src="img/info/precious-moments.jpg" class="img-responsive info_img" alt="Cabin">
+      <img src="images/info/precious-moments.jpg" class="img-responsive info_img" alt="Cabin">
 
       <div class = "how_section">
           <div class = "container">
@@ -118,14 +118,14 @@
           </div>
       </div>
 
-      <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank"><img src="img/info/trello.jpg" class="img-responsive info_img" alt="trello"></a>
+      <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank"><img src="images/info/trello.jpg" class="img-responsive info_img" alt="trello"></a>
 
       <div class = "how_section">
           <div class = "container">
               <div class = "col-sm-8 col-sm-offset-2">
                 <p>Designing a system that worked was only the start of the project. Every slight adjustment that we made to the system, such as moving from electricity to solar power, putting the USB hotspot in a case or using different USB cables introduced new problems that we had to constantly monitor and resolve. Once we felt confident in our system, we had to be realistic that once the system was installed on the island, we would not be able to physically be there to troubleshoot any problem that might arise. This forced us to evaluate the entire solution and implement different components to help reduce the risk factor of the project.</p>
 
-                <img src="img/info/notebook.jpg" class="img-responsive info_img" alt="Notebook" />
+                <img src="images/info/notebook.jpg" class="img-responsive info_img" alt="Notebook" />
 
                 <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below you’ll find a system diagram and an outline of all the hardware and software used to create Cloudberry.</p>
 
@@ -134,7 +134,7 @@
           </div>
       </div>
 
-      <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank"><img src="img/info/cloudberry-system.jpg" class="img-responsive info_img" alt="Cloudberry System"></a>
+      <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank"><img src="images/info/cloudberry-system.jpg" class="img-responsive info_img" alt="Cloudberry System"></a>
 
       <div class = "how_section">
           <div class = "container">
@@ -210,7 +210,7 @@
           </div>
       </div>
 
-      <img src="img/info/boat.jpg" class="img-responsive info_img" alt="Boat" />
+      <img src="images/info/boat.jpg" class="img-responsive info_img" alt="Boat" />
 
       <div class = "how_section">
           <div class = "container">
@@ -218,24 +218,24 @@
                 <h3>Installation</h3>
                 <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments. We had to consider cable lengths, accessibility,  architecture of the cabin and predict the potential weather problems. Based on our research of solar irradiance for the geocoordinates of the cabin, we decided to tilt the solar panel at an angle of 20 degrees since the summer was coming to an end and the winter months would prove to be the most challenging for sunlight. We also had  instal the panel slightly over the heave of the roof to prevent the build up of ice and snow, but this was risky since it was difficult to tightly secure the panel to the roof in the event of high winds and slightly positions the panel out of the sun’s path.</p>
 
-                <img src="img/info/solar-install.jpg" class="img-responsive info_img" alt="Solar Power Install" />
+                <img src="images/info/solar-install.jpg" class="img-responsive info_img" alt="Solar Power Install" />
 
                 <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island, we were confused about what would be the best thing to capture; the landscape, the ocean, something else entirely. We were reliant on the outside structure of the cabin to orient the frame and through a process of elimination, we made a decision. Pointing the camera towards the south was directly in line with the path of the sun caused the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoided the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window and reminds us of the inside view from the cabin window.</p>
 
-                <img src="img/info/cam-do.jpg" class="img-responsive info_img" alt="Cam Do Enclosure" />
+                <img src="images/info/cam-do.jpg" class="img-responsive info_img" alt="Cam Do Enclosure" />
 
                 <p>Next, it was time to assemble the camera components together and test. We connected the Cam Do interval timer to the GoPro and powered camera via USB cable and repeater plugged into the solar power. The new USB cords we introduced were causing the camera to detect a USB power mode when the camera was turned on, which conflicted with the `autoexec` script that we wrote to take the photo, turn on WiFi and put the camera in standby mode. After half a day of troubleshooting, we had to rewrite the script to re-sequence the code to control the camera and go through a series of tests that component.</p>
 
                 <p>Once we stabilized the camera component, we introduced the Raspberry Pi and its add-ons. The initial test had this component of the system performing well; the WittyPi was booting and shutting down the Raspberry Pi on schedule, the Raspberry Pi was connecting to the GoPro WiFi enabling us to access the camera and the USB hotspot was providing the internet to upload the images to the AWS S3 Bucket. However, once we settled the Raspberry Pi and its add-ons in the Nanuk case, it significantly impacted the WiFi signal to the point where we were not able to maintain a connection to the GoPro via WiFi. This resulted in us completely rewiring the power to this component of the system to allow the Raspberry Pi be positioned as close to the camera as possible to improve the WiFi signal strength.</p>
 
-                <img src="img/info/pi.jpg" class="img-responsive info_img" alt="Cloudberry" />
+                <img src="images/info/pi.jpg" class="img-responsive info_img" alt="Cloudberry" />
 
                 <p>Once the entire system was in place, we monitored everything for a full day cycle before locking up all of the cases and leaving the island.</p>
             </div>
         </div>
     </div>
 
-    <img src="img/info/yay.jpg" class="img-responsive info_img" alt="Creators" />
+    <img src="images/info/yay.jpg" class="img-responsive info_img" alt="Creators" />
 
     <div class = "how_section">
         <div class = "container">
@@ -247,17 +247,17 @@
                 <h3>Who Are you?</h3>
                 <div class = "row people_row">
                     <div class = "col-sm-4 people_col_1">
-                        <div class = "people"><img src="/img/people/adam-simms.jpg" /></div>
+                        <div class = "people"><img src="/images/people/adam-simms.jpg" /></div>
                         <div class = "job"><strong>Adam Simms</strong> is a Photographer pursuing his MFA in Studio Arts, Photography at Concordia University. </div>
                         <a href="http://adamsim.ms/" target="_blank" class="link">www</a>
                     </div>
                     <div class = "col-sm-4 people_col_2">
-                        <div class = "people"><img src="/img/people/angela-gabereaux.jpg" /></div>
+                        <div class = "people"><img src="/images/people/angela-gabereaux.jpg" /></div>
                         <div class = "job"><strong>Angela Gabereaux</strong> is software developer, system architech, hacker, maker, media artist and teacher.</div>
                         <a href="http://www.angelagabereaux.com/" target="_blank" class="link">www</a>
                     </div>
                     <div class = "col-sm-4 people_col_3">
-                        <div class = "people"><img src="/img/people/roger-knight.jpg" /></div>
+                        <div class = "people"><img src="/images/people/roger-knight.jpg" /></div>
                         <div class = "job"><strong>Roger Knight</strong> is a heavy equipment operator and carpenter. </div>
                     </div>
                 </div>
@@ -278,36 +278,36 @@
 
     <!-- Large Image
 
-    <img src="photo/1.jpg" class="img-responsive info_img" alt=""> -->
+    <img src="images/photo/1.jpg" class="img-responsive info_img" alt=""> -->
 
 
     <!-- Two-Up Images
 
     <div class = "row">
         <div class = "col-sm-6">
-            <img src="photo/1.jpg" class="img-responsive info_img" alt="">
+            <img src="images/photo/1.jpg" class="img-responsive info_img" alt="">
         </div>
         <div class = "col-sm-6">
-            <img src="photo/1.jpg" class="img-responsive info_img" alt="">
+            <img src="images/photo/1.jpg" class="img-responsive info_img" alt="">
         </div>
     </div> -->
 
     <!-- Thumbnail Images
     <div class = "row about_images">
         <div class = "col-sm-4">
-            <a class="gallery" href="photo/1.jpg"><img src="photo/1.jpg" class="img-responsive info_img" alt=""/></a>
+            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-responsive info_img" alt=""/></a>
         </div>
         <div class = "col-sm-4">
-            <a class="gallery" href="photo/1.jpg"><img src="photo/1.jpg" class="img-responsive info_img" alt="" /></a>
+            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-responsive info_img" alt="" /></a>
         </div>
         <div class = "col-sm-4">
-            <a class="gallery" href="photo/1.jpg"><img src="photo/1.jpg" class="img-responsive info_img" alt="" /></a>
+            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-responsive info_img" alt="" /></a>
         </div>
     </div> -->
 
     <!-- Hero Image
 
-    <img src="photo/1.jpg" class="img-responsive info_img" alt=""> -->
+    <img src="images/photo/1.jpg" class="img-responsive info_img" alt=""> -->
 
     <!-- CODE
 
