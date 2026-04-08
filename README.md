@@ -2,14 +2,6 @@
 
 www.pinchards.is
 
-## What’s in this repo
-
-**Core site:** root PHP (`index.php`, `gallery.php`, `info.php`, …), `css/`, `js/` (built/min assets only), `img/`, `photo/`, `vendor/`, `favicon/`, `fonts/`, `less/` (source for styles), `source/` (design assets).
-
-**Related sections (same stack, subpaths):** `jam/`, `trees/`, `resettled/`.
-
-Standalone experiments (3D viewers, wave sims, old backups) were removed to keep the tree small; they still exist in git history before the cleanup commit if you ever need them.
-
 ## AWS credentials on DreamHost
 
 The PHP app reads **`AWS_ACCESS_KEY_ID`** and **`AWS_SECRET_ACCESS_KEY`** via `getenv()` (AWS SDK default chain).
