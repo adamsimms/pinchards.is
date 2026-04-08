@@ -1,0 +1,8 @@
+<?php
+/**
+ * On the server: copy this file to aws-env.local.php and fill in real values.
+ * aws-env.local.php is gitignored and blocked from HTTP by .htaccess.
+ */
+putenv('AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID');
+putenv('AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY');
+putenv('AWS_DEFAULT_REGION=us-east-1');

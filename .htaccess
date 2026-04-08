@@ -1,0 +1,4 @@
+# Block direct HTTP access to AWS credential bootstrap (same directory as index.php).
+<Files "aws-env.local.php">
+	Require all denied
+</Files>

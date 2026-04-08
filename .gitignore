@@ -2,3 +2,4 @@
 .DS_Store
 *.secret
 cookies.txt
+aws-env.local.php

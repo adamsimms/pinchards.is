@@ -1,0 +1,31 @@
+# Push to master → sync to DreamHost (or any FTP) via GitHub Actions.
+# Add repo secrets: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, FTP_SERVER_DIR (optional).
+name: Deploy FTP
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: FTP deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # Remote path from FTP user home, e.g. pinchard.is or pinchards.is (DreamHost panel shows this)
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          protocol: ftps
+          # Never remove or overwrite server-only credential file
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            aws-env.local.php
