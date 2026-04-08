@@ -12,7 +12,7 @@ if (isset($_GET['fade']) && !empty($_GET['fade'])) {
     $fade = $_GET['fade'];
 }
 
-include('functions_inc.php');
+require_once __DIR__ . '/functions_inc.php';
 if (isset($_GET['cury']) && !empty($_GET['cury']) && isset($_GET['curm']) && !empty($_GET['curm'])) {
     $current_year = $_GET['cury'];
     $current_month = $_GET['curm'];
@@ -21,15 +21,7 @@ if (isset($_GET['cury']) && !empty($_GET['cury']) && isset($_GET['curm']) && !em
     $current_year = date('Y');
     // echo "phpcurr_month = " . $current_month;
 }
-ini_set('allow_url_fopen', 'on');
-$cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
-//$cdnurl = 'http://d35wkpjsrmtk40.cloudfront.net/';
-// $xml = simplexml_load_file($cdnurl) or die("Error: Cannot create object");
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $cdnurl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$xmlresponse = curl_exec($ch);
-$xml = simplexml_load_string($xmlresponse);
+$cdnurl = 'https://d35wkpjsrmtk40.cloudfront.net/';
 
 $array = array();
 $supported_image = array(
@@ -80,15 +72,12 @@ foreach ($objects as $content) {
     }
 }
 usort($array, function ($a, $b) {
-    return $a['date'] > $b['date'];
+    return $a['date'] <=> $b['date'];
 });
 
-//var_dump($array)
-
 ?>
-<script src=" vendor/jquery/jquery.min.js"></script>
+<script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/jquery-ui/jquery-ui.min.js"></script>
-<script src=" vendor/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="vendor/slick/slick.min.js"></script>
 
 <link rel="stylesheet" type="text/css" href="vendor/slick/slick.css" />
@@ -107,7 +96,7 @@ usort($array, function ($a, $b) {
             break;
         }
     ?>
-        <img src="<?php echo $cdnurl . $photo['filename'] ?>">
+        <img src="<?php echo htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8') ?>" alt="">
     <?php } ?>
 
 

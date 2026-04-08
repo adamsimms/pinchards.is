@@ -9,14 +9,8 @@ if (isset($_GET['cury'], $_GET['curm']) && !empty($_GET['cury']) && !empty($_GET
     $current_year = date('Y');
 }
 
-ini_set('allow_url_fopen', 'on');
-//$cdnurl = 'http://d3kq73uimqeic8.cloudfront.net/';
-$cdnurl = 'http://d35wkpjsrmtk40.cloudfront.net/';
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $cdnurl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-$xmlresponse = curl_exec($ch);
-$xml = simplexml_load_string($xmlresponse);
+// Thumbnail CDN (must match shutter-island-thumbnails distribution)
+$cdnurl = 'https://d35wkpjsrmtk40.cloudfront.net/';
 
 $array = [];
 $supported_image = ['gif', 'jpg', 'jpeg', 'png'];
@@ -228,7 +222,7 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
                     <?php foreach ($array as $photo) : ?>
                         <div class="col-md-5ths col-sm-6 col-xs-12 photoElement">
                             <a href="index.php?fn=<?php echo $photo['filename'] ?>" class="photoBox">
-                                <img class="lazy" data-src="<?php echo $cdnurl . $photo['filename'] ?>" class="img-responsive" alt="" width="288" height="224">
+                                <img class="lazy img-responsive" data-src="<?php echo htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8') ?>" alt="" width="288" height="224">
                                 <div class="photo-box-caption">
                                     <div class="photo-box-caption-content"><?php echo $photo['show_date'] ?></div>
                                 </div>

@@ -49,6 +49,9 @@ function getObjectList($bucket)
 						}
 
 						$date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $dateString);
+						if ($date === false) {
+							continue;
+						}
 						$date = $date->format('Y/m/d H:i:s');
 						$array[] = [
 							"filename" => $key,

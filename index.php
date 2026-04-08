@@ -60,11 +60,16 @@
     $array = getObjectList("shutter-island");
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 
+    if ($array === []) {
+        http_response_code(503);
+        exit('Photo gallery is empty or temporarily unavailable.');
+    }
+
     // get prev and next filename
     if (isset($filename) && !empty($filename) && $filename != "") {
         foreach ($array as $i => $content) {
             if ($content['filename'] == $filename) {
-                if ($i > 1) {
+                if ($i > 0) {
                     $prev_filename = $array[$i - 1]['filename'];
                 }
                 if ($i < count($array) - 1) {
