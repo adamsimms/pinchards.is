@@ -31,7 +31,7 @@ In the GitHub repo: **Settings → Secrets and variables → Actions → New rep
 
 `aws-env.local.php` is **excluded** from sync so it stays only on the server and is not deleted by deploys.
 
-If FTPS fails on your host, change `protocol` in the workflow to `ftp` (not ideal) or `ftps-legacy` per DreamHost docs.
+DreamHost’s usual FTP endpoint expects **plain FTP** on port **21**; **FTPS** often fails with `500 AUTH not understood`, so the workflow uses `protocol: ftp`. For hosts that require TLS, try `ftps` or `ftps-legacy` in [.github/workflows/deploy-ftp.yml](.github/workflows/deploy-ftp.yml).
 
 ## Future hosting notes
 

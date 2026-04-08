@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -22,7 +23,9 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           # Remote path from FTP user home, e.g. pinchard.is or pinchards.is (DreamHost panel shows this)
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          protocol: ftps
+          # DreamHost FTP often returns "500 AUTH not understood" with ftps — use plain ftp on port 21
+          protocol: ftp
+          port: 21
           # Never remove or overwrite server-only credential file
           exclude: |
             **/.git*
