@@ -2,6 +2,8 @@
 
 www.pinchards.is
 
+**Layout:** The main photo site lives at the repo root (`index.php`, `gallery.php`, …). Additional self-contained mini-sites and experiments live in subfolders (e.g. `adrift/`, `waves/`, `bkp/`, …). Those are **part of the deployment**, not leftovers to delete—work on them is simply deferred until you choose to revisit them.
+
 ## AWS credentials on DreamHost
 
 The PHP app reads **`AWS_ACCESS_KEY_ID`** and **`AWS_SECRET_ACCESS_KEY`** via `getenv()` (AWS SDK default chain).
