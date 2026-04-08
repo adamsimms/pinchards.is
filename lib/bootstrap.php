@@ -81,9 +81,12 @@ function getObjectList(string $bucket): array
 	} catch (AwsException $e) {
 		$code = $e->getAwsErrorCode() ?: $e->getCode();
 		$msg = $e->getAwsErrorMessage() ?: $e->getMessage();
+		$hint = ' For ListBucket errors, fix IAM: the principal needs s3:ListBucket on the bucket and s3:GetObject on objects; remove any explicit Deny.';
+		if ($code === 'InvalidAccessKeyId') {
+			$hint = ' The access key ID is not valid in AWS (deleted, rotated, or typo). Create a new access key for your IAM user in the AWS console and update aws-env.local.php on the server (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY), or fix DreamHost env vars if you use those instead.';
+		}
 		throw new RuntimeException(
-			'S3 access failed (' . $code . '): ' . $msg
-			. ' — For ListBucket errors, fix IAM: the principal needs s3:ListBucket on the bucket and s3:GetObject on objects; remove any explicit Deny.',
+			'S3 access failed (' . $code . '): ' . $msg . ' —' . $hint,
 			0,
 			$e
 		);
