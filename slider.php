@@ -1,7 +1,4 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 
 $display = 5;
 $fade = 1;
@@ -12,16 +9,18 @@ if (isset($_GET['fade']) && !empty($_GET['fade'])) {
     $fade = $_GET['fade'];
 }
 
-require_once __DIR__ . '/functions_inc.php';
+require_once __DIR__ . '/lib/bootstrap.php';
+$cfg = pinchard_config();
+
 if (isset($_GET['cury']) && !empty($_GET['cury']) && isset($_GET['curm']) && !empty($_GET['curm'])) {
     $current_year = $_GET['cury'];
     $current_month = $_GET['curm'];
 } else {
     $current_month = date('m');
     $current_year = date('Y');
-    // echo "phpcurr_month = " . $current_month;
 }
-$cdnurl = 'https://d35wkpjsrmtk40.cloudfront.net/';
+
+$cdnurl = $cfg['cdn_url_thumbnails'];
 
 $array = array();
 $supported_image = array(
@@ -32,13 +31,11 @@ $supported_image = array(
 );
 $validYearArray = array();
 $validMonthArray = array();
-$objects = $s3->getIterator('ListObjects', array(
-    "Bucket" => "shutter-island-thumbnails",
-    //"Prefix" => ''
-));
+$objects = $s3->getIterator('ListObjects', [
+    'Bucket' => $cfg['s3_bucket_thumbnails'],
+]);
 
 foreach ($objects as $content) {
-    //foreach($xml->children() as $content) {
     if ($content['Key']) {
         $ext = strtolower(pathinfo($content['Key'], PATHINFO_EXTENSION));
         if (in_array($ext, $supported_image)) {

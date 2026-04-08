@@ -1,5 +1,6 @@
 <?php
-require_once 'functions_inc.php';
+require_once __DIR__ . '/lib/bootstrap.php';
+$cfg = pinchard_config();
 
 if (isset($_GET['cury'], $_GET['curm']) && !empty($_GET['cury']) && !empty($_GET['curm'])) {
     $current_year = $_GET['cury'];
@@ -9,15 +10,14 @@ if (isset($_GET['cury'], $_GET['curm']) && !empty($_GET['cury']) && !empty($_GET
     $current_year = date('Y');
 }
 
-// Thumbnail CDN (must match shutter-island-thumbnails distribution)
-$cdnurl = 'https://d35wkpjsrmtk40.cloudfront.net/';
+$cdnurl = $cfg['cdn_url_thumbnails'];
 
 $array = [];
 $supported_image = ['gif', 'jpg', 'jpeg', 'png'];
 $validYearArray = [];
 $validMonthArray = [];
 $objects = $s3->getIterator('ListObjects', [
-    'Bucket' => 'shutter-island-thumbnails',
+    'Bucket' => $cfg['s3_bucket_thumbnails'],
 ]);
 
 foreach ($objects as $content) {

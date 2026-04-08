@@ -2,19 +2,27 @@
 
 www.pinchards.is
 
-**Layout:** The main photo site lives at the repo root (`index.php`, `gallery.php`, …). Additional self-contained mini-sites and experiments live in subfolders (e.g. `adrift/`, `waves/`, `bkp/`, …). Those are **part of the deployment**, not leftovers to delete—work on them is simply deferred until you choose to revisit them.
+**Layout**
+
+| Area | Purpose |
+|------|---------|
+| **Core pages** | `index.php`, `gallery.php`, `info.php`, `slider.php`, `getphotos.php` at repo root (web document root). |
+| **`lib/`** | `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
+| **Public assets** | `css/`, `js/`, `img/`, `fonts/`, `favicon/`, `vendor/`, `photo/` (runtime cache for `tmp.jpg`). |
+| **Source / design** | `src/less/` — LESS sources for the theme (compile e.g. `lessc src/less/pinchard.less css/pinchard.css` if you edit them); `design/` — Sketch/SVG sources (not served). |
+| **Mini-sites** | Self-contained folders (`jam/`, `trees/`, `resettled/`, `adrift/`, `waves/`, `bkp/`, …): deployed with the site, not second-class; leave their structure as-is unless you intentionally refactor them. |
 
 ## AWS credentials on DreamHost
 
 The PHP app reads **`AWS_ACCESS_KEY_ID`** and **`AWS_SECRET_ACCESS_KEY`** via `getenv()` (AWS SDK default chain).
 
-**Recommended on DreamHost:** create a server-only file next to `functions_inc.php`:
+**Recommended on DreamHost:** create a server-only file in the **site root** (same directory as `index.php`):
 
 1. Copy `aws-env.local.php.example` to **`aws-env.local.php`** on the server (SFTP/SSH).
 2. Edit `aws-env.local.php` and replace the placeholders with your IAM user’s access key ID and secret.
 3. Leave **`AWS_DEFAULT_REGION=us-east-1`** unless the bucket uses another region.
 
-`functions_inc.php` loads `aws-env.local.php` automatically if it exists. That file is listed in `.gitignore` and **denied by `.htaccess`** so it should not be fetchable over the web.
+`lib/bootstrap.php` loads `aws-env.local.php` when present. That file is listed in `.gitignore` and **denied by root `.htaccess`** so it should not be fetchable over the web.
 
 **Alternatives:** If your plan exposes real environment variables to PHP (some VPS setups), you can set the same three names there and omit `aws-env.local.php`.
 

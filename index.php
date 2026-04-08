@@ -50,14 +50,14 @@
     <?php
 
     ini_set('allow_url_fopen', 'on');
-    require_once 'functions_inc.php';
-
+    require_once __DIR__ . '/lib/bootstrap.php';
+    $cfg = pinchard_config();
 
     if (isset($_GET['fn']) && !empty($_GET['fn'])) {
         $filename = $_GET['fn'];
     }
 
-    $array = getObjectList("shutter-island");
+    $array = getObjectList($cfg['s3_bucket_full']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 
     if ($array === []) {
@@ -90,12 +90,12 @@
     }
 
     $result_1 = $s3->getObject([
-        'Bucket' => "shutter-island",
+        'Bucket' => $cfg['s3_bucket_full'],
         'Key' => $filename,
-        'SaveAs' => "./photo/tmp.jpg",
+        'SaveAs' => __DIR__ . '/photo/tmp.jpg',
     ]);
 
-    $exif = exif_read_data("./photo/tmp.jpg", 0, true);
+    $exif = exif_read_data(__DIR__ . '/photo/tmp.jpg', 0, true);
 
     $make = $exif['IFD0']['Make'] ?? '';
     $model = $exif['IFD0']['Model'] ?? '';
@@ -216,7 +216,7 @@
         </div>
     </nav>
     <div class="preview">
-        <div class="placeholder" data-large="<?= "http://d3kq73uimqeic8.cloudfront.net/" . $filename ?>" id="preview_image">
+        <div class="placeholder" data-large="<?= htmlspecialchars($cfg['cdn_url_full'] . $filename, ENT_QUOTES, 'UTF-8') ?>" id="preview_image">
             <img src="photo/thumbnail.jpg" class="img-small">
             <div style="padding-bottom: 66.6%;"></div>
         </div>

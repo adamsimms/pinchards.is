@@ -1,7 +1,7 @@
 <?php
 /**
- * On the server: copy this file to aws-env.local.php and fill in real values.
- * aws-env.local.php is gitignored and blocked from HTTP by .htaccess.
+ * On the server: copy to aws-env.local.php in the site root (next to index.php).
+ * Loaded by lib/bootstrap.php. Gitignored; blocked from HTTP by root .htaccess.
  */
 putenv('AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID');
 putenv('AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY');

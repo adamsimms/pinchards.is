@@ -1,0 +1,4 @@
+# Prevent direct HTTP access to PHP in this folder (includes only).
+<FilesMatch "\.php$">
+	Require all denied
+</FilesMatch>
