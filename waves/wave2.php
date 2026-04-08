@@ -94,7 +94,7 @@ $choppiness = $wdata[12]; // wave_ht_max
    <span style="position: relative; display:block"> <canvas id="simulator"></canvas></span>
 
     <div id="error">Your browser does not appear to support the required technologies.</div>
-    <script src="jquery.min.js"></script>
+    <script src="jquery.js"></script>
 
 
     <script>

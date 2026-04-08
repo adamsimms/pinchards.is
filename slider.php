@@ -73,9 +73,9 @@ usort($array, function ($a, $b) {
 });
 
 ?>
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/jquery-ui/jquery-ui.min.js"></script>
-<script type="text/javascript" src="vendor/slick/slick.min.js"></script>
+<script src="vendor/jquery/jquery.js"></script>
+<script src="vendor/jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="vendor/slick/slick.js"></script>
 
 <link rel="stylesheet" type="text/css" href="vendor/slick/slick.css" />
 
