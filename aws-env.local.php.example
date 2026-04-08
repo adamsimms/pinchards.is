@@ -2,7 +2,17 @@
 /**
  * On the server: copy to aws-env.local.php in the site root (next to index.php).
  * Loaded by lib/bootstrap.php. Gitignored; blocked from HTTP by root .htaccess.
+ *
+ * Set both putenv() and $_ENV: on some PHP-FPM hosts getenv() does not see putenv() alone,
+ * which would make the AWS SDK fall through to the EC2 metadata service and time out.
  */
-putenv('AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID');
-putenv('AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY');
-putenv('AWS_DEFAULT_REGION=us-east-1');
+$key = 'YOUR_ACCESS_KEY_ID';
+$secret = 'YOUR_SECRET_ACCESS_KEY';
+$region = 'us-east-1';
+
+putenv('AWS_ACCESS_KEY_ID=' . $key);
+putenv('AWS_SECRET_ACCESS_KEY=' . $secret);
+putenv('AWS_DEFAULT_REGION=' . $region);
+$_ENV['AWS_ACCESS_KEY_ID'] = $key;
+$_ENV['AWS_SECRET_ACCESS_KEY'] = $secret;
+$_ENV['AWS_DEFAULT_REGION'] = $region;

@@ -31,10 +31,50 @@ require pinchard_root() . '/vendor/aws/vendor/autoload.php';
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
-$s3 = new S3Client([
-	'region' => getenv('AWS_DEFAULT_REGION') ?: 'us-east-1',
+/**
+ * Read env vars set via putenv(), $_ENV, or the server (some PHP-FPM pools only populate some of these).
+ */
+function pinchard_env_non_empty(string $name): ?string
+{
+	$v = getenv($name);
+	if (is_string($v) && $v !== '') {
+		return $v;
+	}
+	if (isset($_ENV[$name]) && is_string($_ENV[$name]) && $_ENV[$name] !== '') {
+		return $_ENV[$name];
+	}
+	if (isset($_SERVER[$name]) && is_string($_SERVER[$name]) && $_SERVER[$name] !== '') {
+		return $_SERVER[$name];
+	}
+	return null;
+}
+
+$awsKey = pinchard_env_non_empty('AWS_ACCESS_KEY_ID');
+$awsSecret = pinchard_env_non_empty('AWS_SECRET_ACCESS_KEY');
+$awsRegion = pinchard_env_non_empty('AWS_DEFAULT_REGION') ?? 'us-east-1';
+
+$s3Config = [
+	'region' => $awsRegion,
 	'version' => '2006-03-01',
-]);
+];
+
+if ($awsKey !== null && $awsSecret !== null) {
+	$creds = ['key' => $awsKey, 'secret' => $awsSecret];
+	$token = pinchard_env_non_empty('AWS_SESSION_TOKEN');
+	if ($token !== null) {
+		$creds['token'] = $token;
+	}
+	$s3Config['credentials'] = $creds;
+} else {
+	throw new RuntimeException(
+		'AWS credentials are not set. The SDK was about to use the EC2 instance metadata service (169.254.169.254), which does not exist on DreamHost shared hosting.'
+		. ' Add readable ' . $awsEnv . ' next to index.php with your IAM key and secret (see aws-env.local.php.example).'
+		. ' If the file exists, ensure putenv is not disabled and also assign $_ENV in that file (the example shows both).'
+		. ' Your site path is ' . pinchard_root() . ' — upload aws-env.local.php to the same folder as index.php for this domain.'
+	);
+}
+
+$s3 = new S3Client($s3Config);
 
 function getObjectList(string $bucket): array
 {
