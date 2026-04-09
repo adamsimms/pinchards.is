@@ -419,7 +419,12 @@
     <!-- Theme JavaScript -->
     <script src="js/pinchard.js"></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=REDACTED_GOOGLE_MAPS_KEY&callback=myMap"></script>
+    <?php
+    $pinchardGoogleMapsKey = pinchard_env_non_empty('GOOGLE_MAPS_API_KEY');
+    if ($pinchardGoogleMapsKey !== null) {
+        echo '<script src="https://maps.googleapis.com/maps/api/js?key=' . htmlspecialchars($pinchardGoogleMapsKey, ENT_QUOTES, 'UTF-8') . '&callback=myMap"></script>';
+    }
+    ?>
 
     <script>
         $(document).ready(function() {

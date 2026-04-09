@@ -240,7 +240,7 @@ usort($array, fn($a, $b) => $a['date'] <=> $b['date']);
     <!-- Theme JavaScript -->
     <script src="../js/pinchard.js"></script>
 
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=REDACTED_GOOGLE_MAPS_KEY&callback=myMap"></script> -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_BROWSER_KEY&callback=myMap"></script> -->
 
     <!-- Google Analytics -->
     <!-- Google tag (gtag.js) -->

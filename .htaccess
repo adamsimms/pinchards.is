@@ -1,4 +1,7 @@
-# Block direct HTTP access to AWS credential bootstrap (same directory as index.php).
+# Block direct HTTP access to local secrets (same directory as index.php).
+<Files "secrets.local.php">
+	Require all denied
+</Files>
 <Files "aws-env.local.php">
 	Require all denied
 </Files>

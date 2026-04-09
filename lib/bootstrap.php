@@ -10,6 +10,8 @@ declare(strict_types=1);
 ini_set('display_errors', '1');
 error_reporting(E_ALL);
 
+require_once __DIR__ . '/env.php';
+
 function pinchard_root(): string
 {
 	return dirname(__DIR__);
@@ -21,33 +23,10 @@ function pinchard_config(): array
 	return $cfg ??= require __DIR__ . '/config.php';
 }
 
-$awsEnv = pinchard_root() . '/aws-env.local.php';
-if (is_readable($awsEnv)) {
-	require $awsEnv;
-}
-
 require pinchard_root() . '/vendor/aws/vendor/autoload.php';
 
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
-
-/**
- * Read env vars set via putenv(), $_ENV, or the server (some PHP-FPM pools only populate some of these).
- */
-function pinchard_env_non_empty(string $name): ?string
-{
-	$v = getenv($name);
-	if (is_string($v) && $v !== '') {
-		return $v;
-	}
-	if (isset($_ENV[$name]) && is_string($_ENV[$name]) && $_ENV[$name] !== '') {
-		return $_ENV[$name];
-	}
-	if (isset($_SERVER[$name]) && is_string($_SERVER[$name]) && $_SERVER[$name] !== '') {
-		return $_SERVER[$name];
-	}
-	return null;
-}
 
 $awsKey = pinchard_env_non_empty('AWS_ACCESS_KEY_ID');
 $awsSecret = pinchard_env_non_empty('AWS_SECRET_ACCESS_KEY');
@@ -68,9 +47,9 @@ if ($awsKey !== null && $awsSecret !== null) {
 } else {
 	throw new RuntimeException(
 		'AWS credentials are not set. The SDK was about to use the EC2 instance metadata service (169.254.169.254), which does not exist on DreamHost shared hosting.'
-		. ' Add readable ' . $awsEnv . ' next to index.php with your IAM key and secret (see aws-env.local.php.example).'
+		. ' Add readable ' . pinchard_root() . '/secrets.local.php next to index.php with your IAM key and secret (see secrets.local.php.example).'
 		. ' If the file exists, ensure putenv is not disabled and also assign $_ENV in that file (the example shows both).'
-		. ' Your site path is ' . pinchard_root() . ' — upload aws-env.local.php to the same folder as index.php for this domain.'
+		. ' Your site path is ' . pinchard_root() . ' — upload secrets.local.php to the same folder as index.php for this domain.'
 	);
 }
 
@@ -123,7 +102,7 @@ function getObjectList(string $bucket): array
 		$msg = $e->getAwsErrorMessage() ?: $e->getMessage();
 		$hint = ' For ListBucket errors, fix IAM: the principal needs s3:ListBucket on the bucket and s3:GetObject on objects; remove any explicit Deny.';
 		if ($code === 'InvalidAccessKeyId') {
-			$hint = ' The access key ID is not valid in AWS (deleted, rotated, or typo). Create a new access key for your IAM user in the AWS console and update aws-env.local.php on the server (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY), or fix DreamHost env vars if you use those instead.';
+			$hint = ' The access key ID is not valid in AWS (deleted, rotated, or typo). Create a new access key for your IAM user in the AWS console and update secrets.local.php on the server (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY), or fix DreamHost env vars if you use those instead.';
 		}
 		throw new RuntimeException(
 			'S3 access failed (' . $code . '): ' . $msg . ' —' . $hint,

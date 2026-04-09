@@ -31,4 +31,5 @@ jobs:
             **/.git*
             **/.git*/**
             **/.github/**
+            secrets.local.php
             aws-env.local.php

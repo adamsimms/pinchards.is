@@ -42,6 +42,10 @@
 </head>
 
 <body id="page-top">
+    <?php
+    require_once __DIR__ . '/../lib/env.php';
+    $pinchardGoogleMapsKey = pinchard_env_non_empty('GOOGLE_MAPS_API_KEY');
+    ?>
     <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
         <a href="../gallery.php" class = "link-to-gallery nav_cloudberry"></a>
         <a class="nav_info" href="info.php"></a>
@@ -64,7 +68,9 @@
     <!-- Theme JavaScript -->
     <script src="../js/pinchard.js"></script>
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=REDACTED_GOOGLE_MAPS_KEY&callback=myMap"></script>
+    <?php if ($pinchardGoogleMapsKey !== null): ?>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?= htmlspecialchars($pinchardGoogleMapsKey, ENT_QUOTES, 'UTF-8') ?>&callback=myMap"></script>
+    <?php endif; ?>
 
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1XKSQNT5M"></script>
