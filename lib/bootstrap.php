@@ -83,14 +83,15 @@ function getObjectList(string $bucket): array
 							$dateString = substr($dateString, strrpos($dateString, '/') + 1);
 						}
 
-						$date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $dateString);
-						if ($date === false) {
+						$dt = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $dateString);
+						if ($dt === false) {
 							continue;
 						}
-						$date = $date->format('Y/m/d H:i:s');
+						$date = $dt->format('Y/m/d H:i:s');
 						$array[] = [
 							'filename' => $key,
 							'date' => $date,
+							'show_date' => $dt->format('M j @ H:i'),
 						];
 					}
 				}
@@ -112,3 +113,5 @@ function getObjectList(string $bucket): array
 	}
 	return $array;
 }
+
+require_once __DIR__ . '/jam.php';

@@ -41,7 +41,7 @@ $choppiness = $wdata[12]; // wave_ht_max
     <meta charset="utf-8">
     <title>Ocean Wave Simulation</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800" rel="stylesheet" type="text/css">
     <link href="waves.css" rel="stylesheet" type="text/css">
     <style>
         .stationName {

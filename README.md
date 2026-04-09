@@ -10,11 +10,11 @@ www.pinchards.is
 | **`lib/`** | `env.php` (local secrets file), `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
 | **Public assets** | `css/`, `js/`, `images/` (site art + `images/photo/` for EXIF temp `tmp.jpg`, thumbnails, and local gallery assets), `fonts/`, `favicon/`, `vendor/`. |
 | **Source / design** | Theme styles: edit `css/pinchard.css` directly. `design/` — Sketch/SVG sources (not served). |
-| **Mini-sites** | Self-contained folders (`jam/`, `trees/`, `resettled/`, `adrift/`, `waves/`, …): deployed with the site, not second-class; leave their structure as-is unless you intentionally refactor them. |
+| **Mini-sites** | `jam/` (S3 slideshows), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `adrift/` (Three.js scene), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (Mapbox GL), `weather/` (`weather.php` JSON proxy; needs `RAPIDAPI_KEY` in `secrets.local.php`). |
 
 ## Local secrets on DreamHost
 
-The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, and optional keys like **`GOOGLE_MAPS_API_KEY`** via `getenv()` / `$_ENV` (see `lib/env.php`).
+The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, and **`RAPIDAPI_KEY`** (for `weather/weather.php`) via `getenv()` / `$_ENV` (see `lib/env.php`).
 
 **Recommended on DreamHost:** create a server-only file in the **site root** (same directory as `index.php`):
 
