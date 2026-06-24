@@ -221,7 +221,7 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
                 <div class="photos" id="photos">
                     <?php foreach ($array as $photo) : ?>
                         <div class="col-md-5ths col-sm-6 col-xs-12 photoElement">
-                            <a href="index.php?fn=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
+                            <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
                                 <img class="lazy img-responsive" data-src="<?php echo htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8') ?>" alt="" width="288" height="224">
                                 <div class="photo-box-caption">
                                     <div class="photo-box-caption-content"><?php echo $photo['show_date'] ?></div>
