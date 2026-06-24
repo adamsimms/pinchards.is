@@ -1,12 +1,12 @@
 <?php
 
-$display = 5;
-$fade = 1;
-if (isset($_GET['display']) && !empty($_GET['display'])) {
-    $display = $_GET['display'];
+$display = 5.0;
+$fade = 1.0;
+if (isset($_GET['display']) && $_GET['display'] !== '') {
+	$display = max(0.1, min(600.0, (float) $_GET['display']));
 }
-if (isset($_GET['fade']) && !empty($_GET['fade'])) {
-    $fade = $_GET['fade'];
+if (isset($_GET['fade']) && $_GET['fade'] !== '') {
+	$fade = max(0.0, min(60.0, (float) $_GET['fade']));
 }
 
 require_once __DIR__ . '/lib/bootstrap.php';
@@ -101,14 +101,14 @@ usort($array, function ($a, $b) {
 
 
 <script>
-    var display = <?php echo $display; ?> * 1000; // duration in seconds
-    var fade = <?php echo $fade; ?> * 1000; // fade duration amount relative to the time the image is visible
+    var display = <?= json_encode($display) ?> * 1000;
+    var fade = <?= json_encode($fade) ?> * 1000;
     console.log("display=> ", display, "fade => ", fade)
     var firstImg = null;
     var nextImg = null
 
-    var imagesArr = <?php echo json_encode($array) ?>;
-    var cdnurl = "<?php echo $cdnurl ?>";
+    var imagesArr = <?= json_encode($array, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+    var cdnurl = <?= json_encode($cdnurl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var currentIndex = 3;
 
     console.log('total images ', imagesArr)
@@ -151,7 +151,10 @@ usort($array, function ($a, $b) {
                 if (count == 10) {
                     break;
                 }
-                $('.slideshow').append("<img style='display:none'  src='" + cdnurl + imagesArr[i]['filename'] + "'/>");
+                $('.slideshow').append($('<img>', {
+                    style: 'display:none',
+                    src: cdnurl + imagesArr[i]['filename']
+                }));
                 count++
             }
         }

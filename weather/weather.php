@@ -3,6 +3,9 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/env.php';
+require_once __DIR__ . '/../lib/helpers.php';
+
+pinchard_rate_limit('weather', 120, 3600);
 
 header('Content-Type: application/json; charset=utf-8');
 

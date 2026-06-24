@@ -49,13 +49,10 @@
 <body id="page-top">
     <?php
 
-    ini_set('allow_url_fopen', 'on');
     require_once __DIR__ . '/lib/bootstrap.php';
     $cfg = pinchard_config();
 
-    if (isset($_GET['fn']) && !empty($_GET['fn'])) {
-        $filename = $_GET['fn'];
-    }
+    $requestedFn = isset($_GET['fn']) && $_GET['fn'] !== '' ? (string) $_GET['fn'] : null;
 
     $array = getObjectList($cfg['s3_bucket_full']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
@@ -65,29 +62,12 @@
         exit('Photo gallery is empty or temporarily unavailable.');
     }
 
-    // get prev and next filename
-    if (isset($filename) && !empty($filename) && $filename != "") {
-        foreach ($array as $i => $content) {
-            if ($content['filename'] == $filename) {
-                if ($i > 0) {
-                    $prev_filename = $array[$i - 1]['filename'];
-                }
-                if ($i < count($array) - 1) {
-                    $next_filename = $array[$i + 1]['filename'];
-                }
-                $datetime = $content['date'];
-                break;
-            }
-        }
-    } else {
-        //get last element of filename
-        $content = end($array);
-        $filename = $content['filename'];
-        $datetime = $content['date'];
-        if (count($array) > 1 && (!isset($prev_filename) || empty($prev_filename) || $prev_filename == "")) {
-            $prev_filename = $array[count($array) - 2]['filename'];
-        }
-    }
+    $resolved = pinchard_resolve_gallery_photo($array, $requestedFn);
+    $content = $resolved['photo'];
+    $filename = $content['filename'];
+    $datetime = $content['date'];
+    $prev_filename = $resolved['prev_filename'];
+    $next_filename = $resolved['next_filename'];
 
     $result_1 = $s3->getObject([
         'Bucket' => $cfg['s3_bucket_full'],
@@ -206,11 +186,11 @@
         <a href="gallery.php" class="link-to-gallery nav_cloudberry"></a>
         <a class="nav_info" href="info.php"></a>
         <div class="title">
-            <a href="index.php?fn=<?= $prev_filename ?>" <?= (!isset($prev_filename) || empty($prev_filename) || $prev_filename == "") ? 'style="visibility: hidden;"' : '' ?>>
+            <a href="index.php?fn=<?= pinchard_h($prev_filename) ?>" <?= ($prev_filename === null || $prev_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
                 <div class="arrow left"></div>
             </a>
             <a href="index.php">pinchards.is</a>
-            <a href="index.php?fn=<?= $next_filename ?>" <?= (!isset($next_filename) || empty($next_filename) || $next_filename == "") ? 'style="visibility: hidden;"' : '' ?>>
+            <a href="index.php?fn=<?= pinchard_h($next_filename) ?>" <?= ($next_filename === null || $next_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
                 <div class="arrow right"></div>
             </a>
         </div>
@@ -255,15 +235,15 @@
                         <div class="inner_data">
                             <?php
                             if ($make) {
-                                echo "Make: " . $make . "<br>";
+                                echo 'Make: ' . pinchard_h($make) . '<br>';
                             } else {
-                                echo "Make: <br>";
+                                echo 'Make: <br>';
                             }
 
                             if ($model) {
-                                echo "Model: " . $model . "<br>";
+                                echo 'Model: ' . pinchard_h($model) . '<br>';
                             } else {
-                                echo "Model: <br>";
+                                echo 'Model: <br>';
                             }
 
                             if ($focal_length != '') {
@@ -383,13 +363,8 @@
         }
 
         function myMap() {
-            var lat = "<?php echo $lat; ?>";
-            var lon = "<?php echo $lon; ?>";
-
-            if (!lat || !lon) {
-                lat = 49.2025694;
-                lon = -53.48586388888953;
-            }
+            var lat = <?= json_encode($lat !== '' ? (float) $lat : 49.2025694) ?>;
+            var lon = <?= json_encode($lon !== '' ? (float) $lon : -53.48586388888953) ?>;
 
             var myCenter = new google.maps.LatLng(lat, lon);
             var mapCanvas = document.getElementById("googleMap");

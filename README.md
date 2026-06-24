@@ -10,11 +10,13 @@ www.pinchards.is
 | **`lib/`** | `env.php` (local secrets file), `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
 | **Public assets** | `css/`, `js/`, `images/` (site art + `images/photo/` for EXIF temp `tmp.jpg`, thumbnails, and local gallery assets), `fonts/`, `favicon/`, `vendor/`. |
 | **Source / design** | Theme styles: edit `css/pinchard.css` directly. `design/` — Sketch/SVG sources (not served). |
-| **Mini-sites** | `jam/` (S3 slideshows), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `adrift/` (Three.js scene), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (Mapbox GL), `weather/` (`weather.php` JSON proxy; needs `RAPIDAPI_KEY` in `secrets.local.php`). |
+| **Mini-sites** | `jam/` (S3 slideshows), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `adrift/` (Three.js scene), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (`index.php` Mapbox GL), `weather/` (`weather.php` JSON proxy; needs `RAPIDAPI_KEY` in `secrets.local.php`). |
 
 ## Local secrets on DreamHost
 
-The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, and **`RAPIDAPI_KEY`** (for `weather/weather.php`) via `getenv()` / `$_ENV` (see `lib/env.php`).
+The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, **`MAPBOX_ACCESS_TOKEN`** (for `map/index.php`), and **`RAPIDAPI_KEY`** (for `weather/weather.php`) via `getenv()` / `$_ENV` (see `lib/env.php`).
+
+Set **`PINCHARD_DEBUG=1`** in `secrets.local.php` only when debugging (enables `display_errors`); production leaves errors in the server log.
 
 **Recommended on DreamHost:** create a server-only file in the **site root** (same directory as `index.php`):
 

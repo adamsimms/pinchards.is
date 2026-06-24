@@ -7,10 +7,16 @@ declare(strict_types=1);
  * Minisites continue to load this via ../functions_inc.php (shim at repo root).
  */
 
-ini_set('display_errors', '1');
+if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+	ini_set('display_errors', '1');
+} else {
+	ini_set('display_errors', '0');
+	ini_set('log_errors', '1');
+}
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/env.php';
+require_once __DIR__ . '/helpers.php';
 
 function pinchard_root(): string
 {
