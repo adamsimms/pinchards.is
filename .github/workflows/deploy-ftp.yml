@@ -50,9 +50,21 @@ jobs:
             exit 1
           fi
           mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/deploy_key
           printf '%s\n' "${SSH_DEPLOY_KEY}" | tr -d '\r' > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H "${FTP_SERVER}" >> ~/.ssh/known_hosts 2>/dev/null || true
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null 2>&1; then
+            echo "SSH_DEPLOY_KEY is not a valid OpenSSH private key; trying base64 decode..."
+            printf '%s' "${SSH_DEPLOY_KEY}" | tr -d ' \t\r\n' | base64 -d > ~/.ssh/deploy_key
+            chmod 600 ~/.ssh/deploy_key
+          fi
+          if ! ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null 2>&1; then
+            echo "::error::SSH_DEPLOY_KEY is invalid in GitHub Secrets."
+            echo "On your Mac run: base64 < ~/.ssh/pinchards_deploy | pbcopy"
+            echo "Paste that single line as SSH_DEPLOY_KEY (replace the existing secret)."
+            exit 1
+          fi
+          host="$(printf '%s' "${FTP_SERVER}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          ssh-keyscan -H "${host}" >> ~/.ssh/known_hosts 2>/dev/null || true
 
       - name: Validate deploy secrets
         env:

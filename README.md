@@ -58,7 +58,11 @@ On **push to `main`**, [.github/workflows/deploy-ftp.yml](.github/workflows/depl
    ```bash
    ssh -i ~/.ssh/pinchards_deploy -o IdentitiesOnly=yes YOUR_USER@YOUR_SERVER "echo ok"
    ```
-4. In **GitHub → Settings → Secrets and variables → Actions**, add or update secrets (see table below). Paste the **full** private key file (`pinchards_deploy`, including `BEGIN`/`END` lines) as `SSH_DEPLOY_KEY`.
+4. In **GitHub → Settings → Secrets and variables → Actions**, add or update secrets (see table below). For `SSH_DEPLOY_KEY`, base64-encode the private key so GitHub preserves newlines:
+   ```bash
+   base64 < ~/.ssh/pinchards_deploy | pbcopy
+   ```
+   Paste that **single line** as `SSH_DEPLOY_KEY` (not the `.pub` file).
 
 ### Repository secrets
 
