@@ -9,6 +9,8 @@ declare(strict_types=1);
  *   description?: string,
  *   og_image?: string,
  *   og_type?: string,
+ *   canonical_url?: string,
+ *   json_ld?: list<array<string, mixed>>,
  *   extra_head?: string,
  *   body_class?: string,
  *   body_id?: string,
@@ -19,12 +21,15 @@ function pinchard_layout_head(string $title, array $options = []): void
 	$description = $options['description'] ?? "Cloudberry — an off-the-grid, solar-powered long-term photography project documenting Pinchard's Island, Newfoundland.";
 	$ogImage = $options['og_image'] ?? 'https://www.pinchards.is/images/info/pano.jpg';
 	$ogType = $options['og_type'] ?? 'website';
+	$canonical = $options['canonical_url'] ?? pinchard_canonical_url();
+	$jsonLd = $options['json_ld'] ?? [];
 	$extraHead = $options['extra_head'] ?? '';
 	$bodyClass = $options['body_class'] ?? '';
 	$bodyId = $options['body_id'] ?? 'page-top';
 	$t = pinchard_h($title);
 	$d = pinchard_h($description);
 	$og = pinchard_h($ogImage);
+	$canonicalEsc = pinchard_h($canonical);
 	?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,8 +42,9 @@ function pinchard_layout_head(string $title, array $options = []): void
     <meta property="og:description" content="<?= $d ?>">
     <meta property="og:image" content="<?= $og ?>">
     <meta property="og:type" content="<?= pinchard_h($ogType) ?>">
-    <meta property="og:url" content="<?= pinchard_h(pinchard_canonical_url()) ?>">
+    <meta property="og:url" content="<?= $canonicalEsc ?>">
     <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="<?= $canonicalEsc ?>">
     <title><?= $t ?></title>
     <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="css/pinchard.css" rel="stylesheet">
@@ -51,6 +57,10 @@ function pinchard_layout_head(string $title, array $options = []): void
     <meta name="msapplication-config" content="/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 <?php
+	$jsonLdScript = pinchard_json_ld_script($jsonLd);
+	if ($jsonLdScript !== '') {
+		echo '    ' . $jsonLdScript . "\n";
+	}
 	if ($extraHead !== '') {
 		echo $extraHead;
 	}

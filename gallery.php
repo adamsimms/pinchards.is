@@ -25,10 +25,24 @@ try {
 pinchard_layout_head("Pinchard's Island — Photo Gallery", [
     'description' => 'Browse the Cloudberry archive — hourly photographs of Pinchard\'s Island, Newfoundland, grouped by month.',
     'body_class' => 'gallery-page',
+    'json_ld' => [
+        [
+            '@type' => 'CollectionPage',
+            'name' => "Pinchard's Island — Photo Gallery",
+            'description' => 'Browse the Cloudberry archive — hourly photographs of Pinchard\'s Island, Newfoundland, grouped by month.',
+            'url' => pinchard_absolute_url('/gallery.php'),
+            'isPartOf' => [
+                '@type' => 'WebSite',
+                'name' => "Pinchard's Island — Cloudberry",
+                'url' => pinchard_absolute_url('/index.php'),
+            ],
+        ],
+    ],
 ]);
 
 pinchard_layout_nav(['active' => 'gallery']);
 ?>
+    <h1 class="visually-hidden">Pinchard's Island Photo Gallery</h1>
     <div class="gallery-layout">
         <header class="gallery-header">
             <nav class="gallery-timeline" aria-label="Gallery timeline">

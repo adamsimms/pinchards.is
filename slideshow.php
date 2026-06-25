@@ -33,10 +33,24 @@ $mapJe = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 pinchard_layout_head("Pinchard's Island — Slideshow", [
     'description' => 'Watch Cloudberry photographs from Pinchard\'s Island in sequence — an hourly documentary of the view from Precious Memories cabin.',
     'body_class' => 'slideshow-page',
+    'json_ld' => [
+        [
+            '@type' => 'WebPage',
+            'name' => "Pinchard's Island — Slideshow",
+            'description' => 'Watch Cloudberry photographs from Pinchard\'s Island in sequence — an hourly documentary of the view from Precious Memories cabin.',
+            'url' => pinchard_absolute_url('/slideshow.php'),
+            'isPartOf' => [
+                '@type' => 'WebSite',
+                'name' => "Pinchard's Island — Cloudberry",
+                'url' => pinchard_absolute_url('/index.php'),
+            ],
+        ],
+    ],
 ]);
 
 pinchard_layout_nav(['active' => 'slideshow']);
 ?>
+    <h1 class="visually-hidden">Pinchard's Island Slideshow</h1>
     <div class="slideshow-viewport" id="slideshow" aria-live="polite" aria-label="Photograph slideshow"></div>
 
 <?php

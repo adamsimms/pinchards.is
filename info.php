@@ -10,10 +10,28 @@ $copyrightYear = (int) date('Y');
 pinchard_layout_head("Pinchard's Island — About Cloudberry", [
     'description' => 'Cloudberry is a solar-powered, off-the-grid photography project documenting Pinchard\'s Island, Newfoundland — one photograph per hour.',
     'body_class' => 'info-page',
+    'json_ld' => [
+        [
+            '@type' => 'AboutPage',
+            'name' => 'About Cloudberry',
+            'description' => 'Cloudberry is a solar-powered, off-the-grid photography project documenting Pinchard\'s Island, Newfoundland — one photograph per hour.',
+            'url' => pinchard_absolute_url('/info.php'),
+            'mainEntity' => [
+                '@type' => 'CreativeWork',
+                'name' => 'Cloudberry',
+                'description' => 'An off-the-grid, solar-powered, long-term photography project documenting Pinchard\'s Island, Newfoundland.',
+                'creator' => [
+                    ['@type' => 'Person', 'name' => 'Adam Simms'],
+                    ['@type' => 'Person', 'name' => 'Angela Gabereaux'],
+                ],
+            ],
+        ],
+    ],
 ]);
 
 pinchard_layout_nav(['active' => 'info']);
 ?>
+    <h1 class="visually-hidden">About Cloudberry</h1>
     <div class="info-hero">
         <img src="images/info/pano.jpg" class="img-fluid info_img" alt="View from Precious Memories cabin on Pinchard's Island">
     </div>

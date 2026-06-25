@@ -8,15 +8,76 @@ function pinchard_h(?string $value): string
 	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-/** Current request URL without query string (for og:url). */
-function pinchard_canonical_url(): string
+/** Scheme + host for absolute URLs (e.g. https://www.pinchards.is). */
+function pinchard_site_origin(): string
 {
 	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 	$host = $_SERVER['HTTP_HOST'] ?? 'www.pinchards.is';
+
+	return $scheme . '://' . $host;
+}
+
+/**
+ * @param array<string, scalar|null> $query
+ */
+function pinchard_absolute_url(string $path, array $query = []): string
+{
+	$url = pinchard_site_origin() . $path;
+	$filtered = array_filter($query, static fn ($value) => $value !== null && $value !== '');
+	if ($filtered === []) {
+		return $url;
+	}
+
+	return $url . '?' . http_build_query($filtered, '', '&', PHP_QUERY_RFC3986);
+}
+
+/** Canonical URL for the current request (preserves photo filename on index.php). */
+function pinchard_canonical_url(): string
+{
 	$uri = $_SERVER['REQUEST_URI'] ?? '/';
 	$path = strtok($uri, '?') ?: '/';
+	$query = [];
 
-	return $scheme . '://' . $host . $path;
+	if (basename($path) === 'index.php' && isset($_GET['filename']) && $_GET['filename'] !== '') {
+		$query['filename'] = (string) $_GET['filename'];
+	}
+
+	return pinchard_absolute_url($path, $query);
+}
+
+/** Accessible alt text for a photograph from its archive datetime string. */
+function pinchard_photo_alt_text(string $datetime): string
+{
+	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
+	if ($dt === false) {
+		return "Photograph of Pinchard's Island, Newfoundland";
+	}
+
+	return "Photograph of Pinchard's Island, Newfoundland — " . $dt->format('F j, Y \a\t g:i A');
+}
+
+/**
+ * @param list<array<string, mixed>> $nodes Schema.org entities (without @context).
+ */
+function pinchard_json_ld_script(array $nodes): string
+{
+	if ($nodes === []) {
+		return '';
+	}
+
+	$payload = [
+		'@context' => 'https://schema.org',
+		'@graph' => $nodes,
+	];
+	$json = json_encode(
+		$payload,
+		JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+	);
+	if ($json === false) {
+		return '';
+	}
+
+	return '<script type="application/ld+json">' . $json . '</script>';
 }
 
 /**
@@ -61,6 +122,68 @@ function pinchard_gallery_context_for_photo(string $date): ?array
 		'month_key' => $monthKey,
 		'label' => $dt->format('F Y'),
 		'gallery_url' => 'gallery.php#month-' . $monthKey,
+	];
+}
+
+/**
+ * Timeline entries for the index photo viewer scrubber.
+ *
+ * Uses the full archive when it is small enough to embed; otherwise scopes to the
+ * photograph's month so drag/click can resolve to the nearest image client-side.
+ *
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return array{
+ *   scope: 'archive'|'month',
+ *   label: string,
+ *   entries: list<array{f: string, d: string}>,
+ *   index: int,
+ * }|null
+ */
+function pinchard_viewer_timeline(array $photos, string $currentFilename, ?array $galleryContext): ?array
+{
+	if ($photos === []) {
+		return null;
+	}
+
+	$archiveLimit = 2500;
+	$scope = count($photos) <= $archiveLimit ? 'archive' : 'month';
+	$monthKey = $galleryContext['month_key'] ?? null;
+	$label = $scope === 'archive' ? 'Full archive' : ($galleryContext['label'] ?? 'This month');
+
+	$entries = [];
+	foreach ($photos as $photo) {
+		if ($scope === 'month') {
+			if ($monthKey === null) {
+				continue;
+			}
+			$dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
+			if ($dt === false || $dt->format('Y-m') !== $monthKey) {
+				continue;
+			}
+		}
+		$entries[] = [
+			'f' => $photo['filename'],
+			'd' => $photo['show_date'] ?? $photo['date'],
+		];
+	}
+
+	if (count($entries) < 2) {
+		return null;
+	}
+
+	$index = 0;
+	foreach ($entries as $i => $entry) {
+		if ($entry['f'] === $currentFilename) {
+			$index = $i;
+			break;
+		}
+	}
+
+	return [
+		'scope' => $scope,
+		'label' => $label,
+		'entries' => $entries,
+		'index' => $index,
 	];
 }
 
