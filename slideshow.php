@@ -16,8 +16,8 @@ require_once __DIR__ . '/lib/partials/layout.php';
 
 try {
     $cfg = pinchard_config();
-    $cdnurl = $cfg['cdn_url_thumbnails'];
-    $array = getObjectList($cfg['s3_bucket_thumbnails']);
+    $cdnurl = $cfg['cdn_url_full'];
+    $array = getObjectList($cfg['s3_bucket_full']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
     http_response_code(503);
@@ -38,7 +38,6 @@ pinchard_layout_head("Pinchard's Island — Slideshow", [
 pinchard_layout_nav(['active' => 'slideshow']);
 ?>
     <div class="slideshow-viewport" id="slideshow" aria-live="polite" aria-label="Photograph slideshow"></div>
-    <div class="slideshow-controls" id="slideshowStatus"></div>
 
 <?php
 $footerScripts = '<script>' . "\n";
@@ -52,7 +51,7 @@ $footerScripts .= <<<'JS'
 (function($) {
     var cfg = window.pinchardSlideshow;
     var container = document.getElementById('slideshow');
-    var status = document.getElementById('slideshowStatus');
+    var navDate = document.getElementById('navSlideshowDate');
     if (!cfg.images.length) {
         container.textContent = 'No photographs available.';
         return;
@@ -65,25 +64,34 @@ $footerScripts .= <<<'JS'
         return cfg.cdnurl + cfg.images[i].filename;
     }
 
-    function updateStatus() {
+    function updateNavDate() {
         var item = cfg.images[index];
-        if (status && item) {
-            status.textContent = (item.show_date || '') + ' (' + (index + 1) + ' of ' + cfg.images.length + ')';
+        if (navDate && item) {
+            navDate.textContent = item.show_date || '';
         }
+    }
+
+    function preloadIndex(i) {
+        if (i < 0 || i >= cfg.images.length) return;
+        var img = new Image();
+        img.src = photoUrl(i);
     }
 
     function showIndex(i) {
         index = i;
         var img = document.createElement('img');
+        img.className = 'slideshow-photo';
         img.src = photoUrl(i);
-        img.alt = cfg.images[i].show_date || ('Photo ' + (i + 1));
+        img.alt = cfg.images[i].show_date || '';
         img.style.display = 'none';
         container.appendChild(img);
+
+        preloadIndex((i + 1) % cfg.images.length);
 
         if (!currentImg) {
             img.style.display = 'block';
             currentImg = img;
-            updateStatus();
+            updateNavDate();
             setTimeout(advance, cfg.display);
             return;
         }
@@ -94,14 +102,13 @@ $footerScripts .= <<<'JS'
             if (old && old.parentNode) {
                 old.parentNode.removeChild(old);
             }
-            updateStatus();
+            updateNavDate();
             setTimeout(advance, cfg.display);
         });
     }
 
     function advance() {
-        var next = (index + 1) % cfg.images.length;
-        showIndex(next);
+        showIndex((index + 1) % cfg.images.length);
     }
 
     showIndex(0);
