@@ -1,288 +1,76 @@
 <?php
+
+declare(strict_types=1);
+
 require_once __DIR__ . '/lib/bootstrap.php';
+require_once __DIR__ . '/lib/partials/layout.php';
 
 try {
-$cfg = pinchard_config();
-$cdnurl = $cfg['cdn_url_thumbnails'];
+    $cfg = pinchard_config();
+    $cdnurl = $cfg['cdn_url_thumbnails'];
 
-$array = getObjectList($cfg['s3_bucket_thumbnails']);
-usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
-
-$photosByMonth = [];
-foreach ($array as $photo) {
-    $dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
-    if ($dt === false) {
-        continue;
-    }
-    $monthKey = $dt->format('Y-m');
-    if (!isset($photosByMonth[$monthKey])) {
-        $photosByMonth[$monthKey] = [
-            'label' => $dt->format('F Y'),
-            'photos' => [],
-        ];
-    }
-    $photosByMonth[$monthKey]['photos'][] = $photo;
-}
+    $array = getObjectList($cfg['s3_bucket_thumbnails']);
+    usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
+    $photosByMonth = pinchard_group_photos_by_month($array);
+    $monthKeys = array_keys($photosByMonth);
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
-	http_response_code(503);
-	header('Content-Type: text/plain; charset=utf-8');
-	if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
-		exit($e->getMessage());
-	}
-	exit('Photo gallery is temporarily unavailable.');
+    http_response_code(503);
+    header('Content-Type: text/plain; charset=utf-8');
+    if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+        exit($e->getMessage());
+    }
+    exit('Photo gallery is temporarily unavailable.');
 }
+
+pinchard_layout_head("Pinchard's Island — Photo Gallery", [
+    'description' => 'Browse the Cloudberry archive — hourly photographs of Pinchard\'s Island, Newfoundland, grouped by month.',
+    'body_class' => 'gallery-page',
+]);
+
+pinchard_layout_nav(['active' => 'gallery']);
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Pinchard's Island</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="vendor/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-
-    <!-- Plugin CSS -->
-    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
-
-    <!-- Theme CSS -->
-    <link href="css/pinchard.css" rel="stylesheet">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.js"></script>
-    <![endif]-->
-
-    <script src="vendor/exifjs/exif.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.js"></script>
-
-
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/favicon/manifest.json">
-    <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="/favicon/favicon.ico">
-    <meta name="msapplication-config" content="/favicon/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
-
-    <style>
-        .content_area {
-            padding: 32px 0px 8px 0px !important;
-            border: none;
-        }
-
-        #photo_container {
-            padding: 0 !important;
-            margin-top: 0px;
-            border: none;
-            max-width: none;
-            width: 100%;
-        }
-
-        .gallery-month {
-            margin-bottom: 80px;
-        }
-
-        .gallery-month:last-child {
-            margin-bottom: 0;
-        }
-
-        .gallery-month-title {
-            font-family: 'circular-bold', 'Open Sans', sans-serif;
-            font-size: 2.75rem;
-            font-weight: 700;
-            line-height: 1.1;
-            margin: 0 0 28px;
-            padding-left: 16px;
-            color: rgba(0, 0, 0, 0.85);
-        }
-
-        #photo_container > .photos,
-        .gallery-month .photos {
-            margin: 0 !important;
-            border: none;
-        }
-
-        .photos {
-            width: 100% !important;
-            border: none;
-        }
-
-        #photo_container .photoElement {
-            padding-left: 0;
-            padding-right: 0;
-        }
-
-        .photoElement {
-            padding: 0px;
-            margin-bottom: 0px;
-            border: none;
-        }
-
-        .photoElement .photoBox {
-            max-width: none;
-            margin: 0;
-        }
-
-        .photoElement .photoBox img {
-            width: 104% !important;
-            max-width: 104% !important;
-        }
-
-        .photoElement a {
-            border-radius: 0px;
-            border: none;
-        }
-
-        img.lazy {
-            background-image: url('./images/loading.gif');
-            background-repeat: no-repeat;
-            background-position: 50% 50%;
-            background-size: 18px 18px;
-            border: none;
-        }
-
-
-        img.lazy {
-            animation: fadein 4s;
-            -moz-animation: fadein 4s;
-            /* Firefox */
-            -webkit-animation: fadein 4s;
-            /* Safari and Chrome */
-            -o-animation: fadein 4s;
-            /* Opera */
-        }
-
-
-        @keyframes fadein {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @-moz-keyframes fadein {
-
-            /* Firefox */
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @-webkit-keyframes fadein {
-
-            /* Safari and Chrome */
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @-o-keyframes fadein {
-
-            /* Opera */
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-    </style>
-
-</head>
-
-<!--<body id="page-top" onload="myFunction()" >-->
-
-<body id="page-top">
-    <nav id="mainNav" class="navbar navbar-default fixed-top">
-        <a href="gallery.php" class="link-to-gallery nav_cloudberry active"></a>
-        <a class="nav_info" href="info.php"></a>
-        <div class="title">
-            <a href="index.php">pinchards.is</a>
-        </div>
-    </nav>
     <div class="content_area">
+        <nav class="gallery-month-strip" aria-label="Jump to month">
+<?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
+            <a href="#month-<?= pinchard_h($monthKey) ?>"><?= pinchard_h($monthGroup['label']) ?></a>
+<?php endforeach; ?>
+<?php if ($monthKeys !== []): ?>
+            <a href="#month-<?= pinchard_h($monthKeys[count($monthKeys) - 1]) ?>">Latest</a>
+<?php endif; ?>
+        </nav>
         <div class="container-fluid px-0" id="photo_container">
-            <?php foreach ($photosByMonth as $monthGroup) : ?>
-            <section class="gallery-month">
+<?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
+            <section class="gallery-month" id="month-<?= pinchard_h($monthKey) ?>">
                 <h2 class="gallery-month-title"><?= pinchard_h($monthGroup['label']) ?></h2>
                 <div class="row photos g-0">
-                    <?php foreach ($monthGroup['photos'] as $photo) : ?>
-                        <div class="col-md-5ths col-sm-6 col-12 photoElement">
-                            <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
-                                <img class="lazy img-fluid" data-src="<?php echo htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8') ?>" alt="" width="288" height="224">
-                                <div class="photo-box-caption">
-                                    <div class="photo-box-caption-content"><?php echo $photo['show_date'] ?></div>
-                                </div>
-                            </a>
-                        </div>
-                    <?php endforeach; ?>
+<?php foreach ($monthGroup['photos'] as $photo): ?>
+                    <div class="col-md-5ths col-sm-6 col-12 photoElement">
+                        <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
+                            <img class="lazy img-fluid" data-src="<?= pinchard_h($cdnurl . $photo['filename']) ?>" alt="<?= pinchard_h($photo['show_date'] ?? '') ?>" width="288" height="224" loading="lazy">
+                            <div class="photo-box-caption">
+                                <div class="photo-box-caption-content"><?= pinchard_h($photo['show_date'] ?? '') ?></div>
+                            </div>
+                        </a>
+                    </div>
+<?php endforeach; ?>
                 </div>
             </section>
-            <?php endforeach; ?>
+<?php endforeach; ?>
         </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="vendor/jquery/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>
-    <script src="vendor/scrollreveal/scrollreveal.js"></script>
-    <script src="vendor/magnific-popup/jquery.magnific-popup.js"></script>
-
-    <!-- Theme JavaScript -->
-    <script src="js/pinchard.js"></script>
+<?php
+pinchard_layout_footer([
+    'extra_scripts' => <<<'JS'
     <script src="js/jquery.lazy.js"></script>
-
     <script>
         $(function() {
             $('.lazy').Lazy({
-                // your configuration goes here
                 scrollDirection: 'vertical',
                 effect: 'fadeIn',
-                visibleOnly: true,
-                beforeLoad: function(element) {
-                    //console.log('loading... ', element.data('src'))
-                },
-                onError: function(element) {
-                    console.log('error loading ' + element.data('src'));
-                }
+                visibleOnly: true
             });
         });
     </script>
-
-</body>
-
-</html>
+JS,
+]);
