@@ -30,6 +30,16 @@ jobs:
           MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
         run: php .github/scripts/write-secrets-local.php
 
+      - name: Remove legacy aws-env.local.php on server
+        continue-on-error: true
+        run: |
+          server_dir="${{ secrets.FTP_SERVER_DIR }}"
+          server_dir="${server_dir%/}"
+          curl --ftp-silent --show-error \
+            --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+            "ftp://${{ secrets.FTP_SERVER }}/${server_dir}/" \
+            -Q "DELE aws-env.local.php"
+
       - name: FTP deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
