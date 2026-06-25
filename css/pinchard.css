@@ -115,8 +115,15 @@ aside {
     float: right;
 }
 .navbar-default .title {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
     height: 49px;
-    padding: 11px;
+    padding: 11px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
     font-family: 'circular-bold';
     font-size: 19px;
     font-weight: 700;
@@ -124,14 +131,37 @@ aside {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    pointer-events: none;
 }
 
 .navbar-default .title > a {
     color: rgba(0, 0, 0, .7);
     text-decoration: none;
+    pointer-events: auto;
 }
 .navbar-default .title > a:hover, .navbar-default .title > a:focus {
     color: #F05F40;
+}
+
+.navbar-default .title .title-brand {
+    grid-column: 2;
+    justify-self: center;
+}
+
+.navbar-default .nav-photo-prev {
+    grid-column: 1;
+    justify-self: end;
+}
+
+.navbar-default .nav-photo-next {
+    grid-column: 3;
+    justify-self: start;
+}
+
+.navbar-default .nav-photo-prev.is-hidden,
+.navbar-default .nav-photo-next.is-hidden {
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .navbar-default .title .arrow {

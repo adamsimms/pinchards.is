@@ -105,13 +105,13 @@ function pinchard_layout_nav(array $options = []): void
         <a class="<?= pinchard_h($infoClass) ?>" href="info.php" aria-label="About this project"></a>
         <div class="title">
 <?php if ($active === 'index'): ?>
-            <a href="index.php?filename=<?= pinchard_h($prev) ?>" class="nav-photo-prev" aria-label="Previous photograph"<?= ($prev === null || $prev === '') ? ' hidden' : '' ?>>
+            <a href="index.php?filename=<?= pinchard_h($prev) ?>" class="nav-photo-prev<?= ($prev === null || $prev === '') ? ' is-hidden' : '' ?>" aria-label="Previous photograph"<?= ($prev === null || $prev === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
                 <div class="arrow left" aria-hidden="true"></div>
             </a>
 <?php endif; ?>
-            <a href="index.php"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>pinchards.is</a>
+            <a href="index.php" class="title-brand"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>pinchards.is</a>
 <?php if ($active === 'index'): ?>
-            <a href="index.php?filename=<?= pinchard_h($next) ?>" class="nav-photo-next" aria-label="Next photograph"<?= ($next === null || $next === '') ? ' hidden' : '' ?>>
+            <a href="index.php?filename=<?= pinchard_h($next) ?>" class="nav-photo-next<?= ($next === null || $next === '') ? ' is-hidden' : '' ?>" aria-label="Next photograph"<?= ($next === null || $next === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
                 <div class="arrow right" aria-hidden="true"></div>
             </a>
 <?php endif; ?>
