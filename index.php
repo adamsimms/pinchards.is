@@ -218,7 +218,8 @@
 
         <div class="detail_view">
             <div class="btn_arrow"></div>
-            <div class="col-md-5 container detail_container">
+            <div class="row g-0">
+            <div class="col-md-5 detail_container">
                 <div class="detail_content_view">
                     <div>
                         <div class="detail_rect title_rect"><img src="images/icon-number.svg" /></div>
@@ -339,7 +340,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-7 container mapcontainer">
+            <div class="col-md-7 mapcontainer">
                 <?php
                 $pinchardMapboxToken = pinchard_env_non_empty('MAPBOX_ACCESS_TOKEN');
                 $mapLat = $lat !== '' ? (float) $lat : 49.2025694;
@@ -351,6 +352,7 @@
                 <?php else : ?>
                 <p class="text-muted">Map unavailable.</p>
                 <?php endif; ?>
+            </div>
             </div>
 
         </div>

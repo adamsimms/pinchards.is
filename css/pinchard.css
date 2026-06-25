@@ -95,6 +95,14 @@ aside {
   transition: all 0.35s;
   text-align: center;
 }
+/* Bootstrap 5 .navbar is flex; this site uses absolute-positioned icons + centered title */
+.navbar-default.navbar {
+  display: block;
+  padding: 0;
+  --bs-navbar-padding-y: 0;
+  --bs-navbar-padding-x: 0;
+  min-height: 50px;
+}
 .navbar-default img {
     display: inline-block;
     max-width: 100%;
