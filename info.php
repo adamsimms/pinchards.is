@@ -409,23 +409,18 @@ pinchard_layout_nav(['active' => 'info']);
                 if (!active) {
                     return;
                 }
-                var navRect = nav.getBoundingClientRect();
-                var linkRect = active.getBoundingClientRect();
-                if (linkRect.left < navRect.left) {
-                    nav.scrollLeft -= (navRect.left - linkRect.left) + 16;
-                } else if (linkRect.right > navRect.right) {
-                    nav.scrollLeft += (linkRect.right - navRect.right) + 16;
-                }
-                updateScrollFades();
+                active.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' });
+                requestAnimationFrame(updateScrollFades);
             }
 
             if (nav) {
                 nav.addEventListener('scroll', updateScrollFades, { passive: true });
                 window.addEventListener('resize', updateScrollFades);
+                window.addEventListener('load', updateScrollFades);
                 if ('ResizeObserver' in window) {
                     new ResizeObserver(updateScrollFades).observe(nav);
                 }
-                updateScrollFades();
+                requestAnimationFrame(updateScrollFades);
             }
 
             if (!sections.length || !('IntersectionObserver' in window)) {
