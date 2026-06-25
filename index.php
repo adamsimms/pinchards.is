@@ -232,7 +232,7 @@ try {
             <a href="<?= pinchard_h($galleryContext['gallery_url']) ?>">Gallery &rarr; <?= pinchard_h($galleryContext['label']) ?></a>
         </div>
 <?php endif; ?>
-        <div class="placeholder" data-large="<?= pinchard_h($imageUrl) ?>" id="preview_image">
+        <div class="photo-placeholder" data-large="<?= pinchard_h($imageUrl) ?>" id="preview_image">
             <img src="images/photo/thumbnail.jpg" class="img-small" alt="<?= pinchard_h($photoAlt) ?>">
             <div style="padding-bottom: 66.6%;"></div>
         </div>
@@ -334,7 +334,7 @@ $footerScripts = <<<'JS'
     </script>
     <script>
         (function() {
-            var placeholder = document.querySelector('.placeholder'),
+            var placeholder = document.querySelector('.photo-placeholder'),
                 small = placeholder.querySelector('.img-small');
             var img = new Image();
             img.src = small.src;
