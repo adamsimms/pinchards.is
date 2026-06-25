@@ -1,17 +1,27 @@
-# Push to main → sync to DreamHost (or any FTP) via GitHub Actions.
+# Push to main → sync to DreamHost via SFTP/rsync over SSH (GitHub Actions).
 #
 # Repository secrets (Settings → Secrets and variables → Actions):
-#   Deploy: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD, FTP_SERVER_DIR
+#   Deploy: FTP_SERVER, FTP_USERNAME, FTP_SERVER_DIR, SSH_DEPLOY_KEY
 #   Runtime (written to secrets.local.php on each deploy):
 #     AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (required)
-#     AWS_DEFAULT_REGION, GOOGLE_MAPS_API_KEY, RAPIDAPI_KEY, MAPBOX_ACCESS_TOKEN (optional)
-name: Deploy FTP
+#     AWS_DEFAULT_REGION, GOOGLE_MAPS_API_KEY, MAPBOX_ACCESS_TOKEN (optional)
+#
+# One-time setup: generate an ed25519 deploy key, append the public key to
+# ~/.ssh/authorized_keys on the server, and store the private key as SSH_DEPLOY_KEY.
+# FTP_SERVER should be the SSH hostname (often your domain or psNNNN.dreamhost.com).
+# FTP_SERVER_DIR must be the absolute remote path, e.g. /home/USER/pinchards.is
+name: Deploy SFTP
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: rsync dry-run (no files changed on server)
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -26,32 +36,48 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
-          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
           MAPBOX_ACCESS_TOKEN: ${{ secrets.MAPBOX_ACCESS_TOKEN }}
         run: php .github/scripts/write-secrets-local.php
 
+      - name: Setup SSH deploy key
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SSH_DEPLOY_KEY}" ]; then
+            echo "Missing secret: SSH_DEPLOY_KEY"
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          echo "${SSH_DEPLOY_KEY}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${FTP_SERVER}" >> ~/.ssh/known_hosts 2>/dev/null || true
+
       - name: Remove legacy aws-env.local.php on server
         continue-on-error: true
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
         run: |
-          server_dir="${{ secrets.FTP_SERVER_DIR }}"
-          server_dir="${server_dir%/}"
-          curl -sS --show-error \
-            --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-            "ftp://${{ secrets.FTP_SERVER }}/${server_dir}/" \
-            -Q "DELE aws-env.local.php"
+          server_dir="${FTP_SERVER_DIR%/}"
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes \
+            "${FTP_USERNAME}@${FTP_SERVER}" \
+            "rm -f '${server_dir}/aws-env.local.php'"
 
-      - name: FTP deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
+      - name: SFTP deploy (rsync over SSH)
+        uses: burnett01/rsync-deployments@v8
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          # Remote path from FTP user home, e.g. pinchard.is or pinchards.is (DreamHost panel shows this)
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          # DreamHost FTP often returns "500 AUTH not understood" with ftps — use plain ftp on port 21
-          protocol: ftp
-          port: 21
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
+          switches: >-
+            -avzr --delete
+            --exclude '.git/'
+            --exclude '.git*/'
+            --exclude '.github/'
+            ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+          path: ./
+          remote_path: ${{ secrets.FTP_SERVER_DIR }}/
+          remote_host: ${{ secrets.FTP_SERVER }}
+          remote_user: ${{ secrets.FTP_USERNAME }}
+          remote_key: ${{ secrets.SSH_DEPLOY_KEY }}
+          remote_port: 22
