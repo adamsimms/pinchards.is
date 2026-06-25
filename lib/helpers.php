@@ -125,6 +125,68 @@ function pinchard_gallery_context_for_photo(string $date): ?array
 	];
 }
 
+/**
+ * Timeline entries for the index photo viewer scrubber.
+ *
+ * Uses the full archive when it is small enough to embed; otherwise scopes to the
+ * photograph's month so drag/click can resolve to the nearest image client-side.
+ *
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return array{
+ *   scope: 'archive'|'month',
+ *   label: string,
+ *   entries: list<array{f: string, d: string}>,
+ *   index: int,
+ * }|null
+ */
+function pinchard_viewer_timeline(array $photos, string $currentFilename, ?array $galleryContext): ?array
+{
+	if ($photos === []) {
+		return null;
+	}
+
+	$archiveLimit = 2500;
+	$scope = count($photos) <= $archiveLimit ? 'archive' : 'month';
+	$monthKey = $galleryContext['month_key'] ?? null;
+	$label = $scope === 'archive' ? 'Full archive' : ($galleryContext['label'] ?? 'This month');
+
+	$entries = [];
+	foreach ($photos as $photo) {
+		if ($scope === 'month') {
+			if ($monthKey === null) {
+				continue;
+			}
+			$dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
+			if ($dt === false || $dt->format('Y-m') !== $monthKey) {
+				continue;
+			}
+		}
+		$entries[] = [
+			'f' => $photo['filename'],
+			'd' => $photo['show_date'] ?? $photo['date'],
+		];
+	}
+
+	if (count($entries) < 2) {
+		return null;
+	}
+
+	$index = 0;
+	foreach ($entries as $i => $entry) {
+		if ($entry['f'] === $currentFilename) {
+			$index = $i;
+			break;
+		}
+	}
+
+	return [
+		'scope' => $scope,
+		'label' => $label,
+		'entries' => $entries,
+		'index' => $index,
+	];
+}
+
 /** Compact label for gallery timeline scrubber (e.g. Aug 2017). */
 function pinchard_month_timeline_label(string $monthKey): string
 {

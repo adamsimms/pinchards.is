@@ -41,6 +41,7 @@ try {
     $prev_filename = $resolved['prev_filename'];
     $next_filename = $resolved['next_filename'];
     $galleryContext = pinchard_gallery_context_for_photo($datetime);
+    $viewerTimeline = pinchard_viewer_timeline($array, $filename, $galleryContext);
 
     $tmpPath = pinchard_exif_tmp_path();
     $exif = [];
@@ -114,45 +115,36 @@ try {
     }
 
     $cameraLines = [];
-    $cameraLines[] = $make !== '' ? 'Make: ' . pinchard_h($make) : 'Make:';
-
-    $cameraLines[] = $model !== '' ? 'Model: ' . pinchard_h($model) : 'Model:';
-
-    $focalLine = 'Focal Length:';
+    if ($make !== '') {
+        $cameraLines[] = 'Make: ' . pinchard_h($make);
+    }
+    if ($model !== '') {
+        $cameraLines[] = 'Model: ' . pinchard_h($model);
+    }
     if ($focal_length !== '') {
         $focal_length_array = explode('/', (string) $focal_length);
         if (count($focal_length_array) === 2 && (float) $focal_length_array[1] !== 0.0) {
-            $focalLine = 'Focal Length: ' . number_format((float) $focal_length_array[0] / (float) $focal_length_array[1], 2) . ' mm';
+            $cameraLines[] = 'Focal Length: ' . number_format((float) $focal_length_array[0] / (float) $focal_length_array[1], 2) . ' mm';
         }
     }
-    $cameraLines[] = $focalLine;
-
-    $exposureLine = 'Exposure:';
     if ($exposure_time !== '' && $fnumber !== '' && $iso_speed_ratings !== '') {
         $exposure_array = explode('/', (string) $exposure_time);
         $fnumber_array = explode('/', (string) $fnumber);
         if (count($exposure_array) === 2 && (float) $exposure_array[0] !== 0.0 && count($fnumber_array) === 2 && (float) $fnumber_array[1] !== 0.0) {
             $exposure_value = number_format((float) $exposure_array[1] / (float) $exposure_array[0], 0);
             $fnumber_value = number_format((float) $fnumber_array[0] / (float) $fnumber_array[1], 1);
-            $exposureLine = 'Exposure: 1/' . $exposure_value . ' sec, f/' . $fnumber_value . '; ISO ' . pinchard_h((string) $iso_speed_ratings);
+            $cameraLines[] = 'Exposure: 1/' . $exposure_value . ' sec, f/' . $fnumber_value . '; ISO ' . pinchard_h((string) $iso_speed_ratings);
         }
     }
-    $cameraLines[] = $exposureLine;
-
-    $imageSizeLine = 'Image Size:';
     if ($image_width !== '' && $image_height !== '') {
-        $imageSizeLine = 'Image Size: ' . pinchard_h((string) $image_width) . ' x ' . pinchard_h((string) $image_height);
+        $cameraLines[] = 'Image Size: ' . pinchard_h((string) $image_width) . ' x ' . pinchard_h((string) $image_height);
     }
-    $cameraLines[] = $imageSizeLine;
-
-    $resolutionLine = 'Resolution:';
     if ($xresolution !== '') {
         $resolution_array = explode('/', (string) $xresolution);
         if (count($resolution_array) === 2 && (float) $resolution_array[1] !== 0.0) {
-            $resolutionLine = 'Resolution: ' . number_format((float) $resolution_array[0] / (float) $resolution_array[1], 2) . ' pixels per inch';
+            $cameraLines[] = 'Resolution: ' . number_format((float) $resolution_array[0] / (float) $resolution_array[1], 2) . ' pixels per inch';
         }
     }
-    $cameraLines[] = $resolutionLine;
 
     $dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
     $converted_date = $dt !== false ? $dt->format('l, F jS, Y @ g:i A') : pinchard_h($datetime);
@@ -215,11 +207,16 @@ try {
         $extraHead .= '    <link rel="prefetch" href="' . pinchard_h($cdnFull . $next_filename) . '" as="image">' . "\n";
     }
 
+    $bodyClass = 'viewer-page';
+    if ($viewerTimeline !== null) {
+        $bodyClass .= ' has-viewer-timeline';
+    }
+
     pinchard_layout_head("Pinchard's Island — " . pinchard_photo_title($filename), [
         'description' => $ogDescription,
         'og_image' => $imageUrl,
         'og_type' => 'article',
-        'body_class' => 'viewer-page',
+        'body_class' => $bodyClass,
         'extra_head' => $extraHead,
         'json_ld' => $jsonLd,
     ]);
@@ -239,7 +236,7 @@ try {
 }
 ?>
     <h1 class="visually-hidden"><?= pinchard_h("Pinchard's Island — " . pinchard_photo_title($filename)) ?></h1>
-    <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse.">
+    <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse. Timeline scrubber below jumps through the archive.">
 <?php if ($galleryContext !== null): ?>
         <div class="photo-context-nav">
             <a href="<?= pinchard_h($galleryContext['gallery_url']) ?>">Gallery &rarr; <?= pinchard_h($galleryContext['label']) ?></a>
@@ -249,6 +246,36 @@ try {
             <img src="images/photo/thumbnail.jpg" class="img-small" alt="<?= pinchard_h($photoAlt) ?>">
             <div style="padding-bottom: 66.6%;"></div>
         </div>
+
+<?php if ($viewerTimeline !== null): ?>
+<?php
+    $timelineCount = count($viewerTimeline['entries']);
+    $timelinePosition = $viewerTimeline['index'] + 1;
+    $timelineDate = $viewerTimeline['entries'][$viewerTimeline['index']]['d'];
+    $timelineAria = pinchard_h('Photograph ' . $timelinePosition . ' of ' . $timelineCount . ', ' . $timelineDate);
+?>
+        <nav class="viewer-timeline" id="viewerTimeline" aria-label="Photograph timeline">
+            <div class="viewer-timeline-meta">
+                <span class="viewer-timeline-position" id="viewerTimelinePosition" aria-live="polite"><?= pinchard_h($timelineDate) ?> · <?= $timelinePosition ?> / <?= $timelineCount ?></span>
+            </div>
+            <div class="viewer-timeline-track">
+                <input
+                    type="range"
+                    class="viewer-timeline-range"
+                    id="viewerTimelineRange"
+                    min="0"
+                    max="<?= $timelineCount - 1 ?>"
+                    value="<?= $viewerTimeline['index'] ?>"
+                    step="1"
+                    aria-label="<?= $timelineAria ?>"
+                    aria-valuemin="1"
+                    aria-valuemax="<?= $timelineCount ?>"
+                    aria-valuenow="<?= $timelinePosition ?>"
+                    aria-valuetext="<?= $timelineAria ?>"
+                >
+            </div>
+        </nav>
+<?php endif; ?>
 
         <div class="detail_view" id="detailDrawer">
             <button type="button" class="btn_arrow" id="detailToggle" aria-expanded="false" aria-controls="detailDrawerContent" aria-label="Show photograph details"></button>
@@ -264,10 +291,12 @@ try {
                         <div class="detail_rect"><img src="images/icon-date.svg" alt="" /></div>
                         <div class="inner_data"><?= $converted_date ?></div>
                     </div>
+<?php if ($cameraLines !== []): ?>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-gopro.svg" alt="" /></div>
                         <div class="inner_data"><?= implode('<br>', $cameraLines) ?></div>
                     </div>
+<?php endif; ?>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-raspberry.svg" alt="" /></div>
                         <div class="inner_data">Photographer: Raspberry Pi 3 Model B</div>
@@ -319,7 +348,9 @@ $footerScripts = <<<'JS'
         window.pinchardViewer = {
             prevUrl: PREV_URL,
             nextUrl: NEXT_URL,
-            prefetch: PRELOAD_URLS
+            prefetch: PRELOAD_URLS,
+            currentFilename: CURRENT_FILENAME,
+            timeline: TIMELINE_DATA
         };
     </script>
     <script>
@@ -365,6 +396,62 @@ $footerScripts = <<<'JS'
                 }
             });
 
+            var timelineRange = document.getElementById('viewerTimelineRange');
+            var timelinePosition = document.getElementById('viewerTimelinePosition');
+            var timeline = window.pinchardViewer.timeline;
+            if (timelineRange && timeline && timeline.entries && timeline.entries.length > 1) {
+                function timelineEntry(idx) {
+                    return timeline.entries[Math.max(0, Math.min(timeline.entries.length - 1, idx))];
+                }
+
+                function updateTimelineUi(idx) {
+                    var entry = timelineEntry(idx);
+                    var position = idx + 1;
+                    var count = timeline.entries.length;
+                    var text = entry.d + ' · ' + position + ' / ' + count;
+                    timelineRange.setAttribute('aria-valuenow', String(position));
+                    timelineRange.setAttribute('aria-valuetext', 'Photograph ' + position + ' of ' + count + ', ' + entry.d);
+                    if (timelinePosition) {
+                        timelinePosition.textContent = text;
+                    }
+                }
+
+                function navigateToTimelineIndex(idx) {
+                    var entry = timelineEntry(idx);
+                    if (!entry || entry.f === window.pinchardViewer.currentFilename) {
+                        return;
+                    }
+                    window.location.href = 'index.php?filename=' + encodeURIComponent(entry.f);
+                }
+
+                timelineRange.addEventListener('input', function() {
+                    updateTimelineUi(parseInt(timelineRange.value, 10));
+                });
+
+                timelineRange.addEventListener('change', function() {
+                    navigateToTimelineIndex(parseInt(timelineRange.value, 10));
+                });
+
+                timelineRange.addEventListener('pointerdown', function(e) {
+                    e.stopPropagation();
+                });
+
+                timelineRange.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                }, { passive: true });
+
+                timelineRange.addEventListener('touchend', function(e) {
+                    e.stopPropagation();
+                }, { passive: true });
+
+                var timelineNav = document.getElementById('viewerTimeline');
+                if (timelineNav) {
+                    timelineNav.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                }
+            }
+
             var viewer = document.getElementById('photoViewer');
             var touchStartX = 0;
             viewer.addEventListener('touchstart', function(e) {
@@ -398,6 +485,8 @@ $nextUrl = ($next_filename !== null && $next_filename !== '') ? 'index.php?filen
 $footerScripts = str_replace('PREV_URL', json_encode($prevUrl, $mapJe), $footerScripts);
 $footerScripts = str_replace('NEXT_URL', json_encode($nextUrl, $mapJe), $footerScripts);
 $footerScripts = str_replace('PRELOAD_URLS', json_encode($preloadUrls, $mapJe), $footerScripts);
+$footerScripts = str_replace('CURRENT_FILENAME', json_encode($filename, $mapJe), $footerScripts);
+$footerScripts = str_replace('TIMELINE_DATA', json_encode($viewerTimeline ?? null, $mapJe), $footerScripts);
 
 if ($pinchardMapboxToken !== null && str_starts_with($pinchardMapboxToken, 'pk.')) {
     $footerScripts .= "\n    <script src=\"https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.js\"></script>\n";
