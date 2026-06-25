@@ -51,7 +51,7 @@ foreach ($objects as $content) {
             $formatted_date = date_format($date, "Y/m/d H:i:s");
             $year = date_format($date, "Y");
             $month = date_format($date, "m");
-            $show_date = date_format($date, "M j @ H:i");
+            $show_date = pinchard_show_date($date);
 
             //if(($month == $current_month) && ($year == $current_year)) {
             $array[] = array(

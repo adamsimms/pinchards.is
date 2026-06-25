@@ -113,7 +113,7 @@ function pinchard_s3_fetch_object_list(string $bucket): array
 						$array[] = [
 							'filename' => $key,
 							'date' => $date,
-							'show_date' => $dt->format('M j @ H:i'),
+							'show_date' => pinchard_show_date($dt),
 						];
 					}
 				}

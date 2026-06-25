@@ -8,6 +8,12 @@ function pinchard_h(?string $value): string
 	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+/** Short display date for gallery captions and timeline (e.g. March 1 @ 18:09). */
+function pinchard_show_date(DateTime $dt): string
+{
+	return $dt->format('F j @ H:i');
+}
+
 /** Scheme + host for absolute URLs (e.g. https://www.pinchards.is). */
 function pinchard_site_origin(): string
 {
