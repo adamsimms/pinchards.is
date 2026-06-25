@@ -24,6 +24,7 @@
 
     <!-- Theme CSS -->
     <link href="css/pinchard.css" rel="stylesheet">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -339,7 +340,17 @@
                 </div>
             </div>
             <div class="col-md-7 container mapcontainer">
-                <div id="googleMap"></div>
+                <?php
+                $pinchardMapboxToken = pinchard_env_non_empty('MAPBOX_ACCESS_TOKEN');
+                $mapLat = $lat !== '' ? (float) $lat : 49.2025694;
+                $mapLon = $lon !== '' ? (float) $lon : -53.48586388888953;
+                $mapJe = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+                if ($pinchardMapboxToken !== null && str_starts_with($pinchardMapboxToken, 'pk.')) :
+                ?>
+                <div id="photoMap"></div>
+                <?php else : ?>
+                <p class="text-muted">Map unavailable.</p>
+                <?php endif; ?>
             </div>
 
         </div>
@@ -368,23 +379,6 @@
             };
             placeholder.appendChild(imgLarge);
         }
-
-        function myMap() {
-            var lat = <?= json_encode($lat !== '' ? (float) $lat : 49.2025694) ?>;
-            var lon = <?= json_encode($lon !== '' ? (float) $lon : -53.48586388888953) ?>;
-
-            var myCenter = new google.maps.LatLng(lat, lon);
-            var mapCanvas = document.getElementById("googleMap");
-            var mapOptions = {
-                center: myCenter,
-                zoom: 14
-            };
-            var map = new google.maps.Map(mapCanvas, mapOptions);
-            var marker = new google.maps.Marker({
-                position: myCenter
-            });
-            marker.setMap(map);
-        }
     </script>
 
     <!-- jQuery -->
@@ -401,12 +395,23 @@
     <!-- Theme JavaScript -->
     <script src="js/pinchard.js"></script>
 
-    <?php
-    $pinchardGoogleMapsKey = pinchard_env_non_empty('GOOGLE_MAPS_API_KEY');
-    if ($pinchardGoogleMapsKey !== null) {
-        echo '<script src="https://maps.googleapis.com/maps/api/js?key=' . htmlspecialchars($pinchardGoogleMapsKey, ENT_QUOTES, 'UTF-8') . '&callback=myMap"></script>';
-    }
-    ?>
+    <?php if ($pinchardMapboxToken !== null && str_starts_with($pinchardMapboxToken, 'pk.')) : ?>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = new mapboxgl.Map({
+                accessToken: <?= json_encode($pinchardMapboxToken, $mapJe) ?>,
+                container: 'photoMap',
+                style: 'mapbox://styles/mapbox/satellite-v9',
+                center: [<?= json_encode($mapLon, $mapJe) ?>, <?= json_encode($mapLat, $mapJe) ?>],
+                zoom: 14
+            });
+            new mapboxgl.Marker()
+                .setLngLat([<?= json_encode($mapLon, $mapJe) ?>, <?= json_encode($mapLat, $mapJe) ?>])
+                .addTo(map);
+        });
+    </script>
+    <?php endif; ?>
 
     <script>
         $(document).ready(function() {
