@@ -9,6 +9,7 @@ declare(strict_types=1);
  *   text: string,
  *   label?: string,
  *   hint?: string,
+ *   class?: string,
  * } $options
  */
 function pinchard_citation_block(array $options): void
@@ -16,8 +17,10 @@ function pinchard_citation_block(array $options): void
 	$text = $options['text'];
 	$label = $options['label'] ?? 'Suggested citation';
 	$hint = $options['hint'] ?? 'Update the access date if you retrieved this material on a different day.';
+	$class = $options['class'] ?? '';
+	$blockClass = 'citation-block' . ($class !== '' ? ' ' . $class : '');
 	?>
-<div class="citation-block">
+<div class="<?= pinchard_h($blockClass) ?>">
     <div class="citation-block-header">
         <span class="citation-block-label"><?= pinchard_h($label) ?></span>
         <button type="button" class="citation-copy-btn" data-citation="<?= pinchard_h($text) ?>" aria-label="Copy citation to clipboard">Copy</button>

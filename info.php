@@ -7,7 +7,6 @@ require_once __DIR__ . '/lib/partials/layout.php';
 require_once __DIR__ . '/lib/partials/citation.php';
 
 $copyrightYear = (int) date('Y');
-$citationAccessDate = pinchard_citation_access_date();
 
 pinchard_layout_head("Pinchard's Island — About Cloudberry", [
     'description' => 'Cloudberry is a solar-powered, off-the-grid photography project documenting Pinchard\'s Island, Newfoundland — one photograph per hour.',
@@ -342,14 +341,16 @@ pinchard_layout_nav(['active' => 'info']);
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Citing this archive</h3>
-                <p>Researchers and publications are welcome to use Cloudberry photographs with attribution. Cloudberry is an automated photography system — cite the project, not an individual photographer.</p>
-                <p>The suggested format below follows the <strong>Chicago Manual of Style, Author-Date</strong> system, adapted for a born-digital photograph archive (similar to citing a website or online collection). Other styles (MLA, APA) are fine if your publisher requires them; keep the same elements: project name, image description, date captured, identifier, URL, and access date.</p>
+                <p>Researchers and publications are welcome to use Cloudberry photographs with attribution.</p>
+                <p>The suggested format below follows the <strong>Chicago Manual of Style, Author-Date</strong> system, adapted for a born-digital photograph archive (similar to citing a website or online collection).</p>
 
                 <h4>Citing the archive</h4>
                 <p>Use this when referring to the project or website as a whole.</p>
                 <?php pinchard_citation_block([
-                    'text' => pinchard_citation_archive($citationAccessDate),
+                    'text' => pinchard_citation_archive(),
                     'label' => 'Archive citation',
+                    'hint' => 'Replace the bracketed access date with the day you retrieved this material.',
+                    'class' => 'citation-block--spaced-below',
                 ]); ?>
 
                 <h4>Citing a specific photograph</h4>
@@ -369,7 +370,7 @@ pinchard_layout_nav(['active' => 'info']);
                 <h3>CONTACT</h3>
                 <p><a href="mailto:info@pinchards.is" class="link">info@pinchards.is</a></p>
                 <div class="copyright">
-                    Copyright &copy; 2017&ndash;<?= $copyrightYear ?> Adam Simms &amp; Angela Gabereaux
+                    Copyright &copy; 2017&ndash;<?= $copyrightYear ?>
                 </div>
             </div></div>
         </div>

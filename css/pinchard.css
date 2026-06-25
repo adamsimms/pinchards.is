@@ -1110,6 +1110,9 @@ body.viewer-page.has-viewer-timeline #preview_image {
     border-left: 3px solid #F05F40;
     border-radius: 4px;
 }
+.citation-block--spaced-below {
+    margin-bottom: 40px;
+}
 .citation-block-header {
     display: flex;
     align-items: center;
@@ -1554,10 +1557,9 @@ body {
 
 /* —— Gallery page —— */
 body.gallery-page {
-    --gallery-content-inset: 48px;
     --gallery-header-offset: 50px;
     --gallery-timeline-height: 52px;
-    padding-top: 50px;
+    padding-top: 0;
     overflow-x: hidden;
 }
 
@@ -1686,7 +1688,7 @@ body.gallery-page .content_area {
 }
 
 body.gallery-page #photo_container {
-    padding: 0 var(--gallery-content-inset);
+    padding: 0;
     margin-top: 0;
     border: none;
     max-width: 100%;
@@ -1715,11 +1717,14 @@ body.gallery-page .photos {
     width: 100% !important;
     max-width: 100%;
     border: none;
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+    row-gap: 0;
 }
 
 body.gallery-page .photoElement {
     padding: 0;
-    margin-bottom: 0;
+    margin: 0;
     border: none;
     overflow: hidden;
 }
@@ -1750,8 +1755,15 @@ body.gallery-page .photoElement .photoBox:not(.is-loaded)::after {
 }
 
 body.gallery-page .photoElement .photoBox img.gallery-photo {
-    width: 100% !important;
-    max-width: 100% !important;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 104% !important;
+    max-width: 104% !important;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: translateX(-50%);
     display: block;
     opacity: 0;
     transition: opacity 0.35s ease;
@@ -1971,7 +1983,6 @@ body.slideshow-page .slideshow-viewport img {
 
 @media (max-width: 767px) {
     body.gallery-page {
-        --gallery-content-inset: 24px;
         --gallery-header-offset: 50px;
         --gallery-timeline-height: 48px;
     }
@@ -1989,7 +2000,7 @@ body.slideshow-page .slideshow-viewport img {
     }
 
     body.gallery-page #photo_container {
-        padding: 0 var(--gallery-content-inset) 16px;
+        padding: 0;
     }
     .detail_content_view .title {
         font-size: 32px;

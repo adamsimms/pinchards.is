@@ -244,23 +244,14 @@ function pinchard_gps_to_decimal(array $exifCoord, ?string $hemi): ?float
 	return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
 }
 
-/** Today's date formatted for archive citations (e.g. June 25, 2026). */
-function pinchard_citation_access_date(?DateTimeInterface $when = null): string
-{
-	$dt = $when ?? new DateTimeImmutable('now');
-
-	return $dt->format('F j, Y');
-}
-
 /** Suggested citation for the Cloudberry archive as a whole. */
-function pinchard_citation_archive(?string $accessDate = null): string
+function pinchard_citation_archive(): string
 {
-	$accessed = $accessDate ?? pinchard_citation_access_date();
 	$url = pinchard_absolute_url('/');
 
 	return 'Cloudberry (Pinchard\'s Island Photography Archive). '
 		. $url
-		. '. Accessed ' . $accessed . '.';
+		. '. Accessed [Month Day, Year].';
 }
 
 /** Template for citing an individual Cloudberry photograph (replace bracketed fields). */
