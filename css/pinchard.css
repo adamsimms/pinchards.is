@@ -139,19 +139,17 @@ aside {
     width: 24px;
     height: 24px;
     vertical-align: top;
-    border: solid 1px #000000 !important;
+    border: none;
     background-size: 12px;
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;
-    border-radius: 3px;
     margin-top: 2px;
     opacity: .4;
 }
 
 .navbar-default .title .arrow:hover {
     opacity: .6;
-    border: solid 1px #F05F40 !important;
 }
 
 .navbar-default .title .arrow.left {
@@ -503,6 +501,13 @@ aside {
     background-color: white;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
+.detail_view-divider {
+    width: 100%;
+    margin: 0;
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+}
 .btn_arrow.down_arrow {
     background-image: url('../images/arrow.svg');
     transform: rotate(0deg);
@@ -583,12 +588,6 @@ aside {
 }
 .detail_content_view .inner_area {
     margin-top: 16px;
-}
-.detail_content_view .citation_rect {
-    font-family: 'circular-bold', sans-serif;
-    font-size: 18px;
-    line-height: 24px;
-    color: #F05F40;
 }
 
 .detail_view .mapcontainer {

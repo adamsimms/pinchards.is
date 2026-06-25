@@ -268,6 +268,7 @@ try {
 <?php endif; ?>
                 <button type="button" class="btn_arrow" id="detailToggle" aria-expanded="false" aria-controls="detailDrawerContent" aria-label="Show photograph details"></button>
             </div>
+            <hr class="detail_view-divider" aria-hidden="true">
             <div class="detail_drawer-inner" id="detailDrawerContent">
             <div class="row g-0">
             <div class="col-md-5 detail_container">
@@ -304,10 +305,7 @@ try {
                         </div>
                     </div>
                     <div class="inner_area">
-                        <div class="detail_rect citation_rect" aria-hidden="true">&ldquo;</div>
-                        <div class="inner_data">
-                            <button type="button" class="citation-copy-btn detail-citation-copy" data-citation="<?= pinchard_h($photoCitation) ?>" aria-label="Copy citation to clipboard">Copy citation</button>
-                        </div>
+                        <button type="button" class="citation-copy-btn detail-citation-copy" data-citation="<?= pinchard_h($photoCitation) ?>" aria-label="Copy citation to clipboard">Copy citation</button>
                     </div>
                 </div>
             </div>
