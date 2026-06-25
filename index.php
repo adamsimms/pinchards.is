@@ -19,7 +19,7 @@ try {
         $requestedFn = (string) $_GET['fn'];
     }
 
-    $array = getObjectList($cfg['s3_bucket_full']);
+    $array = getObjectList($cfg['s3_bucket_thumbnails']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 
     if ($array === []) {
@@ -36,21 +36,26 @@ try {
     $galleryContext = pinchard_gallery_context_for_photo($datetime);
 
     $tmpPath = pinchard_exif_tmp_path();
-    if (!pinchard_exif_tmp_matches_key($filename)) {
-        $s3->getObject([
-            'Bucket' => $cfg['s3_bucket_full'],
-            'Key' => $filename,
-            'SaveAs' => $tmpPath,
-        ]);
-        pinchard_exif_tmp_record_key($filename);
-    }
+    $exif = [];
 
-    if (!function_exists('exif_read_data')) {
-        throw new RuntimeException('EXIF extension is not available.');
-    }
+    try {
+        if (!pinchard_exif_tmp_matches_key($filename)) {
+            $s3->getObject([
+                'Bucket' => $cfg['s3_bucket_full'],
+                'Key' => $filename,
+                'SaveAs' => $tmpPath,
+            ]);
+            pinchard_exif_tmp_record_key($filename);
+        }
 
-    $exif = exif_read_data($tmpPath, 0, true);
-    if ($exif === false) {
+        if (function_exists('exif_read_data') && is_readable($tmpPath)) {
+            $read = exif_read_data($tmpPath, 0, true);
+            if (is_array($read)) {
+                $exif = $read;
+            }
+        }
+    } catch (Throwable $exifErr) {
+        // EXIF is optional; the viewer still works from CDN + S3 listing metadata.
         $exif = [];
     }
 
@@ -147,8 +152,7 @@ try {
         ? 'Photograph from Pinchard\'s Island — ' . $dt->format('F j, Y \a\t g:i A') . '.'
         : 'Photograph from Pinchard\'s Island.';
 
-    $extraHead = '<script src="vendor/exifjs/exif.js"></script>' . "\n";
-    $extraHead .= '    <link href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" rel="stylesheet" />' . "\n";
+    $extraHead = '<link href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" rel="stylesheet" />' . "\n";
     if ($prev_filename !== null && $prev_filename !== '') {
         $extraHead .= '    <link rel="prefetch" href="' . pinchard_h($cdnFull . $prev_filename) . '" as="image">' . "\n";
     }
