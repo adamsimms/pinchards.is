@@ -54,6 +54,28 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "${FTP_SERVER}" >> ~/.ssh/known_hosts 2>/dev/null || true
 
+      - name: Validate deploy secrets
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          set -euo pipefail
+          for name in FTP_SERVER FTP_USERNAME FTP_SERVER_DIR; do
+            if [ -z "${!name}" ]; then
+              echo "Missing secret: ${name}"
+              exit 1
+            fi
+          done
+          if [[ "${FTP_SERVER}" == *"@"* ]] || [[ "${FTP_SERVER}" == *"://"* ]]; then
+            echo "FTP_SERVER must be hostname only (e.g. iad1-shared-b8-36.dreamhost.com), not user@host or a URL."
+            exit 1
+          fi
+          if [[ "${FTP_SERVER_DIR}" != /* ]]; then
+            echo "FTP_SERVER_DIR must be an absolute path (e.g. /home/pinchard/pinchards.is), not a relative folder name."
+            exit 1
+          fi
+
       - name: Remove legacy aws-env.local.php on server
         continue-on-error: true
         env:
@@ -78,9 +100,11 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
             dry_run="--dry-run"
           fi
+          dest="${FTP_USERNAME}@${FTP_SERVER}:${server_dir}"
+          echo "rsync target: ${dest}"
           rsync -avzr --delete ${dry_run} \
             --exclude '.git/' \
             --exclude '.git*/' \
             --exclude '.github/' \
             -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22" \
-            ./ "${FTP_USERNAME}@${FTP_SERVER}:${server_dir}"
+            ./ "${dest}"
