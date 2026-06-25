@@ -53,6 +53,22 @@ foreach ($objects as $content) {
 }
 
 usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
+
+$photosByMonth = [];
+foreach ($array as $photo) {
+    $dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
+    if ($dt === false) {
+        continue;
+    }
+    $monthKey = $dt->format('Y-m');
+    if (!isset($photosByMonth[$monthKey])) {
+        $photosByMonth[$monthKey] = [
+            'label' => $dt->format('F Y'),
+            'photos' => [],
+        ];
+    }
+    $photosByMonth[$monthKey]['photos'][] = $photo;
+}
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
 	http_response_code(503);
 	header('Content-Type: text/plain; charset=utf-8');
@@ -118,14 +134,32 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
         }
 
         #photo_container {
-            padding: 0 !important;
+            padding: 8px 40px 32px !important;
             margin-top: 0px;
             border: none;
             max-width: none;
             width: 100%;
         }
 
-        #photo_container > .photos {
+        .gallery-month {
+            margin-bottom: 80px;
+        }
+
+        .gallery-month:last-child {
+            margin-bottom: 0;
+        }
+
+        .gallery-month-title {
+            font-family: 'circular-bold', 'Open Sans', sans-serif;
+            font-size: 2.75rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin: 0 0 28px;
+            color: rgba(0, 0, 0, 0.85);
+        }
+
+        #photo_container > .photos,
+        .gallery-month .photos {
             margin: 0 !important;
             border: none;
         }
@@ -144,6 +178,11 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
         .photoElement .photoBox {
             max-width: none;
             margin: 0;
+        }
+
+        .photoElement .photoBox img {
+            width: 100% !important;
+            max-width: 100% !important;
         }
 
         .photoElement a {
@@ -232,8 +271,11 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
     </nav>
     <div class="content_area">
         <div class="container-fluid px-0" id="photo_container">
-            <div class="row photos g-0" id="photos">
-                    <?php foreach ($array as $photo) : ?>
+            <?php foreach ($photosByMonth as $monthGroup) : ?>
+            <section class="gallery-month">
+                <h2 class="gallery-month-title"><?= pinchard_h($monthGroup['label']) ?></h2>
+                <div class="row photos g-3">
+                    <?php foreach ($monthGroup['photos'] as $photo) : ?>
                         <div class="col-md-5ths col-sm-6 col-12 photoElement">
                             <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
                                 <img class="lazy img-fluid" data-src="<?php echo htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8') ?>" alt="" width="288" height="224">
@@ -243,7 +285,9 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
                             </a>
                         </div>
                     <?php endforeach; ?>
-            </div>
+                </div>
+            </section>
+            <?php endforeach; ?>
         </div>
     </div>
 

@@ -595,11 +595,6 @@ option {
   width: 100%;
 }
 
-#photo_container .photoElement {
-  padding-right: 0;
-  padding-left: 0;
-}
-
 .col-5ths {
   flex: 0 0 auto;
   width: 20%;
