@@ -35,7 +35,7 @@ jobs:
         run: |
           server_dir="${{ secrets.FTP_SERVER_DIR }}"
           server_dir="${server_dir%/}"
-          curl --ftp-silent --show-error \
+          curl -sS --show-error \
             --user "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
             "ftp://${{ secrets.FTP_SERVER }}/${server_dir}/" \
             -Q "DELE aws-env.local.php"
