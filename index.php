@@ -45,7 +45,14 @@ try {
         pinchard_exif_tmp_record_key($filename);
     }
 
+    if (!function_exists('exif_read_data')) {
+        throw new RuntimeException('EXIF extension is not available.');
+    }
+
     $exif = exif_read_data($tmpPath, 0, true);
+    if ($exif === false) {
+        $exif = [];
+    }
 
     $make = trim((string) ($exif['IFD0']['Make'] ?? ''));
     $model = trim((string) ($exif['IFD0']['Model'] ?? ''));
@@ -69,15 +76,29 @@ try {
     if (isset($exif['GPS']['GPSLatitude'], $exif['GPS']['GPSLongitude'])) {
         $gps_latitude_array = $exif['GPS']['GPSLatitude'];
         $gps_longitude_array = $exif['GPS']['GPSLongitude'];
-        $gps_latitude_degree = explode('/', $gps_latitude_array[0])[0];
-        $gps_latitude_min = explode('/', $gps_latitude_array[1])[0];
-        $gps_latitude_sec = number_format(explode('/', $gps_latitude_array[2])[0] / explode('/', $gps_latitude_array[2])[1], 2);
-        $gps_longitude_degree = explode('/', $gps_longitude_array[0])[0];
-        $gps_longitude_min = explode('/', $gps_longitude_array[1])[0];
-        $gps_longitude_sec = number_format(explode('/', $gps_longitude_array[2])[0] / explode('/', $gps_longitude_array[2])[1], 2);
-        $lon = (string) getGps($exif['GPS']['GPSLongitude'], $exif['GPS']['GPSLongitudeRef']);
-        $lat = (string) getGps($exif['GPS']['GPSLatitude'], $exif['GPS']['GPSLatitudeRef']);
-        $hasGps = true;
+        if (is_array($gps_latitude_array) && count($gps_latitude_array) >= 3) {
+            $gps_latitude_degree = (string) pinchard_gps_rational_to_float($gps_latitude_array[0]);
+            $gps_latitude_min = (string) pinchard_gps_rational_to_float($gps_latitude_array[1]);
+            $gps_latitude_sec = number_format(pinchard_gps_rational_to_float($gps_latitude_array[2]), 2);
+        }
+        if (is_array($gps_longitude_array) && count($gps_longitude_array) >= 3) {
+            $gps_longitude_degree = (string) pinchard_gps_rational_to_float($gps_longitude_array[0]);
+            $gps_longitude_min = (string) pinchard_gps_rational_to_float($gps_longitude_array[1]);
+            $gps_longitude_sec = number_format(pinchard_gps_rational_to_float($gps_longitude_array[2]), 2);
+        }
+        $latDecimal = pinchard_gps_to_decimal(
+            is_array($gps_latitude_array) ? $gps_latitude_array : [],
+            isset($exif['GPS']['GPSLatitudeRef']) ? (string) $exif['GPS']['GPSLatitudeRef'] : null
+        );
+        $lonDecimal = pinchard_gps_to_decimal(
+            is_array($gps_longitude_array) ? $gps_longitude_array : [],
+            isset($exif['GPS']['GPSLongitudeRef']) ? (string) $exif['GPS']['GPSLongitudeRef'] : null
+        );
+        if ($latDecimal !== null && $lonDecimal !== null) {
+            $lat = (string) $latDecimal;
+            $lon = (string) $lonDecimal;
+            $hasGps = true;
+        }
     }
 
     $cameraLines = [];
@@ -148,36 +169,13 @@ try {
         'prev_filename' => $prev_filename,
         'next_filename' => $next_filename,
     ]);
-} catch (RuntimeException | \Aws\Exception\AwsException $e) {
-    http_response_code(503);
+} catch (Throwable $e) {
+    http_response_code($e instanceof \Aws\Exception\AwsException || $e instanceof RuntimeException ? 503 : 500);
     header('Content-Type: text/plain; charset=utf-8');
     if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
         exit($e->getMessage());
     }
     exit('Photo viewer is temporarily unavailable.');
-}
-
-function getGps(array $exifCoord, string $hemi): float
-{
-    $degrees = count($exifCoord) > 0 ? gps2Num($exifCoord[0]) : 0;
-    $minutes = count($exifCoord) > 1 ? gps2Num($exifCoord[1]) : 0;
-    $seconds = count($exifCoord) > 2 ? gps2Num($exifCoord[2]) : 0;
-    $flip = ($hemi === 'W' || $hemi === 'S') ? -1 : 1;
-
-    return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
-}
-
-function gps2Num(string $coordPart): float
-{
-    $parts = explode('/', $coordPart);
-    if (count($parts) <= 0) {
-        return 0;
-    }
-    if (count($parts) === 1) {
-        return (float) $parts[0];
-    }
-
-    return floatval($parts[0]) / floatval($parts[1]);
 }
 ?>
     <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse.">

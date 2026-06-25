@@ -87,6 +87,40 @@ function pinchard_latest_photo(array $photos): ?array
 	return $photos[count($photos) - 1];
 }
 
+/** Convert an EXIF GPS rational string (or number) to float. */
+function pinchard_gps_rational_to_float(mixed $coordPart): float
+{
+	if (is_int($coordPart) || is_float($coordPart)) {
+		return (float) $coordPart;
+	}
+	if (!is_string($coordPart)) {
+		return 0.0;
+	}
+	$parts = explode('/', $coordPart);
+	if (count($parts) === 1) {
+		return (float) $parts[0];
+	}
+	if (count($parts) >= 2 && (float) $parts[1] !== 0.0) {
+		return (float) $parts[0] / (float) $parts[1];
+	}
+
+	return 0.0;
+}
+
+/** @param list<mixed> $exifCoord */
+function pinchard_gps_to_decimal(array $exifCoord, ?string $hemi): ?float
+{
+	if ($hemi === null || $hemi === '') {
+		return null;
+	}
+	$degrees = count($exifCoord) > 0 ? pinchard_gps_rational_to_float($exifCoord[0]) : 0.0;
+	$minutes = count($exifCoord) > 1 ? pinchard_gps_rational_to_float($exifCoord[1]) : 0.0;
+	$seconds = count($exifCoord) > 2 ? pinchard_gps_rational_to_float($exifCoord[2]) : 0.0;
+	$flip = ($hemi === 'W' || $hemi === 'S') ? -1 : 1;
+
+	return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
+}
+
 /** Display title for a gallery photo (GoPro: digits after GOPR). */
 function pinchard_photo_title(string $filename): string
 {
