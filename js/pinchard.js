@@ -1,5 +1,5 @@
 (function($) {
-    "use strict"; // Start of use strict
+    "use strict";
 
     // jQuery for page scrolling feature - requires jQuery Easing plugin
     $(document).on('click', 'a.page-scroll', function(event) {
@@ -10,23 +10,31 @@
         event.preventDefault();
     });
 
-    // Highlight the top nav as scrolling occurs
-    $('body').scrollspy({
-        target: '.navbar-fixed-top',
-        offset: 51
-    });
+    // Highlight the top nav as scrolling occurs (Bootstrap 5 ScrollSpy)
+    if (typeof bootstrap !== 'undefined' && document.body) {
+        new bootstrap.ScrollSpy(document.body, {
+            target: '#mainNav',
+            offset: 51
+        });
+    }
 
-    // Closes the Responsive Menu on Menu Item Click
+    // Closes the responsive menu on menu item click
     $('.navbar-collapse ul li a').click(function() {
-        $('.navbar-toggle:visible').click();
+        $('.navbar-toggler:visible').click();
     });
 
-    // Offset for Main Navigation
-    $('#mainNav').affix({
-        offset: {
-            top: 100
-        }
-    })
+    // Bootstrap 3 affix was removed in v4; toggle the same class on scroll
+    var $mainNav = $('#mainNav');
+    if ($mainNav.length) {
+        var affixOffset = 100;
+        $(window).on('scroll', function() {
+            if ($(window).scrollTop() > affixOffset) {
+                $mainNav.addClass('affix');
+            } else {
+                $mainNav.removeClass('affix');
+            }
+        }).trigger('scroll');
+    }
 
     // Initialize and Configure Scroll Reveal Animation
     window.sr = ScrollReveal();
@@ -54,11 +62,11 @@
         gallery: {
             enabled: true,
             navigateByImgClick: true,
-            preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
+            preload: [0, 1]
         },
         image: {
             tError: '<a href="%url%">The image #%curr%</a> could not be loaded.'
         }
     });
 
-})(jQuery); // End of use strict
+})(jQuery);

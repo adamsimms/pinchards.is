@@ -50,7 +50,7 @@
 </head>
 
 <body id="page-top">
-    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+    <nav id="mainNav" class="navbar navbar-default fixed-top">
         <a href="gallery.php" class = "link-to-gallery nav_cloudberry"></a>
         <a class="nav_info active" href="info.php"></a>
         </div>
@@ -59,11 +59,11 @@
         </div>
     </nav>
 
-    <img src="images/info/pano.jpg" class="img-responsive info_img" alt="Cabin">
+    <img src="images/info/pano.jpg" class="img-fluid info_img" alt="Cabin">
 
     <div class = "how_section">
         <div class = "container">
-            <div class = "col-sm-8 col-sm-offset-2">
+            <div class = "col-sm-8 offset-sm-2">
                 <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
 
                 <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Memories.” The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
@@ -73,16 +73,16 @@
           </div>
       </div>
 
-      <img src="images/info/precious-moments.jpg" class="img-responsive info_img" alt="Cabin">
+      <img src="images/info/precious-moments.jpg" class="img-fluid info_img" alt="Cabin">
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 col-sm-offset-2">
+              <div class = "col-sm-8 offset-sm-2">
                 <h3>Okay, but why Pinchard's Island?</h3>
 
                 <p><a href="http://adamsim.ms/" target="_blank">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank">Pinchard’s Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
 
-                <img src="https://static1.squarespace.com/static/50e5fc10e4b0291e3b9b75c6/588f654e725e2506f4c22cd9/588f68e56a4963c410121736/1485793514975/10_adam_simms_sisters.jpg" class="img-responsive info_img" alt="Pinchard's Island Sisters" />
+                <img src="https://static1.squarespace.com/static/50e5fc10e4b0291e3b9b75c6/588f654e725e2506f4c22cd9/588f68e56a4963c410121736/1485793514975/10_adam_simms_sisters.jpg" class="img-fluid info_img" alt="Pinchard's Island Sisters" />
 
                 <p>Shortly after Newfoundland joined Canada as it’s 10th province, Pinchard’s Island was <a href="http://adamsim.ms/resettlement/" target="_blank">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and create new ones.<p>
               </div>
@@ -91,7 +91,7 @@
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 col-sm-offset-2">
+              <div class = "col-sm-8 offset-sm-2">
 
                 <h3>Where is Pinchard's Island?</h3>
 
@@ -105,7 +105,7 @@
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 col-sm-offset-2">
+              <div class = "col-sm-8 offset-sm-2">
                 <h3>How?</h3>
 
                 <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
@@ -118,14 +118,14 @@
           </div>
       </div>
 
-      <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank"><img src="images/info/trello.jpg" class="img-responsive info_img" alt="trello"></a>
+      <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank"><img src="images/info/trello.jpg" class="img-fluid info_img" alt="trello"></a>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 col-sm-offset-2">
+              <div class = "col-sm-8 offset-sm-2">
                 <p>Designing a system that worked was only the start of the project. Every slight adjustment that we made to the system, such as moving from electricity to solar power, putting the USB hotspot in a case or using different USB cables introduced new problems that we had to constantly monitor and resolve. Once we felt confident in our system, we had to be realistic that once the system was installed on the island, we would not be able to physically be there to troubleshoot any problem that might arise. This forced us to evaluate the entire solution and implement different components to help reduce the risk factor of the project.</p>
 
-                <img src="images/info/notebook.jpg" class="img-responsive info_img" alt="Notebook" />
+                <img src="images/info/notebook.jpg" class="img-fluid info_img" alt="Notebook" />
 
                 <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below you’ll find a system diagram and an outline of all the hardware and software used to create Cloudberry.</p>
 
@@ -134,11 +134,11 @@
           </div>
       </div>
 
-      <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank"><img src="images/info/cloudberry-system.jpg" class="img-responsive info_img" alt="Cloudberry System"></a>
+      <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img" alt="Cloudberry System"></a>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 col-sm-offset-2">
+              <div class = "col-sm-8 offset-sm-2">
                 <h3>What we used:</h3><br />
 
                 <h4><strong><a href="https://www.amazon.ca/GoPro-MAIN-91068-HERO4-BLACK/dp/B00NIYNUF2" target="_blank">GoPro HERO4 Black</a> with 16gb micro SD Card.</strong></h4>
@@ -210,40 +210,40 @@
           </div>
       </div>
 
-      <img src="images/info/boat.jpg" class="img-responsive info_img" alt="Boat" />
+      <img src="images/info/boat.jpg" class="img-fluid info_img" alt="Boat" />
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 col-sm-offset-2">
+              <div class = "col-sm-8 offset-sm-2">
                 <h3>Installation</h3>
                 <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments. We had to consider cable lengths, accessibility,  architecture of the cabin and predict the potential weather problems. Based on our research of solar irradiance for the geocoordinates of the cabin, we decided to tilt the solar panel at an angle of 20 degrees since the summer was coming to an end and the winter months would prove to be the most challenging for sunlight. We also had  instal the panel slightly over the heave of the roof to prevent the build up of ice and snow, but this was risky since it was difficult to tightly secure the panel to the roof in the event of high winds and slightly positions the panel out of the sun’s path.</p>
 
-                <img src="images/info/solar-install.jpg" class="img-responsive info_img" alt="Solar Power Install" />
+                <img src="images/info/solar-install.jpg" class="img-fluid info_img" alt="Solar Power Install" />
 
                 <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island, we were confused about what would be the best thing to capture; the landscape, the ocean, something else entirely. We were reliant on the outside structure of the cabin to orient the frame and through a process of elimination, we made a decision. Pointing the camera towards the south was directly in line with the path of the sun caused the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoided the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window and reminds us of the inside view from the cabin window.</p>
 
-                <img src="images/info/cam-do.jpg" class="img-responsive info_img" alt="Cam Do Enclosure" />
+                <img src="images/info/cam-do.jpg" class="img-fluid info_img" alt="Cam Do Enclosure" />
 
                 <p>Next, it was time to assemble the camera components together and test. We connected the Cam Do interval timer to the GoPro and powered camera via USB cable and repeater plugged into the solar power. The new USB cords we introduced were causing the camera to detect a USB power mode when the camera was turned on, which conflicted with the `autoexec` script that we wrote to take the photo, turn on WiFi and put the camera in standby mode. After half a day of troubleshooting, we had to rewrite the script to re-sequence the code to control the camera and go through a series of tests that component.</p>
 
                 <p>Once we stabilized the camera component, we introduced the Raspberry Pi and its add-ons. The initial test had this component of the system performing well; the WittyPi was booting and shutting down the Raspberry Pi on schedule, the Raspberry Pi was connecting to the GoPro WiFi enabling us to access the camera and the USB hotspot was providing the internet to upload the images to the AWS S3 Bucket. However, once we settled the Raspberry Pi and its add-ons in the Nanuk case, it significantly impacted the WiFi signal to the point where we were not able to maintain a connection to the GoPro via WiFi. This resulted in us completely rewiring the power to this component of the system to allow the Raspberry Pi be positioned as close to the camera as possible to improve the WiFi signal strength.</p>
 
-                <img src="images/info/pi.jpg" class="img-responsive info_img" alt="Cloudberry" />
+                <img src="images/info/pi.jpg" class="img-fluid info_img" alt="Cloudberry" />
 
                 <p>Once the entire system was in place, we monitored everything for a full day cycle before locking up all of the cases and leaving the island.</p>
             </div>
         </div>
     </div>
 
-    <img src="images/info/yay.jpg" class="img-responsive info_img" alt="Creators" />
+    <img src="images/info/yay.jpg" class="img-fluid info_img" alt="Creators" />
 
     <div class = "how_section">
         <div class = "container">
-            <div class = "col-sm-8 col-sm-offset-2">
+            <div class = "col-sm-8 offset-sm-2">
     </div>
     <div class = "who_section">
         <div class = "container">
-            <div class = "col-sm-8 col-sm-offset-2">
+            <div class = "col-sm-8 offset-sm-2">
                 <h3>Who Are you?</h3>
                 <div class = "row people_row">
                     <div class = "col-sm-4 people_col_1">
@@ -266,7 +266,7 @@
     </div>
     <div class = "contact_section">
         <div class = "container">
-            <div class = "col-sm-8 col-sm-offset-2">
+            <div class = "col-sm-8 offset-sm-2">
                 <h3>CONTACT</h3>
                 <p><a href="mailto:info@pinchards.is" class = "link">info@pinchards.is</a></p>
                 <div class ="copyright">
@@ -278,36 +278,36 @@
 
     <!-- Large Image
 
-    <img src="images/photo/1.jpg" class="img-responsive info_img" alt=""> -->
+    <img src="images/photo/1.jpg" class="img-fluid info_img" alt=""> -->
 
 
     <!-- Two-Up Images
 
     <div class = "row">
         <div class = "col-sm-6">
-            <img src="images/photo/1.jpg" class="img-responsive info_img" alt="">
+            <img src="images/photo/1.jpg" class="img-fluid info_img" alt="">
         </div>
         <div class = "col-sm-6">
-            <img src="images/photo/1.jpg" class="img-responsive info_img" alt="">
+            <img src="images/photo/1.jpg" class="img-fluid info_img" alt="">
         </div>
     </div> -->
 
     <!-- Thumbnail Images
     <div class = "row about_images">
         <div class = "col-sm-4">
-            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-responsive info_img" alt=""/></a>
+            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-fluid info_img" alt=""/></a>
         </div>
         <div class = "col-sm-4">
-            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-responsive info_img" alt="" /></a>
+            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-fluid info_img" alt="" /></a>
         </div>
         <div class = "col-sm-4">
-            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-responsive info_img" alt="" /></a>
+            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-fluid info_img" alt="" /></a>
         </div>
     </div> -->
 
     <!-- Hero Image
 
-    <img src="images/photo/1.jpg" class="img-responsive info_img" alt=""> -->
+    <img src="images/photo/1.jpg" class="img-fluid info_img" alt=""> -->
 
     <!-- CODE
 
@@ -331,7 +331,7 @@
     <script src="vendor/jquery/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
     <!-- Plugin JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>

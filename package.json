@@ -1,0 +1,12 @@
+{
+  "name": "pinchards-is",
+  "private": true,
+  "scripts": {
+    "vendor:frontend": "node scripts/vendor-frontend.js"
+  },
+  "devDependencies": {
+    "bootstrap": "5.3.3",
+    "jquery": "3.7.1",
+    "jquery-ui": "1.14.1"
+  }
+}

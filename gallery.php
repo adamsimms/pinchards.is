@@ -66,8 +66,6 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 
     <title>Pinchard's Island</title>
 
-    <link href="vendor/jquery-ui/jquery-ui.css" rel="stylesheet">
-
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
 
@@ -208,7 +206,7 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 <!--<body id="page-top" onload="myFunction()" >-->
 
 <body id="page-top">
-    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+    <nav id="mainNav" class="navbar navbar-default fixed-top">
         <a href="gallery.php" class="link-to-gallery nav_cloudberry active"></a>
         <a class="nav_info" href="info.php"></a>
         <div class="title">
@@ -220,9 +218,9 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
             <div class="row">
                 <div class="photos" id="photos">
                     <?php foreach ($array as $photo) : ?>
-                        <div class="col-md-5ths col-sm-6 col-xs-12 photoElement">
-                            <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
-                                <img class="lazy img-responsive" data-src="<?php echo htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8') ?>" alt="" width="288" height="224">
+                        <div class="col-md-5ths col-sm-6 col-12 photoElement">
+                            <a href="index.php?fn=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
+                                <img class="lazy img-fluid" data-src="<?php echo htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8') ?>" alt="" width="288" height="224">
                                 <div class="photo-box-caption">
                                     <div class="photo-box-caption-content"><?php echo $photo['show_date'] ?></div>
                                 </div>
@@ -236,10 +234,9 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 
     <!-- jQuery -->
     <script src="vendor/jquery/jquery.js"></script>
-    <script src="vendor/jquery-ui/jquery-ui.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
     <!-- Plugin JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>

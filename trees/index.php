@@ -10,7 +10,7 @@ pinchard_microsite_head('53 Trees', [
 	'font_awesome' => true,
 ]);
 ?>
-    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+    <nav id="mainNav" class="navbar navbar-default fixed-top">
         <a href="../gallery.php" class="link-to-gallery nav_cloudberry"></a>
         <a class="nav_info" href="../info.php"></a>
         <div class="title">

@@ -78,6 +78,13 @@ aside {
 .no-padding {
   padding: 0;
 }
+.navbar-default.affix {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+}
 .navbar-default {
   background-color: white;
   border-color: #e5e5e5;
@@ -572,19 +579,19 @@ option {
 
 
 /*five column*/
-.col-xs-5ths,
+.col-5ths,
 .col-sm-5ths,
 .col-md-5ths,
 .col-lg-5ths {
   position: relative;
-  min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
+  width: 100%;
+  padding-right: calc(var(--bs-gutter-x, 1.5rem) * .5);
+  padding-left: calc(var(--bs-gutter-x, 1.5rem) * .5);
 }
 
-.col-xs-5ths {
+.col-5ths {
+  flex: 0 0 auto;
   width: 20%;
-  float: left;
 }
 
 .day {
@@ -818,22 +825,22 @@ option {
 
 @media (min-width: 768px) {
   .col-sm-5ths {
+    flex: 0 0 auto;
     width: 20%;
-    float: left;
   }
 }
 
 @media (min-width: 992px) {
   .col-md-5ths {
+    flex: 0 0 auto;
     width: 20%;
-    float: left;
   }
 }
 
 @media (min-width: 1200px) {
   .col-lg-5ths {
+    flex: 0 0 auto;
     width: 20%;
-    float: left;
   }
 }
 /*file column end*/

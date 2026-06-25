@@ -52,13 +52,7 @@
     require_once __DIR__ . '/lib/bootstrap.php';
     $cfg = pinchard_config();
 
-    $requestedFn = null;
-    if (isset($_GET['filename']) && $_GET['filename'] !== '') {
-        $requestedFn = (string) $_GET['filename'];
-    } elseif (isset($_GET['fn']) && $_GET['fn'] !== '') {
-        // Legacy query param (pre-2026)
-        $requestedFn = (string) $_GET['fn'];
-    }
+    $requestedFn = isset($_GET['fn']) && $_GET['fn'] !== '' ? (string) $_GET['fn'] : null;
 
     $array = getObjectList($cfg['s3_bucket_full']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
@@ -188,15 +182,15 @@
     }
     ?>
 
-    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+    <nav id="mainNav" class="navbar navbar-default fixed-top">
         <a href="gallery.php" class="link-to-gallery nav_cloudberry"></a>
         <a class="nav_info" href="info.php"></a>
         <div class="title">
-            <a href="index.php?filename=<?= pinchard_h($prev_filename) ?>" <?= ($prev_filename === null || $prev_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
+            <a href="index.php?fn=<?= pinchard_h($prev_filename) ?>" <?= ($prev_filename === null || $prev_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
                 <div class="arrow left"></div>
             </a>
             <a href="index.php">pinchards.is</a>
-            <a href="index.php?filename=<?= pinchard_h($next_filename) ?>" <?= ($next_filename === null || $next_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
+            <a href="index.php?fn=<?= pinchard_h($next_filename) ?>" <?= ($next_filename === null || $next_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
                 <div class="arrow right"></div>
             </a>
         </div>
@@ -215,7 +209,14 @@
                         <div class="detail_rect title_rect"><img src="images/icon-number.svg" /></div>
                         <div class="title">
                             <?php
-                            echo pinchard_h(pathinfo($filename, PATHINFO_FILENAME));
+                            $filename_array = explode(".", $filename);
+                            $splited_file_name = "";
+                            for ($i = 0; $i < count($filename_array) - 1; $i++) {
+                                $splited_file_name .= $filename_array[$i];
+                            }
+                            $final_title = explode("GOPR", $splited_file_name);
+
+                            echo $final_title[1];
                             ?>
                         </div>
                     </div>
@@ -383,7 +384,7 @@
     <script src="vendor/jquery/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
 
     <!-- Plugin JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>

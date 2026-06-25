@@ -64,7 +64,7 @@ function pinchard_microsite_scripts_footer(): void
 {
 	?>
     <script src="../vendor/jquery/jquery.js"></script>
-    <script src="../vendor/bootstrap/js/bootstrap.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>
     <script src="../js/pinchard.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1XKSQNT5M"></script>
