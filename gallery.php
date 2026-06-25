@@ -116,6 +116,16 @@ pinchard_layout_footer([
             sections.forEach(function(section) {
                 observer.observe(section);
             });
+
+            var timelineVisibleClass = 'gallery-timeline-visible';
+            var scrollThreshold = 120;
+
+            function updateTimelineVisibility() {
+                document.body.classList.toggle(timelineVisibleClass, window.scrollY > scrollThreshold);
+            }
+
+            window.addEventListener('scroll', updateTimelineVisibility, { passive: true });
+            updateTimelineVisibility();
         });
     </script>
 JS,
