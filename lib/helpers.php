@@ -64,6 +64,17 @@ function pinchard_gallery_context_for_photo(string $date): ?array
 	];
 }
 
+/** Compact label for gallery timeline scrubber (e.g. Aug '17). */
+function pinchard_month_timeline_label(string $monthKey): string
+{
+	$dt = DateTime::createFromFormat('Y-m', $monthKey);
+	if ($dt === false) {
+		return $monthKey;
+	}
+
+	return $dt->format("M 'y");
+}
+
 /**
  * @param list<array{filename: string, date: string, show_date?: string}> $photos
  */

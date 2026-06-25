@@ -29,15 +29,24 @@ pinchard_layout_head("Pinchard's Island — Photo Gallery", [
 
 pinchard_layout_nav(['active' => 'gallery']);
 ?>
-    <div class="content_area">
-        <nav class="gallery-month-strip" aria-label="Jump to month">
+    <nav class="gallery-timeline" aria-label="Gallery timeline">
+        <div class="gallery-timeline-track">
 <?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
-            <a href="#month-<?= pinchard_h($monthKey) ?>"><?= pinchard_h($monthGroup['label']) ?></a>
+            <a href="#month-<?= pinchard_h($monthKey) ?>" class="gallery-timeline-marker" data-month="<?= pinchard_h($monthKey) ?>" title="<?= pinchard_h($monthGroup['label']) ?>">
+                <span class="gallery-timeline-label"><?= pinchard_h(pinchard_month_timeline_label($monthKey)) ?></span>
+                <span class="gallery-timeline-dot" aria-hidden="true"></span>
+            </a>
 <?php endforeach; ?>
 <?php if ($monthKeys !== []): ?>
-            <a href="#month-<?= pinchard_h($monthKeys[count($monthKeys) - 1]) ?>">Latest</a>
+            <a href="#month-<?= pinchard_h($monthKeys[count($monthKeys) - 1]) ?>" class="gallery-timeline-marker gallery-timeline-latest" title="Latest photographs">
+                <span class="gallery-timeline-label">Latest</span>
+                <span class="gallery-timeline-dot" aria-hidden="true"></span>
+            </a>
 <?php endif; ?>
-        </nav>
+        </div>
+    </nav>
+
+    <div class="content_area">
         <div class="container-fluid px-0" id="photo_container">
 <?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
             <section class="gallery-month" id="month-<?= pinchard_h($monthKey) ?>">
@@ -69,6 +78,41 @@ pinchard_layout_footer([
                 scrollDirection: 'vertical',
                 effect: 'fadeIn',
                 visibleOnly: true
+            });
+
+            var markers = document.querySelectorAll('.gallery-timeline-marker');
+            var sections = document.querySelectorAll('.gallery-month');
+            if (!markers.length || !sections.length || !('IntersectionObserver' in window)) {
+                return;
+            }
+
+            var activeMonth = null;
+
+            function setActive(monthKey) {
+                if (activeMonth === monthKey) return;
+                activeMonth = monthKey;
+                markers.forEach(function(marker) {
+                    var match = marker.classList.contains('gallery-timeline-latest')
+                        ? monthKey === sections[sections.length - 1].id.replace('month-', '')
+                        : marker.getAttribute('data-month') === monthKey;
+                    marker.classList.toggle('is-active', match);
+                });
+            }
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        setActive(entry.target.id.replace('month-', ''));
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '-45% 0px -45% 0px',
+                threshold: 0
+            });
+
+            sections.forEach(function(section) {
+                observer.observe(section);
             });
         });
     </script>
