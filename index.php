@@ -201,9 +201,6 @@ try {
     }
 
     $bodyClass = 'viewer-page';
-    if ($viewerTimeline !== null) {
-        $bodyClass .= ' has-viewer-timeline';
-    }
 
     pinchard_layout_head("Pinchard's Island — " . pinchard_photo_title($filename), [
         'description' => $ogDescription,
@@ -240,6 +237,8 @@ try {
             <div style="padding-bottom: 66.6%;"></div>
         </div>
 
+        <div class="detail_view<?= $viewerTimeline !== null ? ' has-timeline' : '' ?>" id="detailDrawer">
+            <div class="detail_view-bar">
 <?php if ($viewerTimeline !== null): ?>
 <?php
     $timelineCount = count($viewerTimeline['entries']);
@@ -247,31 +246,28 @@ try {
     $timelineDate = $viewerTimeline['entries'][$viewerTimeline['index']]['d'];
     $timelineAria = pinchard_h('Photograph ' . $timelinePosition . ' of ' . $timelineCount . ', ' . $timelineDate);
 ?>
-        <nav class="viewer-timeline" id="viewerTimeline" aria-label="Photograph timeline">
-            <div class="viewer-timeline-meta">
-                <span class="viewer-timeline-position" id="viewerTimelinePosition" aria-live="polite"><?= pinchard_h($timelineDate) ?> · <?= $timelinePosition ?> / <?= $timelineCount ?></span>
-            </div>
-            <div class="viewer-timeline-track">
-                <input
-                    type="range"
-                    class="viewer-timeline-range"
-                    id="viewerTimelineRange"
-                    min="0"
-                    max="<?= $timelineCount - 1 ?>"
-                    value="<?= $viewerTimeline['index'] ?>"
-                    step="1"
-                    aria-label="<?= $timelineAria ?>"
-                    aria-valuemin="1"
-                    aria-valuemax="<?= $timelineCount ?>"
-                    aria-valuenow="<?= $timelinePosition ?>"
-                    aria-valuetext="<?= $timelineAria ?>"
-                >
-            </div>
-        </nav>
+                <nav class="viewer-timeline" id="viewerTimeline" aria-label="Photograph timeline">
+                    <span class="viewer-timeline-date" id="viewerTimelinePosition" aria-live="polite"><?= pinchard_h($timelineDate) ?></span>
+                    <div class="viewer-timeline-track">
+                        <input
+                            type="range"
+                            class="viewer-timeline-range"
+                            id="viewerTimelineRange"
+                            min="0"
+                            max="<?= $timelineCount - 1 ?>"
+                            value="<?= $viewerTimeline['index'] ?>"
+                            step="1"
+                            aria-label="<?= $timelineAria ?>"
+                            aria-valuemin="1"
+                            aria-valuemax="<?= $timelineCount ?>"
+                            aria-valuenow="<?= $timelinePosition ?>"
+                            aria-valuetext="<?= $timelineAria ?>"
+                        >
+                    </div>
+                </nav>
 <?php endif; ?>
-
-        <div class="detail_view" id="detailDrawer">
-            <button type="button" class="btn_arrow" id="detailToggle" aria-expanded="false" aria-controls="detailDrawerContent" aria-label="Show photograph details"></button>
+                <button type="button" class="btn_arrow" id="detailToggle" aria-expanded="false" aria-controls="detailDrawerContent" aria-label="Show photograph details"></button>
+            </div>
             <div class="detail_drawer-inner" id="detailDrawerContent">
             <div class="row g-0">
             <div class="col-md-5 detail_container">
@@ -393,11 +389,10 @@ $footerScripts = <<<'JS'
                     var entry = timelineEntry(idx);
                     var position = idx + 1;
                     var count = timeline.entries.length;
-                    var text = entry.d + ' · ' + position + ' / ' + count;
                     timelineRange.setAttribute('aria-valuenow', String(position));
                     timelineRange.setAttribute('aria-valuetext', 'Photograph ' + position + ' of ' + count + ', ' + entry.d);
                     if (timelinePosition) {
-                        timelinePosition.textContent = text;
+                        timelinePosition.textContent = entry.d;
                     }
                 }
 
