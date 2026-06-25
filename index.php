@@ -49,8 +49,6 @@
 <body id="page-top">
     <?php
 
-    use Aws\Exception\AwsException;
-
     try {
     require_once __DIR__ . '/lib/bootstrap.php';
     $cfg = pinchard_config();
@@ -188,7 +186,7 @@
 
         return floatval($parts[0]) / floatval($parts[1]);
     }
-    } catch (RuntimeException | AwsException $e) {
+    } catch (RuntimeException | \Aws\Exception\AwsException $e) {
         http_response_code(503);
         header('Content-Type: text/plain; charset=utf-8');
         if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {

@@ -1,8 +1,6 @@
 <?php
 require_once __DIR__ . '/lib/bootstrap.php';
 
-use Aws\Exception\AwsException;
-
 try {
 $cfg = pinchard_config();
 
@@ -55,7 +53,7 @@ foreach ($objects as $content) {
 }
 
 usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
-} catch (RuntimeException | AwsException $e) {
+} catch (RuntimeException | \Aws\Exception\AwsException $e) {
 	http_response_code(503);
 	header('Content-Type: text/plain; charset=utf-8');
 	if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
