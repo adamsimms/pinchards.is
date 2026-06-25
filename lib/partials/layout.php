@@ -85,6 +85,9 @@ function pinchard_layout_nav(array $options = []): void
             <a href="slideshow.php" class="<?= pinchard_h($slideshowClass) ?>" aria-label="Watch slideshow"></a>
 <?php endif; ?>
         </div>
+<?php if ($active === 'slideshow'): ?>
+        <span class="nav-slideshow-date" id="navSlideshowDate" aria-live="polite"></span>
+<?php endif; ?>
         <a class="<?= pinchard_h($infoClass) ?>" href="info.php" aria-label="About this project"></a>
         <div class="title">
 <?php if ($active === 'index'): ?>
@@ -93,9 +96,6 @@ function pinchard_layout_nav(array $options = []): void
             </a>
 <?php endif; ?>
             <a href="index.php"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>pinchards.is</a>
-<?php if ($active === 'slideshow'): ?>
-            <span class="nav-slideshow-date" id="navSlideshowDate" aria-live="polite"></span>
-<?php endif; ?>
 <?php if ($active === 'index'): ?>
             <a href="index.php?filename=<?= pinchard_h($next) ?>" class="nav-photo-next" aria-label="Next photograph"<?= ($next === null || $next === '') ? ' hidden' : '' ?>>
                 <div class="arrow right" aria-hidden="true"></div>
