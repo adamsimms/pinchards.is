@@ -278,7 +278,7 @@ button:hover {
 
 #weather-info {
 	position: absolute;
-    bottom: -100px;
+    bottom: 0;
     left: 0px;
     width: 100%;
 	height: 32px;
@@ -304,6 +304,14 @@ button:hover {
     -moz-transition: 1s ease-in-out;
     -o-transition: 1s ease-in-out;
     transition: 1s ease-in-out;
+}
+
+#weather-info.is-open {
+	bottom: 0;
+}
+
+#weather-info.is-closed {
+	bottom: -10%;
 }
 
 #weather-text {
@@ -349,7 +357,8 @@ button:hover {
 }
 
 #weather-in  {
-	opacity: 0.6;
+	opacity: 0;
+	pointer-events: none;
 	display: block;
 	position: absolute;
 	right: 28px;
@@ -362,22 +371,28 @@ button:hover {
 	font-size: 24px;
 	color: rgba(0, 255, 0, 0.73);
 	z-index: 106;
-	-webkit-transition: 0.5s ease-in-out;
-    -moz-transition: 0.5s ease-in-out;
-    -o-transition: 0.5s ease-in-out;
-    transition: 0.5s ease-in-out;
+	cursor: pointer;
+	-webkit-transition: opacity 0.5s ease-in-out;
+    -moz-transition: opacity 0.5s ease-in-out;
+    -o-transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
 	background-image: url('info.svg');
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center;
 }
 
-#weather-in:hover {
+#weather-in.is-visible {
+	opacity: 0.6;
+	pointer-events: auto;
+}
+
+#weather-in.is-visible:hover {
 	opacity: 0.9;
-	-webkit-transition: 0.25s ease-in-out;
-    -moz-transition: 0.25s ease-in-out;
-    -o-transition: 0.25s ease-in-out;
-    transition: 0.25s ease-in-out
+	-webkit-transition: opacity 0.25s ease-in-out;
+    -moz-transition: opacity 0.25s ease-in-out;
+    -o-transition: opacity 0.25s ease-in-out;
+    transition: opacity 0.25s ease-in-out;
 }
 
 #weather-bt  {

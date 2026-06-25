@@ -6656,6 +6656,11 @@ function IonVR ( options ) {
 
     this.options = extend( {}, defaults, options );
 
+    this.weatherBarOpen = true;
+    this.weatherInfoIdleMs = 3000;
+    this._weatherInfoTimer = null;
+    this._weatherChromeReady = false;
+
     this.animations = {};
     this.autorotations = {};
     this.interfaces = [];
@@ -6890,6 +6895,10 @@ IonVR.prototype = {
             this.weather_text.id = 'weather-text';
 			// this.weather_text.style.z-index = 110;
             this.weather_info.appendChild( this.weather_text );
+
+			this.weather_info.classList.add('is-open');
+			this.weather_in.classList.remove('is-visible');
+			this.initWeatherChrome();
         };
 
 		var nl = pinchardNlNow();
@@ -6943,12 +6952,75 @@ IonVR.prototype = {
 
     },
 
+	initWeatherChrome : function () {
+		if ( this._weatherChromeReady || !this.options.weather_info ) return;
+		this._weatherChromeReady = true;
+
+		var self = this;
+		var onActivity = function () {
+			self.onWeatherPointerActivity();
+		};
+
+		this.container.addEventListener('mousemove', onActivity);
+		this.container.addEventListener('touchstart', onActivity, { passive: true });
+		this.container.addEventListener('touchmove', onActivity, { passive: true });
+	},
+
+	onWeatherPointerActivity : function () {
+		if ( this.weatherBarOpen ) return;
+
+		var info = document.getElementById('weather-in');
+		if ( !info ) return;
+
+		info.classList.add('is-visible');
+		this.resetWeatherInfoIdleTimer();
+	},
+
+	resetWeatherInfoIdleTimer : function () {
+		this.clearWeatherInfoIdleTimer();
+
+		var self = this;
+		this._weatherInfoTimer = setTimeout(function () {
+			if ( !self.weatherBarOpen ) {
+				var info = document.getElementById('weather-in');
+				if ( info ) info.classList.remove('is-visible');
+			}
+		}, this.weatherInfoIdleMs);
+	},
+
+	clearWeatherInfoIdleTimer : function () {
+		if ( this._weatherInfoTimer ) {
+			clearTimeout( this._weatherInfoTimer );
+			this._weatherInfoTimer = null;
+		}
+	},
+
+	setWeatherBarOpen : function ( open ) {
+		this.weatherBarOpen = open;
+
+		var bar = document.getElementById('weather-info');
+		var info = document.getElementById('weather-in');
+		if ( !bar || !info ) return;
+
+		if ( open ) {
+			bar.classList.add('is-open');
+			bar.classList.remove('is-closed');
+			info.classList.remove('is-visible');
+			this.clearWeatherInfoIdleTimer();
+		} else {
+			bar.classList.add('is-closed');
+			bar.classList.remove('is-open');
+			info.classList.remove('is-visible');
+			this.clearWeatherInfoIdleTimer();
+		}
+	},
+
 	showUI : function() {
-		document.getElementById('weather-info').style.bottom="0%"
+		this.setWeatherBarOpen(true);
 	},
 
 	hideUI : function() {
-		document.getElementById('weather-info').style.bottom="-10%"
+		this.setWeatherBarOpen(false);
 	},
 
 	soundSwitch: function() {
