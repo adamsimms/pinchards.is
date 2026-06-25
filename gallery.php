@@ -118,13 +118,15 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
         }
 
         #photo_container {
-            padding: 0px;
+            padding: 0 !important;
             margin-top: 0px;
             border: none;
+            max-width: none;
+            width: 100%;
         }
 
         #photo_container > .photos {
-            margin: 0px !important;
+            margin: 0 !important;
             border: none;
         }
 
@@ -137,6 +139,11 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
             padding: 0px;
             margin-bottom: 0px;
             border: none;
+        }
+
+        .photoElement .photoBox {
+            max-width: none;
+            margin: 0;
         }
 
         .photoElement a {
@@ -224,7 +231,7 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
         </div>
     </nav>
     <div class="content_area">
-        <div class="container" id="photo_container">
+        <div class="container-fluid px-0" id="photo_container">
             <div class="row photos g-0" id="photos">
                     <?php foreach ($array as $photo) : ?>
                         <div class="col-md-5ths col-sm-6 col-12 photoElement">

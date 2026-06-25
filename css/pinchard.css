@@ -437,8 +437,7 @@ aside {
 .photoBox {
     position: relative;
     display: block;
-    max-width: 650px;
-    margin: 0 auto;
+    width: 100%;
     overflow: hidden;
     border-radius: 4px;
 }
@@ -594,8 +593,11 @@ option {
 .col-lg-5ths {
   position: relative;
   width: 100%;
-  padding-right: calc(var(--bs-gutter-x, 1.5rem) * .5);
-  padding-left: calc(var(--bs-gutter-x, 1.5rem) * .5);
+}
+
+#photo_container .photoElement {
+  padding-right: 0;
+  padding-left: 0;
 }
 
 .col-5ths {
