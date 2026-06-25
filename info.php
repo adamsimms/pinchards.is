@@ -48,19 +48,22 @@ pinchard_layout_nav(['active' => 'info']);
         </p>
     </div>
 
-    <div class="info-toc">
-        <nav aria-label="On this page">
-            <a href="#about">About</a>
-            <a href="#why">Why</a>
-            <a href="#where">Where</a>
-            <a href="#how">How</a>
-            <a href="#hardware">Hardware</a>
-            <a href="#installation">Installation</a>
-            <a href="#who">Who</a>
-            <a href="#contact">Contact</a>
-        </nav>
-    </div>
+    <div class="info-layout">
+        <aside class="info-toc" aria-label="Table of contents">
+            <p class="info-toc-heading">On this page</p>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#why">Why</a>
+                <a href="#where">Where</a>
+                <a href="#how">How</a>
+                <a href="#hardware">Hardware</a>
+                <a href="#installation">Installation</a>
+                <a href="#who">Who</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </aside>
 
+        <main class="info-main">
     <div class="how_section" id="about">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
@@ -355,6 +358,9 @@ pinchard_layout_nav(['active' => 'info']);
                 </div>
             </div></div>
         </div>
+    </div>
+
+        </main>
     </div>
 
 <?php pinchard_layout_footer(); ?>
