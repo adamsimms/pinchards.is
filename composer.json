@@ -1,0 +1,14 @@
+{
+    "name": "adamsimms/pinchards.is",
+    "description": "Pinchards.is — S3 photo gallery and minisites",
+    "require": {
+        "php": ">=8.1",
+        "aws/aws-sdk-php": "^3.271"
+    },
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.1.0"
+        }
+    }
+}

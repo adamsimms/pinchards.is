@@ -30,7 +30,7 @@ function pinchard_config(): array
 	return $cfg ??= require __DIR__ . '/config.php';
 }
 
-require pinchard_root() . '/vendor/aws/vendor/autoload.php';
+require pinchard_root() . '/vendor/autoload.php';
 
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
