@@ -50,7 +50,7 @@ pinchard_layout_nav(['active' => 'gallery']);
                 <section class="gallery-month" id="month-<?= pinchard_h($monthKey) ?>" aria-label="<?= pinchard_h($monthGroup['label']) ?>">
                     <div class="row photos g-0">
 <?php foreach ($monthGroup['photos'] as $photo): ?>
-                        <div class="col-md-5ths col-sm-6 col-12 photoElement">
+                        <div class="col-md-5ths col-12 photoElement">
                             <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
                                 <img class="gallery-photo img-fluid" data-src="<?= pinchard_h($cdnurl . $photo['filename']) ?>" alt="<?= pinchard_h($photo['show_date'] ?? '') ?>" width="288" height="224">
                                 <div class="photo-box-caption">

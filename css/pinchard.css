@@ -350,7 +350,8 @@ aside {
 .navbar-default .nav_info {
     position: absolute;
     right: 16px;
-    top: 16px;
+    top: 50%;
+    transform: translateY(-50%);
     background: url(../images/icon-info.svg) no-repeat;
     background-size: contain;
     height: 24px;
@@ -967,12 +968,28 @@ option {
 
 @media (max-width: 767px) {
     .viewer-timeline {
-        gap: 8px;
-        padding-left: 12px;
+        gap: 0;
+        padding: 0 4px 0 12px;
     }
 
     .viewer-timeline-date {
-        font-size: 11px;
+        display: none;
+    }
+
+    .navbar-default .nav-slideshow-date {
+        display: none;
+    }
+
+    .navbar-default .nav-slideshow-control {
+        padding: 0;
+        border: none;
+        background: transparent;
+        min-width: 24px;
+    }
+
+    .navbar-default .nav-slideshow-control:not(.is-paused):hover,
+    .navbar-default .nav-slideshow-control:not(.is-paused):focus {
+        border: none;
     }
 }
 
@@ -1817,23 +1834,6 @@ body.gallery-page .photo-date-mobile {
     display: none;
 }
 
-@media (max-width: 767px) {
-    body.gallery-page .photo-box-caption {
-        opacity: 1;
-        background: rgba(255, 255, 255, 0.85);
-        height: auto;
-        min-height: 36px;
-        position: relative;
-    }
-    body.gallery-page .photoBox .photo-box-caption .photo-box-caption-content {
-        position: relative;
-        top: auto;
-        transform: none;
-        padding: 8px;
-        font-size: 14px;
-    }
-}
-
 /* —— Info page TOC & status —— */
 body.info-page .info-layout {
     display: grid;
@@ -1997,41 +1997,110 @@ body.slideshow-page .slideshow-viewport img {
     body.info-page .info-toc {
         position: sticky;
         top: 50px;
-        padding: 16px 0;
-        margin-bottom: 8px;
+        z-index: 100;
+        padding: 8px 0 10px;
+        margin: 0 -20px;
         border-right: none;
         border-bottom: 1px solid #e5e5e5;
         background: rgba(255, 255, 255, 0.97);
+        align-self: stretch;
     }
 
     body.info-page .info-toc nav {
         display: flex;
-        flex-direction: column;
-        gap: 2px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding: 0 20px;
+    }
+
+    body.info-page .info-toc nav::-webkit-scrollbar {
+        display: none;
     }
 
     body.info-page .info-toc a {
-        padding: 6px 0 6px 10px;
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-size: 13px;
+        line-height: 1.2;
+        padding: 8px 12px;
         margin-left: 0;
+        border-left: none;
+        border-bottom: 2px solid transparent;
+    }
+
+    body.info-page .info-toc a:hover,
+    body.info-page .info-toc a:focus,
+    body.info-page .info-toc a.is-active {
+        border-left-color: transparent;
+        border-bottom-color: #F05F40;
+    }
+
+    body.info-page .info-main [id] {
+        scroll-margin-top: 108px;
     }
 }
 
 @media (max-width: 767px) {
     body.gallery-page {
         --gallery-header-offset: 50px;
-        --gallery-timeline-height: 48px;
+        --gallery-timeline-height: 40px;
+        --gallery-photo-bleed: 100%;
     }
 
     body.gallery-page .gallery-header {
-        padding: 6px 0 6px;
+        padding: 4px 0;
     }
 
     body.gallery-page .gallery-timeline-scroll {
-        padding: 4px 4px 4px;
+        padding: 2px 0;
+    }
+
+    body.gallery-page .gallery-timeline-track {
+        width: max-content;
+        min-width: 100%;
+        min-height: calc(var(--gallery-timeline-height) - 8px);
+        padding: 0 12px;
+        gap: 0;
+    }
+
+    body.gallery-page .gallery-timeline-track::before {
+        left: 12px;
+        right: 12px;
+    }
+
+    body.gallery-page .gallery-timeline-marker {
+        flex: 0 0 auto;
+        min-width: 48px;
+        padding: 0 8px;
+        gap: 4px;
     }
 
     body.gallery-page .gallery-timeline-label {
-        font-size: 11px;
+        font-size: 10px;
+    }
+
+    body.gallery-page .gallery-timeline-latest .gallery-timeline-label {
+        font-size: 9px;
+    }
+
+    body.gallery-page .gallery-month {
+        margin-bottom: 0;
+    }
+
+    body.gallery-page .gallery-month:last-child {
+        margin-bottom: 0;
+    }
+
+    body.gallery-page .photoElement .photoBox {
+        border-radius: 0;
+    }
+
+    body.gallery-page .photo-box-caption {
+        display: none;
     }
 
     body.gallery-page #photo_container {
