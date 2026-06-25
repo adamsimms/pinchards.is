@@ -3,55 +3,9 @@ require_once __DIR__ . '/lib/bootstrap.php';
 
 try {
 $cfg = pinchard_config();
-
-if (isset($_GET['cury'], $_GET['curm']) && !empty($_GET['cury']) && !empty($_GET['curm'])) {
-    $current_year = $_GET['cury'];
-    $current_month = $_GET['curm'];
-} else {
-    $current_month = date('m');
-    $current_year = date('Y');
-}
-
 $cdnurl = $cfg['cdn_url_thumbnails'];
 
-$array = [];
-$supported_image = ['gif', 'jpg', 'jpeg', 'png'];
-$validYearArray = [];
-$validMonthArray = [];
-$objects = $s3->getIterator('ListObjects', [
-    'Bucket' => $cfg['s3_bucket_thumbnails'],
-]);
-
-foreach ($objects as $content) {
-    if ($content['Key']) {
-        $ext = strtolower(pathinfo($content['Key'], PATHINFO_EXTENSION));
-        if (in_array($ext, $supported_image)) {
-            $dateString = $content['Key'];
-            $dateString = explode("_", $dateString)[0];
-            if (strrpos($dateString, "/")) {
-                $dateString = substr($dateString, strrpos($dateString, "/") + 1);
-            }
-            //$date = DateTime::createFromFormat('Y-m-d\TH:i:s.000\Z', $dateString);
-            $date = (new DateTime)->setTimestamp(strtotime($dateString));
-            $formatted_date = date_format($date, "Y/m/d H:i:s");
-            $year = date_format($date, "Y");
-            $month = date_format($date, "m");
-            $show_date = date_format($date, "M j @ H:i");
-
-            $array[] = [
-                "filename" => $content['Key'],
-                "date" => $formatted_date,
-                "show_date" => $show_date,
-            ];
-
-            $year_month = $year . "-" . $month;
-            if (!in_array($year_month, $validMonthArray)) {
-                $validMonthArray[] = $year_month;
-            }
-        }
-    }
-}
-
+$array = getObjectList($cfg['s3_bucket_thumbnails']);
 usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 
 $photosByMonth = [];

@@ -6,3 +6,5 @@ node_modules/
 cookies.txt
 secrets.local.php
 aws-env.local.php
+images/photo/.cache/
+images/photo/tmp.jpg

@@ -8,6 +8,17 @@ function pinchard_h(?string $value): string
 	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+/** Display title for a gallery photo (GoPro: digits after GOPR). */
+function pinchard_photo_title(string $filename): string
+{
+	$basename = pathinfo($filename, PATHINFO_FILENAME);
+	if (preg_match('/GOPR(\d+)/i', $basename, $matches)) {
+		return $matches[1];
+	}
+
+	return $basename;
+}
+
 /**
  * Resolve a gallery photo by filename (allowlist). Unknown fn falls back to latest photo.
  *

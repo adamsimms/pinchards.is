@@ -49,35 +49,47 @@
 
 </head>
 
-<body id="page-top">
+<body id="page-top" class="info-page">
     <nav id="mainNav" class="navbar navbar-default fixed-top">
-        <a href="gallery.php" class = "link-to-gallery nav_cloudberry"></a>
+        <a href="gallery.php" class="link-to-gallery nav_cloudberry"></a>
         <a class="nav_info active" href="info.php"></a>
-        </div>
-        <div class = "title">
+        <div class="title">
             <a href="index.php">pinchards.is</a>
         </div>
     </nav>
 
-    <img src="images/info/pano.jpg" class="img-fluid info_img" alt="Cabin">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <img src="images/info/pano.jpg" class="img-fluid info_img" alt="Cabin">
+            </div>
+        </div>
+    </div>
 
     <div class = "how_section">
         <div class = "container">
-            <div class = "col-sm-8 offset-sm-2">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
 
                 <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Memories.” The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
                 <p>The view is static–in the sense that camera is always capturing the same frame; however, the lighting of the frame can vary drastically from one image to another. These photographs are a continuation of the moments the locals spend in the cabin glancing out the window at the surrounding landscape. </p>
             </div>
+            </div>
           </div>
       </div>
 
-      <img src="images/info/precious-moments.jpg" class="img-fluid info_img" alt="Cabin">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <img src="images/info/precious-moments.jpg" class="img-fluid info_img" alt="Cabin">
+            </div>
+        </div>
+    </div>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 offset-sm-2">
+              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Okay, but why Pinchard's Island?</h3>
 
                 <p><a href="http://adamsim.ms/" target="_blank">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank">Pinchard’s Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
@@ -86,26 +98,36 @@
 
                 <p>Shortly after Newfoundland joined Canada as it’s 10th province, Pinchard’s Island was <a href="http://adamsim.ms/resettlement/" target="_blank">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and create new ones.<p>
               </div>
+            </div>
           </div>
       </div>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 offset-sm-2">
+              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
 
                 <h3>Where is Pinchard's Island?</h3>
 
                 <p>Pinchard's Island is situated at the northern edge of Bonavista Bay, Newfoundland, Canada. It was one of the first settled sites in Bonavista Bay but is no longer inhabited.</p>
 
               </div>
+            </div>
           </div>
       </div>
 
-<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20855.569930035457!2d-53.48462861918841!3d49.20157937004537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4b75e272b66fd9bf%3A0xe011372b0d414175!2sPinchards+Island%2C+New-Wes-Valley%2C+NL+A0G+3L0%2C+Canada!5e0!3m2!1sen!2sgr!4v1503767433902" width="100%" height="500" frameborder="0" style="border:0" allowfullscreen></iframe>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="info-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20855.569930035457!2d-53.48462861918841!3d49.20157937004537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4b75e272b66fd9bf%3A0xe011372b0d414175!2sPinchards+Island%2C+New-Wes-Valley%2C+NL+A0G+3L0%2C+Canada!5e0!3m2!1sen!2sgr!4v1503767433902" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map of Pinchard's Island"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 offset-sm-2">
+              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>How?</h3>
 
                 <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
@@ -115,14 +137,21 @@
                 <p>We used <a href="http://www.trello.com/" target="_blank">Trello</a> to plan every aspect of the project, communicate, and document ongoing research:</p>
 
               </div>
+            </div>
           </div>
       </div>
 
-      <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank"><img src="images/info/trello.jpg" class="img-fluid info_img" alt="trello"></a>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank"><img src="images/info/trello.jpg" class="img-fluid info_img" alt="trello"></a>
+            </div>
+        </div>
+    </div>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 offset-sm-2">
+              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <p>Designing a system that worked was only the start of the project. Every slight adjustment that we made to the system, such as moving from electricity to solar power, putting the USB hotspot in a case or using different USB cables introduced new problems that we had to constantly monitor and resolve. Once we felt confident in our system, we had to be realistic that once the system was installed on the island, we would not be able to physically be there to troubleshoot any problem that might arise. This forced us to evaluate the entire solution and implement different components to help reduce the risk factor of the project.</p>
 
                 <img src="images/info/notebook.jpg" class="img-fluid info_img" alt="Notebook" />
@@ -131,14 +160,21 @@
 
                 <h3>The Cloudberry System</h3>
               </div>
+            </div>
           </div>
       </div>
 
-      <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img" alt="Cloudberry System"></a>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img" alt="Cloudberry System"></a>
+            </div>
+        </div>
+    </div>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 offset-sm-2">
+              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>What we used:</h3><br />
 
                 <h4><strong><a href="https://www.amazon.ca/GoPro-MAIN-91068-HERO4-BLACK/dp/B00NIYNUF2" target="_blank">GoPro HERO4 Black</a> with 16gb micro SD Card.</strong></h4>
@@ -207,14 +243,21 @@
                 <h4><strong><a href="https://github.com/KonradIT/goprowifihack" target="_blank">GoPro WiFi Hack</a> from KonradIT</strong></h4>
                 <p>A series of wifi commands that enable to to control the GoPro remotely.</p><br />
               </div>
+            </div>
           </div>
       </div>
 
-      <img src="images/info/boat.jpg" class="img-fluid info_img" alt="Boat" />
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <img src="images/info/boat.jpg" class="img-fluid info_img" alt="Boat">
+            </div>
+        </div>
+    </div>
 
       <div class = "how_section">
           <div class = "container">
-              <div class = "col-sm-8 offset-sm-2">
+              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Installation</h3>
                 <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments. We had to consider cable lengths, accessibility,  architecture of the cabin and predict the potential weather problems. Based on our research of solar irradiance for the geocoordinates of the cabin, we decided to tilt the solar panel at an angle of 20 degrees since the summer was coming to an end and the winter months would prove to be the most challenging for sunlight. We also had  instal the panel slightly over the heave of the roof to prevent the build up of ice and snow, but this was risky since it was difficult to tightly secure the panel to the roof in the event of high winds and slightly positions the panel out of the sun’s path.</p>
 
@@ -232,18 +275,21 @@
 
                 <p>Once the entire system was in place, we monitored everything for a full day cycle before locking up all of the cases and leaving the island.</p>
             </div>
+            </div>
         </div>
     </div>
 
-    <img src="images/info/yay.jpg" class="img-fluid info_img" alt="Creators" />
-
-    <div class = "how_section">
-        <div class = "container">
-            <div class = "col-sm-8 offset-sm-2">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <img src="images/info/yay.jpg" class="img-fluid info_img" alt="Creators">
+            </div>
+        </div>
     </div>
-    <div class = "who_section">
+
+    <div class="who_section">
         <div class = "container">
-            <div class = "col-sm-8 offset-sm-2">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Who Are you?</h3>
                 <div class = "row people_row">
                     <div class = "col-sm-4 people_col_1">
@@ -262,16 +308,18 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
     </div>
-    <div class = "contact_section">
+    <div class="contact_section">
         <div class = "container">
-            <div class = "col-sm-8 offset-sm-2">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>CONTACT</h3>
                 <p><a href="mailto:info@pinchards.is" class = "link">info@pinchards.is</a></p>
                 <div class ="copyright">
                     Copyright @2017
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -364,15 +412,14 @@
     </script>
 
     <!-- Google Analytics -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1XKSQNT5M"></script>
     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
 
-      ga('create', 'UA-106248699-1', 'auto');
-      ga('send', 'pageview');
-
+         gtag('config', 'G-G1XKSQNT5M');
     </script>
 </body>
 

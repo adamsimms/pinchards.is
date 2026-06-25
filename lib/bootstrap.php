@@ -18,6 +18,7 @@ if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/s3_cache.php';
 
 function pinchard_root(): string
 {
@@ -64,6 +65,19 @@ if ($awsKey !== null && $awsSecret !== null) {
 $s3 = new S3Client($s3Config);
 
 function getObjectList(string $bucket): array
+{
+	$cached = pinchard_s3_list_cache_read($bucket);
+	if ($cached !== null) {
+		return $cached;
+	}
+
+	$array = pinchard_s3_fetch_object_list($bucket);
+	pinchard_s3_list_cache_write($bucket, $array);
+
+	return $array;
+}
+
+function pinchard_s3_fetch_object_list(string $bucket): array
 {
 	global $s3;
 	$array = [];

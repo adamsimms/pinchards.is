@@ -76,13 +76,17 @@
     $prev_filename = $resolved['prev_filename'];
     $next_filename = $resolved['next_filename'];
 
-    $result_1 = $s3->getObject([
-        'Bucket' => $cfg['s3_bucket_full'],
-        'Key' => $filename,
-        'SaveAs' => __DIR__ . '/images/photo/tmp.jpg',
-    ]);
+    $tmpPath = pinchard_exif_tmp_path();
+    if (!pinchard_exif_tmp_matches_key($filename)) {
+        $s3->getObject([
+            'Bucket' => $cfg['s3_bucket_full'],
+            'Key' => $filename,
+            'SaveAs' => $tmpPath,
+        ]);
+        pinchard_exif_tmp_record_key($filename);
+    }
 
-    $exif = exif_read_data(__DIR__ . '/images/photo/tmp.jpg', 0, true);
+    $exif = exif_read_data($tmpPath, 0, true);
 
     $make = $exif['IFD0']['Make'] ?? '';
     $model = $exif['IFD0']['Model'] ?? '';
@@ -225,7 +229,7 @@
                         <div class="detail_rect title_rect"><img src="images/icon-number.svg" /></div>
                         <div class="title">
                             <?php
-                            echo pinchard_h(pathinfo($filename, PATHINFO_FILENAME));
+                            echo pinchard_h(pinchard_photo_title($filename));
                             ?>
                         </div>
                     </div>
