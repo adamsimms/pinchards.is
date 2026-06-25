@@ -6870,7 +6870,7 @@ IonVR.prototype = {
 		var cTime = new Date(currentDate).toLocaleTimeString();
 		var cDay = currentDate.substring(8, 10);
 		var cM = currentDate.substring(5, 7);
-		var month = ion.data.param.months[01].toString();
+		var month = ion.data.param.months[parseInt(cM, 10)] || '';
 
 		// console.log(cM, MMMM);
 
@@ -6885,7 +6885,7 @@ IonVR.prototype = {
         this.weather_dot.innerHTML =
 		'●';
         this.weather_text.innerHTML =
-		'&nbsp&nbsp' + 'Atlantic Ocean, ' + month + ' ' + cDay + ' at ' + cTime +
+		'&nbsp&nbsp' + "Pinchard's Island, " + month + ' ' + cDay + ' at ' + cTime +
 		'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
 
 		this.weather_text.appendChild(iconW.documentElement);
@@ -8372,34 +8372,27 @@ IonVR.prototype = {
 
 	fetchWeather : function () {
 
-		var today = new Date();
-		var dd = String(today.getDate()).padStart(2, '0');
-		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-		var yyyy = today.getFullYear();
+		fetch('weather.php')
+			.then(function (res) {
+				if (!res.ok) {
+					throw new Error('Weather HTTP ' + res.status);
+				}
+				return res.json();
+			})
+			.then(function (data) {
+				if (data && data.current) {
+					ion.data.param.live_data = data;
+					ion.updateWeather();
+					ion.updateSun();
+				}
+			})
+			.catch(function (err) {
+				console.warn('Weather fetch failed', err);
+			});
 
-		var todayAstro = 'http://api.weatherapi.com/v1/astronomy.json?key=86e2cee98e40449a969174824200812&q=47.7086, -52.7144&dt=' + yyyy + '-' + mm + '-' + dd;
-		console.log(todayAstro);
-
-
-		fetch('http://api.weatherapi.com/v1/current.json?key=86e2cee98e40449a969174824200812&q=47.7086, -52.7144').then(res => res.json()).then(data => ion.data.param.live_data = data);
-		// fetch(todayAstro).then(res => res.json()).then(data => ion.data.param.live_astro = data);
-
-		setTimeout(stepOne, 3000);
-		setTimeout(stepTwo, 300000);
-
-		function stepOne() {
-			ion.updateWeather();
-			ion.updateSun();
-
-			// if ( ion.options.weather_info !== false && undefined ) {
-				// ion.showLiveWeather();
-			// }
-
-		}
-
-		function stepTwo() {
+		setTimeout(function () {
 			ion.fetchWeather();
-		}
+		}, 300000);
 
 	},
 

@@ -49,7 +49,6 @@ function pinchard_geomet_fetch_json(string $url): ?array
 	$body = curl_exec($curl);
 	$err = curl_error($curl);
 	$code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
-	curl_close($curl);
 
 	if ($err || !is_string($body) || $body === '' || $code >= 400) {
 		return null;
@@ -186,4 +185,79 @@ function pinchard_geomet_weather_payload(float $lat = PINCHARD_WEATHER_LAT, floa
 	}
 
 	return $payload;
+}
+
+/**
+ * Format an MSC GeoMet ISO timestamp for adrift's updateSun() (Newfoundland local time).
+ */
+function pinchard_geomet_adrift_last_updated(?string $iso): string
+{
+	if ($iso === null || $iso === '') {
+		return (new DateTime('now', new DateTimeZone('America/St_Johns')))->format('Y-m-d H:i');
+	}
+
+	try {
+		$dt = new DateTime($iso);
+		$dt->setTimezone(new DateTimeZone('America/St_Johns'));
+
+		return $dt->format('Y-m-d H:i');
+	} catch (Exception) {
+		return (new DateTime('now', new DateTimeZone('America/St_Johns')))->format('Y-m-d H:i');
+	}
+}
+
+/**
+ * WeatherAPI-shaped JSON for adrift/ (IonVR live_data.current fields).
+ *
+ * @return array<string, mixed>
+ */
+function pinchard_geomet_adrift_live_data(float $lat = PINCHARD_WEATHER_LAT, float $lon = PINCHARD_WEATHER_LON): array
+{
+	$payload = pinchard_geomet_weather_payload($lat, $lon);
+
+	if (isset($payload['error'])) {
+		return $payload;
+	}
+
+	$currently = $payload['currently'] ?? [];
+	$windKph = $currently['wind_speed_kmh'] ?? null;
+	$windDegree = $currently['wind_bearing_deg'] ?? null;
+	$windDir = $currently['wind_direction'] ?? null;
+	$lastUpdated = pinchard_geomet_adrift_last_updated(
+		is_string($currently['time'] ?? null) ? $currently['time'] : ($payload['last_updated'] ?? null),
+	);
+
+	$gustKph = $currently['wind_gust_kmh'] ?? null;
+	$tempC = $currently['temperature_c'] ?? null;
+	$humidity = $currently['humidity_percent'] ?? null;
+	$pressureKpa = $currently['pressure_kpa'] ?? null;
+	$windChill = $currently['wind_chill_c'] ?? null;
+
+	return [
+		'source' => 'msc-geomet',
+		'current' => [
+			'cloud' => 0,
+			'feelslike_c' => $windChill ?? $tempC,
+			'feelslike_f' => $windChill !== null ? round(($windChill * 9 / 5) + 32, 1) : ($tempC !== null ? round(($tempC * 9 / 5) + 32, 1) : null),
+			'gust_kph' => $gustKph,
+			'gust_mph' => $gustKph !== null ? round($gustKph * 0.621371, 1) : null,
+			'humidity' => $humidity,
+			'is_day' => 1,
+			'last_updated' => $lastUpdated,
+			'last_updated_epoch' => null,
+			'precip_in' => 0,
+			'precip_mm' => 0,
+			'pressure_in' => $pressureKpa !== null ? round($pressureKpa * 0.2953, 2) : null,
+			'pressure_mb' => $pressureKpa !== null ? round($pressureKpa * 10, 0) : null,
+			'temp_c' => $tempC,
+			'temp_f' => $tempC !== null ? round(($tempC * 9 / 5) + 32, 1) : null,
+			'uv' => 0,
+			'vis_km' => 10,
+			'vis_miles' => 6,
+			'wind_degree' => $windDegree !== null ? (int) round((float) $windDegree) : null,
+			'wind_dir' => is_string($windDir) ? $windDir : '',
+			'wind_kph' => $windKph !== null ? (float) $windKph : 0,
+			'wind_mph' => $windKph !== null ? round($windKph * 0.621371, 1) : null,
+		],
+	];
 }
