@@ -91,22 +91,49 @@ aside {
   border-bottom: 1px solid #e5e5e5;
   --nav-icon-size: 24px;
   --nav-icon-hit: 24px;
-  --nav-left-cluster: calc(16px + var(--nav-icon-hit) + 12px + var(--nav-icon-hit));
-  --nav-right-cluster: calc(16px + var(--nav-icon-hit));
   /*font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;*/
   font-family: "circular-std";
   -webkit-transition: all 0.35s;
   -moz-transition: all 0.35s;
   transition: all 0.35s;
-  text-align: center;
 }
-/* Bootstrap 5 .navbar is flex; this site uses absolute-positioned icons + centered title */
 .navbar-default.navbar {
-  display: block;
+  display: flex;
   padding: 0;
   --bs-navbar-padding-y: 0;
   --bs-navbar-padding-x: 0;
   min-height: 50px;
+}
+.navbar-default .nav-bar-inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px;
+  gap: 8px;
+}
+.navbar-default .nav-bar-start,
+.navbar-default .nav-bar-end {
+  display: flex;
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 0;
+}
+.navbar-default .nav-bar-start {
+  justify-content: flex-start;
+  gap: 12px;
+}
+.navbar-default .nav-bar-end {
+  justify-content: flex-end;
+}
+.navbar-default .nav-bar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(100%, 280px);
+  gap: 4px;
 }
 .navbar-default img {
     display: inline-block;
@@ -119,72 +146,51 @@ aside {
 .navbar-default .img_right {
     float: right;
 }
-.navbar-default .title {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 49px;
-    padding: 11px var(--nav-right-cluster) 11px var(--nav-left-cluster);
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
+.navbar-default .nav-bar-center .title-brand,
+.navbar-default .nav-bar-center > a:not(.nav-photo-prev):not(.nav-photo-next) {
     font-family: 'circular-bold';
     font-size: 19px;
     font-weight: 700;
+    color: rgba(0, 0, 0, .7);
+    text-decoration: none;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    pointer-events: none;
-    z-index: 1;
-    box-sizing: border-box;
 }
-
-.navbar-default .title > a {
-    color: rgba(0, 0, 0, .7);
-    text-decoration: none;
-    pointer-events: auto;
-}
-.navbar-default .title > a:hover, .navbar-default .title > a:focus {
+.navbar-default .nav-bar-center .title-brand:hover,
+.navbar-default .nav-bar-center .title-brand:focus,
+.navbar-default .nav-bar-center > a:not(.nav-photo-prev):not(.nav-photo-next):hover,
+.navbar-default .nav-bar-center > a:not(.nav-photo-prev):not(.nav-photo-next):focus {
     color: #F05F40;
 }
-
-.navbar-default .title .title-brand {
-    grid-column: 2;
-    justify-self: center;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.navbar-default .nav-photo-prev {
-    grid-column: 1;
-    justify-self: end;
-}
-
-.navbar-default .nav-photo-next {
-    grid-column: 3;
-    justify-self: start;
-}
-
 .navbar-default .nav-photo-prev.is-hidden,
 .navbar-default .nav-photo-next.is-hidden {
     visibility: hidden;
     pointer-events: none;
 }
-
 .navbar-default .nav-photo-prev,
 .navbar-default .nav-photo-next {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     width: var(--nav-icon-hit);
     height: var(--nav-icon-hit);
+    color: rgba(0, 0, 0, .7);
+    text-decoration: none;
 }
-
-.navbar-default .title .arrow {
+.navbar-default .nav-photo-prev:hover,
+.navbar-default .nav-photo-prev:focus,
+.navbar-default .nav-photo-next:hover,
+.navbar-default .nav-photo-next:focus {
+    color: #F05F40;
+}
+.navbar-default .nav-bar-center .arrow {
     display: inline-block;
     width: var(--nav-icon-size);
     height: var(--nav-icon-size);
@@ -197,37 +203,28 @@ aside {
     margin-top: 0;
     opacity: .4;
 }
-
-.navbar-default .title .arrow:hover {
+.navbar-default .nav-bar-center .arrow:hover {
     opacity: .6;
 }
-
-.navbar-default .title .arrow.left {
-    margin-right: 8px;
+.navbar-default .nav-bar-center .arrow.left {
+    margin-right: 4px;
     background-image: url(../images/arrow.svg);
     transform: rotate(90deg);
 }
-
-.navbar-default .title .arrow.left:hover {
+.navbar-default .nav-bar-center .arrow.left:hover {
     background-image: url(../images/arrow_hover.svg);
     transform: rotate(90deg);
 }
-
-.navbar-default .title .arrow.right {
-    margin-left: 8px;
+.navbar-default .nav-bar-center .arrow.right {
+    margin-left: 4px;
     background-image: url(../images/arrow.svg);
     transform: rotate(-90deg);
 }
-
-.navbar-default .title .arrow.right:hover {
+.navbar-default .nav-bar-center .arrow.right:hover {
     background-image: url(../images/arrow_hover.svg);
     transform: rotate(-90deg);
 }
-
 .navbar-default .nav_cloudberry {
-    position: relative;
-    left: auto;
-    top: auto;
     display: block;
     background: url(../images/icon-cloudberry.svg) no-repeat center;
     background-size: var(--nav-icon-size);
@@ -236,21 +233,8 @@ aside {
     opacity: .6;
     flex-shrink: 0;
 }
-
-.navbar-default .nav-left-icons {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 2;
-}
-
 .navbar-default .nav_slideshow {
     display: block;
-    position: relative;
     background-image: url(../images/icon-slideshow.svg);
     background-repeat: no-repeat;
     background-position: center;
@@ -359,16 +343,13 @@ aside {
 }
 
 .navbar-default .nav_info {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
+    display: block;
     background: url(../images/icon-info.svg) no-repeat center;
     background-size: var(--nav-icon-size);
     width: var(--nav-icon-hit);
     height: var(--nav-icon-hit);
     opacity: .6;
-    z-index: 2;
+    flex-shrink: 0;
 }
 
 .navbar-default .nav_info.active, .navbar-default .nav_info:hover, .navbar-default .nav_info:focus {
@@ -980,11 +961,25 @@ option {
 
 @media (max-width: 767px) {
     .navbar-default {
-        --nav-icon-size: 32px;
+        --nav-icon-size: 28px;
         --nav-icon-hit: 44px;
     }
 
-    .navbar-default .title {
+    .navbar-default .nav-bar-inner {
+        gap: 4px;
+        padding: 0 12px;
+    }
+
+    .navbar-default .nav-bar-start {
+        gap: 8px;
+    }
+
+    .navbar-default .nav-bar-center {
+        max-width: min(100%, 220px);
+    }
+
+    .navbar-default .nav-bar-center .title-brand,
+    .navbar-default .nav-bar-center > a:not(.nav-photo-prev):not(.nav-photo-next) {
         font-size: clamp(13px, 4.2vw, 17px);
     }
 

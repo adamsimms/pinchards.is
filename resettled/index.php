@@ -11,10 +11,16 @@ pinchard_microsite_head('Resettled Communities', [
 ]);
 ?>
     <nav id="mainNav" class="navbar navbar-default fixed-top">
-        <a href="../gallery.php" class="link-to-gallery nav_cloudberry"></a>
-        <a class="nav_info" href="../info.php"></a>
-        <div class="title">
-            <a href="#">Resettled Communities</a>
+        <div class="nav-bar-inner">
+            <div class="nav-bar-start">
+                <a href="../gallery.php" class="link-to-gallery nav_cloudberry" aria-label="Browse photo gallery"></a>
+            </div>
+            <div class="nav-bar-center">
+                <a href="#" class="title-brand">Resettled Communities</a>
+            </div>
+            <div class="nav-bar-end">
+                <a class="nav_info" href="../info.php" aria-label="About this project"></a>
+            </div>
         </div>
     </nav>
 
