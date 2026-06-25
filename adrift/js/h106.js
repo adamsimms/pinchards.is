@@ -4611,6 +4611,32 @@ function round ( number, size ) {
     return Math.ceil( number * size ) / size;
 }
 
+/** Newfoundland local date/time parts for HUD and sun lighting. */
+function pinchardNlNow() {
+    var now = new Date();
+    var tz = { timeZone: 'America/St_Johns' };
+    var clockParts = new Intl.DateTimeFormat('en-CA', Object.assign({
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false
+    }, tz)).formatToParts(now);
+
+    function part(type) {
+        for (var i = 0; i < clockParts.length; i++) {
+            if (clockParts[i].type === type) return clockParts[i].value;
+        }
+        return '0';
+    }
+
+    return {
+        month: parseInt(new Intl.DateTimeFormat('en-CA', Object.assign({ month: '2-digit' }, tz)).format(now), 10),
+        day: new Intl.DateTimeFormat('en-CA', Object.assign({ day: 'numeric' }, tz)).format(now),
+        time: new Intl.DateTimeFormat('en-CA', Object.assign({ hour: 'numeric', minute: '2-digit', hour12: true }, tz)).format(now),
+        hour: parseInt(part('hour'), 10),
+        minute: parseInt(part('minute'), 10)
+    };
+}
+
 function rounVector ( v, size ) {
     return new THREE.Vector3( round( v.x, size ), round( v.y, size ), round( v.z, size ) );
 }
@@ -6866,13 +6892,16 @@ IonVR.prototype = {
             this.weather_info.appendChild( this.weather_text );
         };
 
-		var currentDate = this.data.param.live_data.current.last_updated;
-		var cTime = new Date(currentDate).toLocaleTimeString();
-		var cDay = currentDate.substring(8, 10);
-		var cM = currentDate.substring(5, 7);
-		var month = ion.data.param.months[parseInt(cM, 10)] || '';
-
-		// console.log(cM, MMMM);
+		var nl = pinchardNlNow();
+		var month = ion.data.param.months[nl.month] || '';
+		var current = this.data.param.live_data.current;
+		var windText = round(current.wind_kph, 100) + ' km/h';
+		if (current.gust_kph && current.gust_kph > current.wind_kph) {
+			windText += ' (gusts ' + round(current.gust_kph, 100) + ')';
+		}
+		var tempText = (current.temp_c !== null && current.temp_c !== undefined)
+			? round(current.temp_c, 10) + '°C'
+			: '';
 
 		var iconW = new DOMParser().parseFromString('<svg class="weather_icon" height="20" viewBox="0 0 30 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.50001 6.75H18.125C18.8419 6.75201 19.5407 6.52573 20.1203 6.10395C20.7 5.68217 21.1302 5.0868 21.3488 4.40409C21.5674 3.72139 21.5629 2.98683 21.336 2.30684C21.1092 1.62685 20.6717 1.03676 20.0869 0.62207C19.5022 0.207381 18.8007 -0.0103669 18.0839 0.000379477C17.3672 0.0111259 16.6724 0.249808 16.1004 0.681841C15.5284 1.11387 15.1088 1.71681 14.9024 2.4033C14.696 3.08978 14.7136 3.82415 14.9525 4.49999H3.50001C3.20164 4.49999 2.91549 4.61852 2.70451 4.8295C2.49353 5.04048 2.37501 5.32663 2.37501 5.62499C2.37501 5.92336 2.49353 6.20951 2.70451 6.42049C2.91549 6.63147 3.20164 6.75 3.50001 6.75ZM17 3.37499C17 3.15249 17.066 2.93498 17.1896 2.74997C17.3132 2.56497 17.4889 2.42077 17.6945 2.33563C17.9001 2.25048 18.1263 2.2282 18.3445 2.27161C18.5627 2.31502 18.7632 2.42216 18.9205 2.5795C19.0779 2.73683 19.185 2.93729 19.2284 3.15551C19.2718 3.37374 19.2495 3.59994 19.1644 3.80551C19.0792 4.01108 18.9351 4.18678 18.75 4.3104C18.565 4.43401 18.3475 4.49999 18.125 4.49999C17.8267 4.49999 17.5405 4.38147 17.3295 4.17049C17.1186 3.95951 17 3.67336 17 3.37499ZM25.875 4.37499C25.3359 4.37651 24.805 4.50716 24.3267 4.75601C23.8484 5.00485 23.4367 5.36466 23.1261 5.8053C22.8154 6.24594 22.6149 6.75459 22.5412 7.28866C22.4675 7.82274 22.5228 8.3667 22.7025 8.875H1.125C0.826633 8.875 0.540484 8.99353 0.329505 9.2045C0.118527 9.41548 0 9.70163 0 10C0 10.2984 0.118527 10.5845 0.329505 10.7955C0.540484 11.0065 0.826633 11.125 1.125 11.125H25.875C26.7701 11.125 27.6286 10.7694 28.2615 10.1365C28.8945 9.50355 29.25 8.6451 29.25 7.75C29.25 6.85489 28.8945 5.99644 28.2615 5.36351C27.6286 4.73057 26.7701 4.37499 25.875 4.37499ZM25.875 8.875C25.6525 8.875 25.435 8.80902 25.25 8.6854C25.065 8.56178 24.9208 8.38608 24.8357 8.18052C24.7505 7.97495 24.7282 7.74875 24.7717 7.53052C24.8151 7.31229 24.9222 7.11184 25.0795 6.9545C25.2369 6.79717 25.4373 6.69002 25.6556 6.64661C25.8738 6.6032 26.1 6.62548 26.3056 6.71063C26.5111 6.79578 26.6868 6.93997 26.8104 7.12498C26.9341 7.30998 27 7.52749 27 7.75C27 8.04837 26.8815 8.33451 26.6705 8.54549C26.4596 8.75647 26.1734 8.875 25.875 8.875ZM21.375 13.25H2.25C1.95163 13.25 1.66549 13.3685 1.45451 13.5795C1.24353 13.7905 1.125 14.0766 1.125 14.375C1.125 14.6734 1.24353 14.9595 1.45451 15.1705C1.66549 15.3815 1.95163 15.5 2.25 15.5H18.2025C17.9636 16.1758 17.946 16.9102 18.1524 17.5967C18.3588 18.2832 18.7784 18.8861 19.3504 19.3182C19.9224 19.7502 20.6172 19.9889 21.3339 19.9996C22.0507 20.0104 22.7522 19.7926 23.337 19.3779C23.9217 18.9632 24.3592 18.3731 24.586 17.6932C24.8129 17.0132 24.8174 16.2786 24.5988 15.5959C24.3802 14.9132 23.95 14.3178 23.3703 13.896C22.7907 13.4743 22.0919 13.248 21.375 13.25ZM21.375 17.75C21.1525 17.75 20.935 17.684 20.75 17.5604C20.565 17.4368 20.4208 17.2611 20.3357 17.0555C20.2505 16.85 20.2282 16.6238 20.2716 16.4055C20.3151 16.1873 20.4222 15.9868 20.5795 15.8295C20.7369 15.6722 20.9373 15.565 21.1556 15.5216C21.3738 15.4782 21.6 15.5005 21.8055 15.5856C22.0111 15.6708 22.1868 15.815 22.3104 16C22.4341 16.185 22.5 16.4025 22.5 16.625C22.5 16.9234 22.3815 17.2095 22.1705 17.4205C21.9595 17.6315 21.6734 17.75 21.375 17.75Z" fill="black" fill-opacity="0.74"/></svg>' , 'application/xml');
 
@@ -6885,19 +6914,20 @@ IonVR.prototype = {
         this.weather_dot.innerHTML =
 		'●';
         this.weather_text.innerHTML =
-		'&nbsp&nbsp' + "Pinchard's Island, " + month + ' ' + cDay + ' at ' + cTime +
+		'&nbsp&nbsp' + "Pinchard's Island, " + month + ' ' + nl.day + ' at ' + nl.time +
+		(tempText ? '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + tempText : '') +
 		'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
 
 		this.weather_text.appendChild(iconW.documentElement);
 
 		this.weather_text.innerHTML +=
-		'&nbsp&nbsp' + round( this.data.param.live_data.current.wind_kph, 100 ) + ' km/h' +
+		'&nbsp&nbsp' + windText +
 		'&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';
 
 		this.weather_text.appendChild(iconD.documentElement);
 
 		this.weather_text.innerHTML +=
-		'&nbsp&nbsp' + round( this.data.param.live_data.current.wind_degree, 100 ) + 'º' + ' ' + ion.data.param.live_data.current.wind_dir;
+		'&nbsp&nbsp' + round( current.wind_degree, 100 ) + 'º' + ' ' + current.wind_dir;
 
 		this.weather_sound.innerHTML =
 		'';
@@ -7163,8 +7193,9 @@ IonVR.prototype = {
 
 	updateSun : function() {
 
-		var cTime = new Date(ion.data.param.live_data.current.last_updated).getHours();
-		var cMin = new Date(ion.data.param.live_data.current.last_updated).getMinutes();
+		var nl = pinchardNlNow();
+		var cTime = nl.hour;
+		var cMin = nl.minute;
 
 		var cHour = cTime + (cMin * 0.016666);
 		var aziF = 0.5 + (cHour-7)/22;
