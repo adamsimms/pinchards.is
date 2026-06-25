@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/bootstrap.php';
 require_once __DIR__ . '/lib/partials/layout.php';
+require_once __DIR__ . '/lib/partials/citation.php';
 
 $copyrightYear = (int) date('Y');
+$citationAccessDate = pinchard_citation_access_date();
 
 pinchard_layout_head("Pinchard's Island — About Cloudberry", [
     'description' => 'Cloudberry is a solar-powered, off-the-grid photography project documenting Pinchard\'s Island, Newfoundland — one photograph per hour.',
@@ -46,6 +48,7 @@ pinchard_layout_nav(['active' => 'info']);
                 <a href="#hardware">Hardware</a>
                 <a href="#installation">Installation</a>
                 <a href="#who">Who</a>
+                <a href="#citation">Citation</a>
                 <a href="#contact">Contact</a>
             </nav>
         </aside>
@@ -335,6 +338,19 @@ pinchard_layout_nav(['active' => 'info']);
         </div>
     </div>
 
+    <div class="how_section" id="citation">
+        <div class="container">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
+                <h3>Citing this archive</h3>
+                <p>Researchers and publications are welcome to use Cloudberry photographs with attribution. Cloudberry is an automated photography system — cite the project and archive URL below, not an individual photographer. For a specific image, open that photograph and copy the per-photo citation from the details panel.</p>
+                <?php pinchard_citation_block([
+                    'text' => pinchard_citation_archive($citationAccessDate),
+                    'label' => 'General citation',
+                ]); ?>
+            </div></div>
+        </div>
+    </div>
+
     <div class="contact_section" id="contact">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
@@ -354,7 +370,7 @@ pinchard_layout_nav(['active' => 'info']);
     'extra_scripts' => <<<'JS'
     <script>
         (function() {
-            var sectionIds = ['about', 'why', 'where', 'how', 'hardware', 'installation', 'who', 'contact'];
+            var sectionIds = ['about', 'why', 'where', 'how', 'hardware', 'installation', 'who', 'citation', 'contact'];
             var links = document.querySelectorAll('.info-toc nav a');
             var sections = sectionIds.map(function(id) {
                 return document.getElementById(id);

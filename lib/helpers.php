@@ -244,6 +244,49 @@ function pinchard_gps_to_decimal(array $exifCoord, ?string $hemi): ?float
 	return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
 }
 
+/** Today's date formatted for archive citations (e.g. June 25, 2026). */
+function pinchard_citation_access_date(?DateTimeInterface $when = null): string
+{
+	$dt = $when ?? new DateTimeImmutable('now');
+
+	return $dt->format('F j, Y');
+}
+
+/** Suggested citation for the Cloudberry archive as a whole. */
+function pinchard_citation_archive(?string $accessDate = null): string
+{
+	$accessed = $accessDate ?? pinchard_citation_access_date();
+	$url = pinchard_absolute_url('/');
+
+	return 'Cloudberry (Pinchard\'s Island Photography Archive). '
+		. $url
+		. '. Accessed ' . $accessed . '.';
+}
+
+/**
+ * Suggested citation for an individual Cloudberry photograph.
+ *
+ * @param string $datetime Archive datetime (Y/m/d H:i:s).
+ */
+function pinchard_citation_photo(string $filename, string $datetime, ?string $accessDate = null): string
+{
+	$accessed = $accessDate ?? pinchard_citation_access_date();
+	$url = pinchard_absolute_url('/index.php', ['filename' => $filename]);
+	$photoId = pinchard_photo_title($filename);
+
+	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
+	$timestamp = $dt !== false
+		? $dt->format('F j, Y, g:i A')
+		: $datetime;
+
+	return 'Cloudberry. Automated photograph, '
+		. $timestamp
+		. '; photo ID ' . $photoId
+		. ' (' . $filename . '). '
+		. $url
+		. '. Accessed ' . $accessed . '.';
+}
+
 /** Display title for a gallery photo (GoPro: digits after GOPR). */
 function pinchard_photo_title(string $filename): string
 {

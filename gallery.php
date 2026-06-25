@@ -44,7 +44,28 @@ pinchard_layout_nav(['active' => 'gallery']);
 ?>
     <h1 class="visually-hidden">Pinchard's Island Photo Gallery</h1>
     <div class="gallery-layout">
-        <header class="gallery-header">
+        <div class="content_area">
+            <div class="container-fluid px-0" id="photo_container">
+<?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
+                <section class="gallery-month" id="month-<?= pinchard_h($monthKey) ?>" aria-label="<?= pinchard_h($monthGroup['label']) ?>">
+                    <div class="row photos g-0">
+<?php foreach ($monthGroup['photos'] as $photo): ?>
+                        <div class="col-md-5ths col-sm-6 col-12 photoElement">
+                            <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
+                                <img class="gallery-photo img-fluid" data-src="<?= pinchard_h($cdnurl . $photo['filename']) ?>" alt="<?= pinchard_h($photo['show_date'] ?? '') ?>" width="288" height="224">
+                                <div class="photo-box-caption">
+                                    <div class="photo-box-caption-content"><?= pinchard_h($photo['show_date'] ?? '') ?></div>
+                                </div>
+                            </a>
+                        </div>
+<?php endforeach; ?>
+                    </div>
+                </section>
+<?php endforeach; ?>
+            </div>
+        </div>
+
+        <footer class="gallery-header">
             <nav class="gallery-timeline" aria-label="Gallery timeline">
                 <div class="gallery-timeline-scroll">
                     <div class="gallery-timeline-track">
@@ -63,41 +84,59 @@ pinchard_layout_nav(['active' => 'gallery']);
                     </div>
                 </div>
             </nav>
-        </header>
-
-        <div class="content_area">
-            <div class="container-fluid px-0" id="photo_container">
-<?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
-                <section class="gallery-month" id="month-<?= pinchard_h($monthKey) ?>" aria-label="<?= pinchard_h($monthGroup['label']) ?>">
-                    <div class="row photos g-0">
-<?php foreach ($monthGroup['photos'] as $photo): ?>
-                        <div class="col-md-5ths col-sm-6 col-12 photoElement">
-                            <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
-                                <img class="lazy img-fluid" data-src="<?= pinchard_h($cdnurl . $photo['filename']) ?>" alt="<?= pinchard_h($photo['show_date'] ?? '') ?>" width="288" height="224" loading="lazy">
-                                <div class="photo-box-caption">
-                                    <div class="photo-box-caption-content"><?= pinchard_h($photo['show_date'] ?? '') ?></div>
-                                </div>
-                            </a>
-                        </div>
-<?php endforeach; ?>
-                    </div>
-                </section>
-<?php endforeach; ?>
-            </div>
-        </div>
+        </footer>
     </div>
 
 <?php
 pinchard_layout_footer([
     'extra_scripts' => <<<'JS'
-    <script src="js/jquery.lazy.js"></script>
     <script>
-        $(function() {
-            $('.lazy').Lazy({
-                scrollDirection: 'vertical',
-                effect: 'fadeIn',
-                visibleOnly: true
-            });
+        (function() {
+            var photos = document.querySelectorAll('.gallery-photo[data-src]');
+
+            function markLoaded(img) {
+                var box = img.closest('.photoBox');
+                if (box) {
+                    box.classList.add('is-loaded');
+                }
+            }
+
+            function loadPhoto(img) {
+                if (img.dataset.loading) return;
+                img.dataset.loading = '1';
+                var src = img.getAttribute('data-src');
+                if (!src) return;
+
+                function done() {
+                    markLoaded(img);
+                    img.removeAttribute('data-src');
+                }
+
+                img.addEventListener('load', done, { once: true });
+                img.addEventListener('error', done, { once: true });
+                img.src = src;
+                if (img.complete) {
+                    done();
+                }
+            }
+
+            if (photos.length) {
+                if ('IntersectionObserver' in window) {
+                    var photoObserver = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                loadPhoto(entry.target);
+                                photoObserver.unobserve(entry.target);
+                            }
+                        });
+                    }, { rootMargin: '240px 0px' });
+                    photos.forEach(function(img) {
+                        photoObserver.observe(img);
+                    });
+                } else {
+                    photos.forEach(loadPhoto);
+                }
+            }
 
             var markers = document.querySelectorAll('.gallery-timeline-marker');
             var sections = document.querySelectorAll('.gallery-month');
@@ -134,7 +173,7 @@ pinchard_layout_footer([
                 scrollMarkerIntoView(activeMarker);
             }
 
-            var observer = new IntersectionObserver(function(entries) {
+            var monthObserver = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
                         setActive(entry.target.id.replace('month-', ''));
@@ -147,9 +186,9 @@ pinchard_layout_footer([
             });
 
             sections.forEach(function(section) {
-                observer.observe(section);
+                monthObserver.observe(section);
             });
-        });
+        })();
     </script>
 JS,
 ]);

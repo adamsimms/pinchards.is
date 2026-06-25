@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/bootstrap.php';
 require_once __DIR__ . '/lib/partials/layout.php';
+require_once __DIR__ . '/lib/partials/citation.php';
 
 if (isset($_GET['fn']) && $_GET['fn'] !== '') {
 	$filenameParam = isset($_GET['filename']) && $_GET['filename'] !== ''
@@ -159,6 +160,8 @@ try {
         ? 'Photograph from Pinchard\'s Island — ' . $dt->format('F j, Y \a\t g:i A') . '.'
         : 'Photograph from Pinchard\'s Island.';
     $photoAlt = pinchard_photo_alt_text($datetime);
+    $citationAccessDate = pinchard_citation_access_date();
+    $photoCitation = pinchard_citation_photo($filename, $datetime, $citationAccessDate);
 
     $jsonLd = [
         [
@@ -318,6 +321,16 @@ try {
                         </div>
                     </div>
 <?php endif; ?>
+                    <div class="inner_area citation_area">
+                        <div class="detail_rect citation_rect" aria-hidden="true">&ldquo;</div>
+                        <div class="inner_data">
+                            <?php pinchard_citation_block([
+                                'text' => $photoCitation,
+                                'label' => 'Citation',
+                                'compact' => true,
+                            ]); ?>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-7 mapcontainer">
