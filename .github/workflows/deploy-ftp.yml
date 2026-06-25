@@ -50,7 +50,7 @@ jobs:
             exit 1
           fi
           mkdir -p ~/.ssh
-          echo "${SSH_DEPLOY_KEY}" > ~/.ssh/deploy_key
+          printf '%s\n' "${SSH_DEPLOY_KEY}" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "${FTP_SERVER}" >> ~/.ssh/known_hosts 2>/dev/null || true
 
@@ -67,17 +67,20 @@ jobs:
             "rm -f '${server_dir}/aws-env.local.php'"
 
       - name: SFTP deploy (rsync over SSH)
-        uses: burnett01/rsync-deployments@v8
-        with:
-          switches: >-
-            -avzr --delete
-            --exclude '.git/'
-            --exclude '.git*/'
-            --exclude '.github/'
-            ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
-          path: ./
-          remote_path: ${{ secrets.FTP_SERVER_DIR }}/
-          remote_host: ${{ secrets.FTP_SERVER }}
-          remote_user: ${{ secrets.FTP_USERNAME }}
-          remote_key: ${{ secrets.SSH_DEPLOY_KEY }}
-          remote_port: 22
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          set -euo pipefail
+          server_dir="${FTP_SERVER_DIR%/}/"
+          dry_run=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            dry_run="--dry-run"
+          fi
+          rsync -avzr --delete ${dry_run} \
+            --exclude '.git/' \
+            --exclude '.git*/' \
+            --exclude '.github/' \
+            -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22" \
+            ./ "${FTP_USERNAME}@${FTP_SERVER}:${server_dir}"
