@@ -490,6 +490,7 @@ IonVR.prototype = {
     showLiveWeather : function () {
 
         if ( !this.weather_info ) {
+			var self = this;
             this.weather_info = $c( 'div' );
             this.weather_info.id = 'weather-info';
 			// this.weather_info.style.z-index = 105;
@@ -497,13 +498,13 @@ IonVR.prototype = {
 
 			this.weather_in = $c( 'div' );
             this.weather_in.id = 'weather-in';
-			this.weather_in.onclick = ion.showUI;
+			this.weather_in.onclick = function () { self.showUI(); };
 			// this.weather_in.style.z-index = 100;
             this.container.appendChild( this.weather_in );
 
 			this.weather_bt = $c( 'div' );
             this.weather_bt.id = 'weather-bt';
-			this.weather_bt.onclick = ion.hideUI;
+			this.weather_bt.onclick = function () { self.hideUI(); };
 			// this.weather_bt.style.z-index = 110;
             this.weather_info.appendChild( this.weather_bt );
 
