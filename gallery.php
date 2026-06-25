@@ -29,23 +29,7 @@ pinchard_layout_head("Pinchard's Island — Photo Gallery", [
 
 pinchard_layout_nav(['active' => 'gallery']);
 ?>
-    <nav class="gallery-timeline" aria-label="Gallery timeline">
-        <div class="gallery-timeline-track">
-<?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
-            <a href="#month-<?= pinchard_h($monthKey) ?>" class="gallery-timeline-marker" data-month="<?= pinchard_h($monthKey) ?>" title="<?= pinchard_h($monthGroup['label']) ?>">
-                <span class="gallery-timeline-label"><?= pinchard_h(pinchard_month_timeline_label($monthKey)) ?></span>
-                <span class="gallery-timeline-dot" aria-hidden="true"></span>
-            </a>
-<?php endforeach; ?>
-<?php if ($monthKeys !== []): ?>
-            <a href="#month-<?= pinchard_h($monthKeys[count($monthKeys) - 1]) ?>" class="gallery-timeline-marker gallery-timeline-latest" title="Latest photographs">
-                <span class="gallery-timeline-label">Latest</span>
-                <span class="gallery-timeline-dot" aria-hidden="true"></span>
-            </a>
-<?php endif; ?>
-        </div>
-    </nav>
-
+    <div class="gallery-layout">
     <div class="content_area">
         <div class="container-fluid px-0" id="photo_container">
 <?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
@@ -66,6 +50,24 @@ pinchard_layout_nav(['active' => 'gallery']);
             </section>
 <?php endforeach; ?>
         </div>
+    </div>
+
+    <nav class="gallery-timeline" aria-label="Gallery timeline">
+        <div class="gallery-timeline-track">
+<?php foreach ($photosByMonth as $monthKey => $monthGroup): ?>
+            <a href="#month-<?= pinchard_h($monthKey) ?>" class="gallery-timeline-marker" data-month="<?= pinchard_h($monthKey) ?>" title="<?= pinchard_h($monthGroup['label']) ?>">
+                <span class="gallery-timeline-label"><?= pinchard_h(pinchard_month_timeline_label($monthKey)) ?></span>
+                <span class="gallery-timeline-dot" aria-hidden="true"></span>
+            </a>
+<?php endforeach; ?>
+<?php if ($monthKeys !== []): ?>
+            <a href="#month-<?= pinchard_h($monthKeys[count($monthKeys) - 1]) ?>" class="gallery-timeline-marker gallery-timeline-latest" title="Latest photographs">
+                <span class="gallery-timeline-label">Latest</span>
+                <span class="gallery-timeline-dot" aria-hidden="true"></span>
+            </a>
+<?php endif; ?>
+        </div>
+    </nav>
     </div>
 
 <?php
