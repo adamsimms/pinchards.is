@@ -1477,7 +1477,7 @@ body.info-page .info-main {
 }
 
 body.info-page .info-main .container {
-    max-width: none;
+    max-width: 48rem;
     width: 100%;
     padding-left: 0;
     padding-right: 0;
@@ -1488,11 +1488,21 @@ body.info-page .info-main .row {
     margin-right: 0;
 }
 
-body.info-page .info-main .row > [class*="col-"] {
+body.info-page .info-main .row:not(.people_row) > [class*="col-"] {
     flex: 0 0 100%;
     max-width: 100%;
     padding-left: 0;
     padding-right: 0;
+}
+
+body.info-page .info-main .people_row {
+    margin-left: calc(var(--bs-gutter-x, 1.5rem) * -0.5);
+    margin-right: calc(var(--bs-gutter-x, 1.5rem) * -0.5);
+}
+
+body.info-page .info-main .people_row > [class*="col-"] {
+    padding-left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+    padding-right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
 }
 
 body.info-page .info-main [id] {
