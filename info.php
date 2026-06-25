@@ -36,7 +36,7 @@ pinchard_layout_nav(['active' => 'info']);
     <div class="how_section" id="about">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
+                <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB cellular modem, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
 
                 <p>The photographs depict a view of Pinchard's Island from a small, family owned cabin named "Precious Memories." The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
@@ -111,7 +111,7 @@ pinchard_layout_nav(['active' => 'info']);
     <div class="how_section">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <p>Designing a system that worked was only the start of the project. Every slight adjustment that we made to the system, such as moving from electricity to solar power, putting the USB hotspot in a case or using different USB cables introduced new problems that we had to constantly monitor and resolve. Once we felt confident in our system, we had to be realistic that once the system was installed on the island, we would not be able to physically be there to troubleshoot any problem that might arise. This forced us to evaluate the entire solution and implement different components to help reduce the risk factor of the project.</p>
+                <p>Designing a system that worked was only the start of the project. Every slight adjustment that we made to the system, such as moving from electricity to solar power, putting the USB cellular modem in a case or using different USB cables introduced new problems that we had to constantly monitor and resolve. Once we felt confident in our system, we had to be realistic that once the system was installed on the island, we would not be able to physically be there to troubleshoot any problem that might arise. This forced us to evaluate the entire solution and implement different components to help reduce the risk factor of the project.</p>
 
                 <img src="images/info/notebook.jpg" class="img-fluid info_img" alt="Project notebook">
 
@@ -207,11 +207,11 @@ pinchard_layout_nav(['active' => 'info']);
                     </div>
                     <div class="accordion-item">
                         <h4 class="accordion-header" id="hw-hotspot">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-hotspot-body" aria-expanded="false" aria-controls="hw-hotspot-body">Huawei LTE E8372 USB Hotspot</button>
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-hotspot-body" aria-expanded="false" aria-controls="hw-hotspot-body">Huawei LTE E8372 USB Cellular Modem</button>
                         </h4>
                         <div id="hw-hotspot-body" class="accordion-collapse collapse" aria-labelledby="hw-hotspot" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p>The USB hotspot is connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. At ±6mb per photo, 13 photos per day, we're using ±2.3gb per month.</p>
+                                <p>The USB cellular modem is connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. At ±6mb per photo, 13 photos per day, we're using ±2.3gb per month.</p>
                             </div>
                         </div>
                     </div>
