@@ -61,20 +61,41 @@ jobs:
           FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
         run: |
           set -euo pipefail
+          trim() { printf '%s' "$1" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'; }
+          FTP_SERVER="$(trim "${FTP_SERVER}")"
+          FTP_USERNAME="$(trim "${FTP_USERNAME}")"
+          FTP_SERVER_DIR="$(trim "${FTP_SERVER_DIR}")"
           for name in FTP_SERVER FTP_USERNAME FTP_SERVER_DIR; do
             if [ -z "${!name}" ]; then
               echo "Missing secret: ${name}"
               exit 1
             fi
           done
-          if [[ "${FTP_SERVER}" == *"@"* ]] || [[ "${FTP_SERVER}" == *"://"* ]]; then
-            echo "FTP_SERVER must be hostname only (e.g. iad1-shared-b8-36.dreamhost.com), not user@host or a URL."
+          if [[ "${FTP_SERVER}" == *"@"* ]] || [[ "${FTP_SERVER}" == *"://"* ]] || [[ "${FTP_SERVER}" == *"/"* ]] || [[ "${FTP_SERVER}" == *":"* ]]; then
+            echo "FTP_SERVER must be hostname only (e.g. iad1-shared-b8-36.dreamhost.com)."
+            echo "Do not include user@, port :22, sftp://, or a path."
             exit 1
           fi
           if [[ "${FTP_SERVER_DIR}" != /* ]]; then
             echo "FTP_SERVER_DIR must be an absolute path (e.g. /home/pinchard/pinchards.is), not a relative folder name."
             exit 1
           fi
+          if [[ "${FTP_SERVER_DIR}" == *"@"* ]] || [[ "${FTP_SERVER_DIR}" == *"://"* ]]; then
+            echo "FTP_SERVER_DIR must be a path only. Put the hostname in FTP_SERVER and username in FTP_USERNAME."
+            exit 1
+          fi
+          echo "FTP_SERVER resolves next; FTP_SERVER_DIR length: ${#FTP_SERVER_DIR}"
+
+      - name: Test SSH connection
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        run: |
+          set -euo pipefail
+          host="$(printf '%s' "${FTP_SERVER}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          user="$(printf '%s' "${FTP_USERNAME}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o ConnectTimeout=20 -p 22 \
+            "${user}@${host}" "echo SSH OK from GitHub Actions"
 
       - name: Remove legacy aws-env.local.php on server
         continue-on-error: true
@@ -83,9 +104,12 @@ jobs:
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
         run: |
-          server_dir="${FTP_SERVER_DIR%/}"
-          ssh -i ~/.ssh/deploy_key -o BatchMode=yes \
-            "${FTP_USERNAME}@${FTP_SERVER}" \
+          host="$(printf '%s' "${FTP_SERVER}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          user="$(printf '%s' "${FTP_USERNAME}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          server_dir="$(printf '%s' "${FTP_SERVER_DIR}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          server_dir="${server_dir%/}"
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -p 22 \
+            "${user}@${host}" \
             "rm -f '${server_dir}/aws-env.local.php'"
 
       - name: SFTP deploy (rsync over SSH)
@@ -95,16 +119,20 @@ jobs:
           FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
         run: |
           set -euo pipefail
-          server_dir="${FTP_SERVER_DIR%/}/"
+          host="$(printf '%s' "${FTP_SERVER}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          user="$(printf '%s' "${FTP_USERNAME}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          server_dir="$(printf '%s' "${FTP_SERVER_DIR}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          server_dir="${server_dir%/}/"
           dry_run=""
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
             dry_run="--dry-run"
           fi
-          dest="${FTP_USERNAME}@${FTP_SERVER}:${server_dir}"
-          echo "rsync target: ${dest}"
+          dest="${host}:${server_dir}"
+          echo "rsync target host: ${host}"
+          echo "rsync target path: ${server_dir}"
           rsync -avzr --delete ${dry_run} \
             --exclude '.git/' \
             --exclude '.git*/' \
             --exclude '.github/' \
-            -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22" \
+            -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22 -l ${user}" \
             ./ "${dest}"
