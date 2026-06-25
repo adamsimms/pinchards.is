@@ -157,7 +157,7 @@ function pinchard_fetch_photo_for_exif(string $filename, string $cdnUrlFull): bo
 			],
 		]);
 		$bytes = @file_get_contents($url, false, $context);
-		if ($bytes !== false && $bytes !== '') {
+		if ($bytes !== false && $bytes !== '' && strncmp($bytes, "\xFF\xD8\xFF", 3) === 0) {
 			$downloaded = file_put_contents($tmpPath, $bytes, LOCK_EX) !== false;
 		}
 	}
@@ -185,9 +185,12 @@ function pinchard_read_photo_exif(string $filename, string $cdnUrlFull): array
 			return [];
 		}
 
-		$read = exif_read_data(pinchard_exif_tmp_path(), 0, true);
+		$read = exif_read_data(pinchard_exif_tmp_path(), null, true);
 		return is_array($read) ? $read : [];
-	} catch (Throwable) {
+	} catch (Throwable $e) {
+		if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+			error_log('pinchard_read_photo_exif: ' . $e->getMessage());
+		}
 		return [];
 	}
 }
