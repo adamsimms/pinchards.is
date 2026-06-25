@@ -134,7 +134,7 @@ foreach ($array as $photo) {
         }
 
         #photo_container {
-            padding: 8px 40px 32px !important;
+            padding: 0 !important;
             margin-top: 0px;
             border: none;
             max-width: none;
@@ -155,6 +155,7 @@ foreach ($array as $photo) {
             font-weight: 700;
             line-height: 1.1;
             margin: 0 0 28px;
+            padding-left: 16px;
             color: rgba(0, 0, 0, 0.85);
         }
 
@@ -169,6 +170,11 @@ foreach ($array as $photo) {
             border: none;
         }
 
+        #photo_container .photoElement {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
         .photoElement {
             padding: 0px;
             margin-bottom: 0px;
@@ -181,8 +187,8 @@ foreach ($array as $photo) {
         }
 
         .photoElement .photoBox img {
-            width: 100% !important;
-            max-width: 100% !important;
+            width: 104% !important;
+            max-width: 104% !important;
         }
 
         .photoElement a {
@@ -274,7 +280,7 @@ foreach ($array as $photo) {
             <?php foreach ($photosByMonth as $monthGroup) : ?>
             <section class="gallery-month">
                 <h2 class="gallery-month-title"><?= pinchard_h($monthGroup['label']) ?></h2>
-                <div class="row photos g-3">
+                <div class="row photos g-0">
                     <?php foreach ($monthGroup['photos'] as $photo) : ?>
                         <div class="col-md-5ths col-sm-6 col-12 photoElement">
                             <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
