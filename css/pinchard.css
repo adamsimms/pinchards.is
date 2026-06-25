@@ -965,6 +965,29 @@ option {
     .viewer-timeline-date {
         display: none;
     }
+
+    .navbar-default .nav_slideshow {
+        width: 32px;
+        height: 32px;
+    }
+
+    .navbar-default .nav-slideshow-control {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+        margin: -10px 0;
+    }
+
+    .navbar-default .nav-slideshow-control .nav-slideshow-icon {
+        width: 32px;
+        height: 32px;
+        opacity: 1;
+    }
+
+    body.slideshow-page .navbar-default .title {
+        padding-left: 108px;
+    }
 }
 
 .preview .photo-placeholder {
