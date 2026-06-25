@@ -1163,25 +1163,6 @@ body.viewer-page.has-viewer-timeline #preview_image {
     line-height: 1.45;
     color: #777;
 }
-.citation-block--compact {
-    margin: 0;
-    padding: 12px 14px;
-}
-.citation-block--compact .citation-block-text {
-    font-size: 13px;
-}
-.citation-block--compact .citation-block-hint {
-    font-size: 12px;
-}
-.detail_content_view .citation_area .inner_data {
-    width: calc(100% - 40px);
-}
-.detail_content_view .citation_rect {
-    font-family: 'circular-bold', sans-serif;
-    font-size: 18px;
-    line-height: 24px;
-    color: #F05F40;
-}
 
 /* Center the loader */
 #loader {
@@ -1575,7 +1556,7 @@ body {
 body.gallery-page {
     --gallery-content-inset: 48px;
     --gallery-header-offset: 50px;
-    --gallery-timeline-height: 48px;
+    --gallery-timeline-height: 52px;
     padding-top: 50px;
     overflow-x: hidden;
 }
@@ -1597,7 +1578,7 @@ body.gallery-page .gallery-header {
     z-index: 100;
     background: #fff;
     border-top: 1px solid #e5e5e5;
-    padding: 8px 0 4px;
+    padding: 8px 0 8px;
     min-height: var(--gallery-timeline-height);
     overflow: visible;
 }
@@ -1608,7 +1589,7 @@ body.gallery-page .gallery-timeline-scroll {
     overflow-y: visible;
     scrollbar-width: thin;
     -webkit-overflow-scrolling: touch;
-    padding: 4px 8px 2px;
+    padding: 4px 8px 4px;
     box-sizing: border-box;
 }
 
@@ -1618,7 +1599,7 @@ body.gallery-page .gallery-timeline-track {
     position: relative;
     width: 100%;
     min-height: calc(var(--gallery-timeline-height) - 16px);
-    padding: 2px 0 0;
+    padding: 2px 0 2px;
     box-sizing: border-box;
 }
 
@@ -1992,15 +1973,15 @@ body.slideshow-page .slideshow-viewport img {
     body.gallery-page {
         --gallery-content-inset: 24px;
         --gallery-header-offset: 50px;
-        --gallery-timeline-height: 44px;
+        --gallery-timeline-height: 48px;
     }
 
     body.gallery-page .gallery-header {
-        padding: 6px 0 4px;
+        padding: 6px 0 6px;
     }
 
     body.gallery-page .gallery-timeline-scroll {
-        padding: 4px 4px 2px;
+        padding: 4px 4px 4px;
     }
 
     body.gallery-page .gallery-timeline-label {

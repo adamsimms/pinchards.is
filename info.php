@@ -342,10 +342,22 @@ pinchard_layout_nav(['active' => 'info']);
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Citing this archive</h3>
-                <p>Researchers and publications are welcome to use Cloudberry photographs with attribution. Cloudberry is an automated photography system — cite the project and archive URL below, not an individual photographer. For a specific image, open that photograph and copy the per-photo citation from the details panel.</p>
+                <p>Researchers and publications are welcome to use Cloudberry photographs with attribution. Cloudberry is an automated photography system — cite the project, not an individual photographer.</p>
+                <p>The suggested format below follows the <strong>Chicago Manual of Style, Author-Date</strong> system, adapted for a born-digital photograph archive (similar to citing a website or online collection). Other styles (MLA, APA) are fine if your publisher requires them; keep the same elements: project name, image description, date captured, identifier, URL, and access date.</p>
+
+                <h4>Citing the archive</h4>
+                <p>Use this when referring to the project or website as a whole.</p>
                 <?php pinchard_citation_block([
                     'text' => pinchard_citation_archive($citationAccessDate),
-                    'label' => 'General citation',
+                    'label' => 'Archive citation',
+                ]); ?>
+
+                <h4>Citing a specific photograph</h4>
+                <p>Open the image on the site, expand the details panel, and note the <strong>date and time</strong>, <strong>photo number</strong> (shown as the large title), and <strong>filename</strong> from the page URL (<code>?filename=…</code>). Substitute those values into the template below.</p>
+                <?php pinchard_citation_block([
+                    'text' => pinchard_citation_photo_template(),
+                    'label' => 'Individual photograph template',
+                    'hint' => 'Replace bracketed fields with values from the photograph you are citing. Update the access date to the day you retrieved the image.',
                 ]); ?>
             </div></div>
         </div>

@@ -8,7 +8,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/bootstrap.php';
 require_once __DIR__ . '/lib/partials/layout.php';
-require_once __DIR__ . '/lib/partials/citation.php';
 
 if (isset($_GET['fn']) && $_GET['fn'] !== '') {
 	$filenameParam = isset($_GET['filename']) && $_GET['filename'] !== ''
@@ -43,29 +42,8 @@ try {
     $galleryContext = pinchard_gallery_context_for_photo($datetime);
     $viewerTimeline = pinchard_viewer_timeline($array, $filename, $galleryContext);
 
-    $tmpPath = pinchard_exif_tmp_path();
-    $exif = [];
-
-    try {
-        if (!pinchard_exif_tmp_matches_key($filename)) {
-            $s3->getObject([
-                'Bucket' => $cfg['s3_bucket_full'],
-                'Key' => $filename,
-                'SaveAs' => $tmpPath,
-            ]);
-            pinchard_exif_tmp_record_key($filename);
-        }
-
-        if (function_exists('exif_read_data') && is_readable($tmpPath)) {
-            $read = exif_read_data($tmpPath, 0, true);
-            if (is_array($read)) {
-                $exif = $read;
-            }
-        }
-    } catch (Throwable $exifErr) {
-        // EXIF is optional; the viewer still works from CDN + S3 listing metadata.
-        $exif = [];
-    }
+    $cdnFull = $cfg['cdn_url_full'];
+    $exif = pinchard_read_photo_exif($filename, $cdnFull);
 
     $make = trim((string) ($exif['IFD0']['Make'] ?? ''));
     $model = trim((string) ($exif['IFD0']['Model'] ?? ''));
@@ -115,35 +93,52 @@ try {
     }
 
     $cameraLines = [];
-    if ($make !== '') {
-        $cameraLines[] = 'Make: ' . pinchard_h($make);
+    $cameraLines[] = $make !== '' ? 'Make: ' . pinchard_h($make) : 'Make:';
+    $cameraLines[] = $model !== '' ? 'Model: ' . pinchard_h($model) : 'Model:';
+
+    $focalLine = 'Focal Length:';
+    $focal_length_array = explode('/', (string) $focal_length);
+    if (count($focal_length_array) === 2 && (float) $focal_length_array[1] !== 0.0) {
+        $focalLine = 'Focal Length: ' . number_format((float) $focal_length_array[0] / (float) $focal_length_array[1], 2) . ' mm';
     }
-    if ($model !== '') {
-        $cameraLines[] = 'Model: ' . pinchard_h($model);
-    }
-    if ($focal_length !== '') {
-        $focal_length_array = explode('/', (string) $focal_length);
-        if (count($focal_length_array) === 2 && (float) $focal_length_array[1] !== 0.0) {
-            $cameraLines[] = 'Focal Length: ' . number_format((float) $focal_length_array[0] / (float) $focal_length_array[1], 2) . ' mm';
-        }
-    }
+    $cameraLines[] = $focalLine;
+
+    $exposureLine = 'Exposure:';
     if ($exposure_time !== '' && $fnumber !== '' && $iso_speed_ratings !== '') {
         $exposure_array = explode('/', (string) $exposure_time);
         $fnumber_array = explode('/', (string) $fnumber);
         if (count($exposure_array) === 2 && (float) $exposure_array[0] !== 0.0 && count($fnumber_array) === 2 && (float) $fnumber_array[1] !== 0.0) {
             $exposure_value = number_format((float) $exposure_array[1] / (float) $exposure_array[0], 0);
             $fnumber_value = number_format((float) $fnumber_array[0] / (float) $fnumber_array[1], 1);
-            $cameraLines[] = 'Exposure: 1/' . $exposure_value . ' sec, f/' . $fnumber_value . '; ISO ' . pinchard_h((string) $iso_speed_ratings);
+            $exposureLine = 'Exposure: 1/' . $exposure_value . ' sec, f/' . $fnumber_value . '; ISO ' . pinchard_h((string) $iso_speed_ratings);
         }
     }
+    $cameraLines[] = $exposureLine;
+
+    $imageSizeLine = 'Image Size:';
     if ($image_width !== '' && $image_height !== '') {
-        $cameraLines[] = 'Image Size: ' . pinchard_h((string) $image_width) . ' x ' . pinchard_h((string) $image_height);
+        $imageSizeLine = 'Image Size: ' . pinchard_h((string) $image_width) . ' x ' . pinchard_h((string) $image_height);
     }
-    if ($xresolution !== '') {
-        $resolution_array = explode('/', (string) $xresolution);
-        if (count($resolution_array) === 2 && (float) $resolution_array[1] !== 0.0) {
-            $cameraLines[] = 'Resolution: ' . number_format((float) $resolution_array[0] / (float) $resolution_array[1], 2) . ' pixels per inch';
-        }
+    $cameraLines[] = $imageSizeLine;
+
+    $resolutionLine = 'Resolution:';
+    $resolution_array = explode('/', (string) $xresolution);
+    if (count($resolution_array) === 2 && (float) $resolution_array[1] !== 0.0) {
+        $resolutionLine = 'Resolution: ' . number_format((float) $resolution_array[0] / (float) $resolution_array[1], 2) . ' pixels per inch';
+    }
+    $cameraLines[] = $resolutionLine;
+
+    if (!$hasGps) {
+        $gpsDefaults = pinchard_cloudberry_gps_defaults();
+        $gps_latitude_degree = $gpsDefaults['latitude_degree'];
+        $gps_latitude_min = $gpsDefaults['latitude_min'];
+        $gps_latitude_sec = $gpsDefaults['latitude_sec'];
+        $gps_longitude_degree = $gpsDefaults['longitude_degree'];
+        $gps_longitude_min = $gpsDefaults['longitude_min'];
+        $gps_longitude_sec = $gpsDefaults['longitude_sec'];
+    }
+    if ($gps_altitude === '') {
+        $gps_altitude = pinchard_cloudberry_gps_defaults()['altitude'];
     }
 
     $dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
@@ -154,14 +149,11 @@ try {
     $mapLon = $hasGps ? (float) $lon : -53.48586388888953;
     $mapJe = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 
-    $cdnFull = $cfg['cdn_url_full'];
     $imageUrl = $cdnFull . $filename;
     $ogDescription = $dt !== false
         ? 'Photograph from Pinchard\'s Island — ' . $dt->format('F j, Y \a\t g:i A') . '.'
         : 'Photograph from Pinchard\'s Island.';
     $photoAlt = pinchard_photo_alt_text($datetime);
-    $citationAccessDate = pinchard_citation_access_date();
-    $photoCitation = pinchard_citation_photo($filename, $datetime, $citationAccessDate);
 
     $jsonLd = [
         [
@@ -291,41 +283,27 @@ try {
                         <div class="detail_rect"><img src="images/icon-date.svg" alt="" /></div>
                         <div class="inner_data"><?= $converted_date ?></div>
                     </div>
-<?php if ($cameraLines !== []): ?>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-gopro.svg" alt="" /></div>
                         <div class="inner_data"><?= implode('<br>', $cameraLines) ?></div>
                     </div>
-<?php endif; ?>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-raspberry.svg" alt="" /></div>
                         <div class="inner_data">Photographer: Raspberry Pi 3 Model B</div>
                     </div>
-<?php if ($hasGps): ?>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-geolocation.svg" alt="" /></div>
                         <div class="inner_data">
                             Position: <?= $gps_latitude_degree ?>&deg; <?= $gps_latitude_min ?>&acute; <?= $gps_latitude_sec ?>&quot; N,
                             <?= $gps_longitude_degree ?>&deg; <?= $gps_longitude_min ?>&acute; <?= $gps_longitude_sec ?>&quot; W<br>
 <?php
-    if ($gps_altitude !== '') {
-        $alt_array = explode('/', (string) $gps_altitude);
-        if (count($alt_array) === 2 && (float) $alt_array[1] !== 0.0) {
-            echo 'Altitude: ' . number_format((float) $alt_array[0] / (float) $alt_array[1], 2) . ' m';
-        }
+    $alt_array = explode('/', (string) $gps_altitude);
+    if (count($alt_array) === 2 && (float) $alt_array[1] !== 0.0) {
+        echo 'Altitude: ' . number_format((float) $alt_array[0] / (float) $alt_array[1], 2) . ' m';
+    } else {
+        echo 'Altitude:';
     }
 ?>
-                        </div>
-                    </div>
-<?php endif; ?>
-                    <div class="inner_area citation_area">
-                        <div class="detail_rect citation_rect" aria-hidden="true">&ldquo;</div>
-                        <div class="inner_data">
-                            <?php pinchard_citation_block([
-                                'text' => $photoCitation,
-                                'label' => 'Citation',
-                                'compact' => true,
-                            ]); ?>
                         </div>
                     </div>
                 </div>

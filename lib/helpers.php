@@ -263,28 +263,26 @@ function pinchard_citation_archive(?string $accessDate = null): string
 		. '. Accessed ' . $accessed . '.';
 }
 
-/**
- * Suggested citation for an individual Cloudberry photograph.
- *
- * @param string $datetime Archive datetime (Y/m/d H:i:s).
- */
-function pinchard_citation_photo(string $filename, string $datetime, ?string $accessDate = null): string
+/** Template for citing an individual Cloudberry photograph (replace bracketed fields). */
+function pinchard_citation_photo_template(): string
 {
-	$accessed = $accessDate ?? pinchard_citation_access_date();
-	$url = pinchard_absolute_url('/index.php', ['filename' => $filename]);
-	$photoId = pinchard_photo_title($filename);
+	return 'Cloudberry. Automated photograph, [Month Day, Year, Time]; photo ID [number] ([FILENAME].JPG). '
+		. pinchard_site_origin()
+		. '/index.php?filename=[FILENAME].JPG. Accessed [Month Day, Year].';
+}
 
-	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
-	$timestamp = $dt !== false
-		? $dt->format('F j, Y, g:i A')
-		: $datetime;
-
-	return 'Cloudberry. Automated photograph, '
-		. $timestamp
-		. '; photo ID ' . $photoId
-		. ' (' . $filename . '). '
-		. $url
-		. '. Accessed ' . $accessed . '.';
+/** Cabin location defaults when GPS EXIF is missing. */
+function pinchard_cloudberry_gps_defaults(): array
+{
+	return [
+		'latitude_degree' => '49',
+		'latitude_min' => '12',
+		'latitude_sec' => '9.14',
+		'longitude_degree' => '53',
+		'longitude_min' => '29',
+		'longitude_sec' => '9.11',
+		'altitude' => '5.27/1',
+	];
 }
 
 /** Display title for a gallery photo (GoPro: digits after GOPR). */

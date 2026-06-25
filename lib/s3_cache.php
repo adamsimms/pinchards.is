@@ -105,3 +105,89 @@ function pinchard_exif_tmp_record_key(string $s3Key): void
 	pinchard_ensure_photo_cache_dir();
 	file_put_contents(pinchard_exif_tmp_key_path(), $s3Key, LOCK_EX);
 }
+
+/** Ensure the directory for tmp.jpg exists (sibling of .cache). */
+function pinchard_ensure_exif_tmp_dir(): void
+{
+	$dir = dirname(pinchard_exif_tmp_path());
+	if (!is_dir($dir)) {
+		mkdir($dir, 0755, true);
+	}
+}
+
+/**
+ * Download a full-resolution photo for EXIF parsing (cached per S3 key).
+ * Tries S3 first, then the public full-size CDN — same JPEG the viewer displays.
+ */
+function pinchard_fetch_photo_for_exif(string $filename, string $cdnUrlFull): bool
+{
+	$tmpPath = pinchard_exif_tmp_path();
+	if (pinchard_exif_tmp_matches_key($filename) && is_readable($tmpPath)) {
+		return true;
+	}
+
+	pinchard_ensure_exif_tmp_dir();
+	$downloaded = false;
+
+	global $s3;
+	if (isset($s3)) {
+		$cfg = pinchard_config();
+		try {
+			$s3->getObject([
+				'Bucket' => $cfg['s3_bucket_full'],
+				'Key' => $filename,
+				'SaveAs' => $tmpPath,
+			]);
+			$downloaded = is_readable($tmpPath);
+		} catch (Throwable) {
+			$downloaded = false;
+		}
+	}
+
+	if (!$downloaded) {
+		$url = $cdnUrlFull . $filename;
+		$context = stream_context_create([
+			'http' => [
+				'timeout' => 30,
+				'follow_location' => 1,
+			],
+			'ssl' => [
+				'verify_peer' => true,
+				'verify_peer_name' => true,
+			],
+		]);
+		$bytes = @file_get_contents($url, false, $context);
+		if ($bytes !== false && $bytes !== '') {
+			$downloaded = file_put_contents($tmpPath, $bytes, LOCK_EX) !== false;
+		}
+	}
+
+	if ($downloaded) {
+		pinchard_exif_tmp_record_key($filename);
+	}
+
+	return $downloaded && is_readable($tmpPath);
+}
+
+/**
+ * Read EXIF from a gallery photo, using a cached tmp copy when possible.
+ *
+ * @return array<string, mixed>
+ */
+function pinchard_read_photo_exif(string $filename, string $cdnUrlFull): array
+{
+	if (!function_exists('exif_read_data')) {
+		return [];
+	}
+
+	try {
+		if (!pinchard_fetch_photo_for_exif($filename, $cdnUrlFull)) {
+			return [];
+		}
+
+		$read = exif_read_data(pinchard_exif_tmp_path(), 0, true);
+		return is_array($read) ? $read : [];
+	} catch (Throwable) {
+		return [];
+	}
+}
