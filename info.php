@@ -5,25 +5,6 @@ declare(strict_types=1);
 require_once __DIR__ . '/lib/bootstrap.php';
 require_once __DIR__ . '/lib/partials/layout.php';
 
-$latestLabel = null;
-$latestUrl = 'index.php';
-
-try {
-    $cfg = pinchard_config();
-    $photos = getObjectList($cfg['s3_bucket_full']);
-    usort($photos, fn ($a, $b) => $a['date'] <=> $b['date']);
-    $latest = pinchard_latest_photo($photos);
-    if ($latest !== null) {
-        $latestUrl = 'index.php?filename=' . rawurlencode($latest['filename']);
-        $dt = DateTime::createFromFormat('Y/m/d H:i:s', $latest['date']);
-        if ($dt !== false) {
-            $latestLabel = $dt->format('F j, Y \a\t g:i A');
-        }
-    }
-} catch (RuntimeException | \Aws\Exception\AwsException $e) {
-    // Status block degrades gracefully without S3.
-}
-
 $copyrightYear = (int) date('Y');
 
 pinchard_layout_head("Pinchard's Island — About Cloudberry", [
@@ -37,22 +18,10 @@ pinchard_layout_nav(['active' => 'info']);
         <img src="images/info/pano.jpg" class="img-fluid info_img" alt="View from Precious Memories cabin on Pinchard's Island">
     </div>
 
-    <div class="info-status">
-<?php if ($latestLabel !== null): ?>
-        <p><strong>Last photograph:</strong> <?= pinchard_h($latestLabel) ?></p>
-<?php endif; ?>
-        <p class="info-cta">
-            <a href="<?= pinchard_h($latestUrl) ?>">View latest photo</a>
-            &middot;
-            <a href="gallery.php">Browse the archive</a>
-        </p>
-    </div>
-
     <div class="info-layout">
         <aside class="info-toc" aria-label="Table of contents">
-            <p class="info-toc-heading">On this page</p>
             <nav>
-                <a href="#about">About</a>
+                <a href="#about" class="is-active" aria-current="true">About</a>
                 <a href="#why">Why</a>
                 <a href="#where">Where</a>
                 <a href="#how">How</a>
@@ -363,4 +332,49 @@ pinchard_layout_nav(['active' => 'info']);
         </main>
     </div>
 
-<?php pinchard_layout_footer(); ?>
+<?php pinchard_layout_footer([
+    'extra_scripts' => <<<'JS'
+    <script>
+        (function() {
+            var sectionIds = ['about', 'why', 'where', 'how', 'hardware', 'installation', 'who', 'contact'];
+            var links = document.querySelectorAll('.info-toc nav a');
+            var sections = sectionIds.map(function(id) {
+                return document.getElementById(id);
+            }).filter(Boolean);
+
+            if (!sections.length || !('IntersectionObserver' in window)) {
+                return;
+            }
+
+            function setActive(id) {
+                links.forEach(function(link) {
+                    var href = link.getAttribute('href') || '';
+                    var match = href === '#' + id;
+                    link.classList.toggle('is-active', match);
+                    if (match) {
+                        link.setAttribute('aria-current', 'true');
+                    } else {
+                        link.removeAttribute('aria-current');
+                    }
+                });
+            }
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        setActive(entry.target.id);
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '-40% 0px -50% 0px',
+                threshold: 0
+            });
+
+            sections.forEach(function(section) {
+                observer.observe(section);
+            });
+        })();
+    </script>
+JS,
+]); ?>
