@@ -59,6 +59,36 @@ $footerScripts .= <<<'JS'
 
     var index = 0;
     var currentImg = null;
+    var advanceTimer = null;
+    var paused = false;
+    var navToggle = document.getElementById('navSlideshowToggle');
+
+    function clearAdvanceTimer() {
+        if (advanceTimer !== null) {
+            clearTimeout(advanceTimer);
+            advanceTimer = null;
+        }
+    }
+
+    function scheduleAdvance() {
+        clearAdvanceTimer();
+        if (paused) {
+            return;
+        }
+        advanceTimer = setTimeout(advance, cfg.display);
+    }
+
+    function setPaused(nextPaused) {
+        paused = nextPaused;
+        clearAdvanceTimer();
+        if (navToggle) {
+            navToggle.classList.toggle('is-paused', paused);
+            navToggle.setAttribute('aria-label', paused ? 'Resume slideshow' : 'Pause slideshow');
+        }
+        if (!paused) {
+            scheduleAdvance();
+        }
+    }
 
     function photoUrl(i) {
         return cfg.cdnurl + cfg.images[i].filename;
@@ -92,7 +122,7 @@ $footerScripts .= <<<'JS'
             img.style.display = 'block';
             currentImg = img;
             updateNavDate();
-            setTimeout(advance, cfg.display);
+            scheduleAdvance();
             return;
         }
 
@@ -103,15 +133,24 @@ $footerScripts .= <<<'JS'
                 old.parentNode.removeChild(old);
             }
             updateNavDate();
-            setTimeout(advance, cfg.display);
+            scheduleAdvance();
         });
     }
 
     function advance() {
+        if (paused) {
+            return;
+        }
         showIndex((index + 1) % cfg.images.length);
     }
 
     showIndex(0);
+
+    if (navToggle) {
+        navToggle.addEventListener('click', function() {
+            setPaused(!paused);
+        });
+    }
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {

@@ -13,7 +13,6 @@ try {
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
     $photosByMonth = pinchard_group_photos_by_month($array);
     $monthKeys = array_keys($photosByMonth);
-    $firstMonthLabel = $monthKeys !== [] ? $photosByMonth[$monthKeys[0]]['label'] : '';
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
     http_response_code(503);
     header('Content-Type: text/plain; charset=utf-8');
@@ -50,7 +49,6 @@ pinchard_layout_nav(['active' => 'gallery']);
                     </div>
                 </div>
             </nav>
-            <h2 class="gallery-active-month" id="galleryActiveMonth"><?= pinchard_h($firstMonthLabel) ?></h2>
         </header>
 
         <div class="content_area">
@@ -89,7 +87,6 @@ pinchard_layout_footer([
 
             var markers = document.querySelectorAll('.gallery-timeline-marker');
             var sections = document.querySelectorAll('.gallery-month');
-            var heading = document.getElementById('galleryActiveMonth');
             if (!markers.length || !sections.length || !('IntersectionObserver' in window)) {
                 return;
             }
@@ -118,9 +115,6 @@ pinchard_layout_footer([
                     marker.classList.toggle('is-active', match);
                     if (match) {
                         activeMarker = marker;
-                        if (heading && marker.getAttribute('data-label')) {
-                            heading.textContent = marker.getAttribute('data-label');
-                        }
                     }
                 });
                 scrollMarkerIntoView(activeMarker);
