@@ -8,6 +8,74 @@ function pinchard_h(?string $value): string
 	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+/** Current request URL without query string (for og:url). */
+function pinchard_canonical_url(): string
+{
+	$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+	$host = $_SERVER['HTTP_HOST'] ?? 'www.pinchards.is';
+	$uri = $_SERVER['REQUEST_URI'] ?? '/';
+	$path = strtok($uri, '?') ?: '/';
+
+	return $scheme . '://' . $host . $path;
+}
+
+/**
+ * Group photos chronologically by Y-m month key.
+ *
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return array<string, array{label: string, photos: list<array{filename: string, date: string, show_date?: string}>}>
+ */
+function pinchard_group_photos_by_month(array $photos): array
+{
+	$photosByMonth = [];
+	foreach ($photos as $photo) {
+		$dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
+		if ($dt === false) {
+			continue;
+		}
+		$monthKey = $dt->format('Y-m');
+		if (!isset($photosByMonth[$monthKey])) {
+			$photosByMonth[$monthKey] = [
+				'label' => $dt->format('F Y'),
+				'photos' => [],
+			];
+		}
+		$photosByMonth[$monthKey]['photos'][] = $photo;
+	}
+
+	return $photosByMonth;
+}
+
+/**
+ * @return array{month_key: string, label: string, gallery_url: string}|null
+ */
+function pinchard_gallery_context_for_photo(string $date): ?array
+{
+	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $date);
+	if ($dt === false) {
+		return null;
+	}
+	$monthKey = $dt->format('Y-m');
+
+	return [
+		'month_key' => $monthKey,
+		'label' => $dt->format('F Y'),
+		'gallery_url' => 'gallery.php#month-' . $monthKey,
+	];
+}
+
+/**
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ */
+function pinchard_latest_photo(array $photos): ?array
+{
+	if ($photos === []) {
+		return null;
+	}
+
+	return $photos[count($photos) - 1];
+}
+
 /** Display title for a gallery photo (GoPro: digits after GOPR). */
 function pinchard_photo_title(string $filename): string
 {
