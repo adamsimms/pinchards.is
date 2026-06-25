@@ -82,9 +82,13 @@ function pinchard_layout_nav(array $options = []): void
         <div class="nav-left-icons">
             <a href="gallery.php" class="<?= pinchard_h($galleryClass) ?>" aria-label="Browse photo gallery"></a>
 <?php if ($showSlideshow): ?>
-            <a href="slideshow.php" class="<?= pinchard_h($slideshowClass) ?>" aria-label="Watch slideshow"></a>
 <?php if ($active === 'slideshow'): ?>
-            <span class="nav-slideshow-date" id="navSlideshowDate" aria-live="polite"></span>
+            <div class="nav-slideshow-control">
+                <a href="slideshow.php" class="<?= pinchard_h($slideshowClass) ?>" aria-label="Slideshow playing"></a>
+                <span class="nav-slideshow-date" id="navSlideshowDate" aria-live="polite"></span>
+            </div>
+<?php else: ?>
+            <a href="slideshow.php" class="<?= pinchard_h($slideshowClass) ?>" aria-label="Watch slideshow"></a>
 <?php endif; ?>
 <?php endif; ?>
         </div>
