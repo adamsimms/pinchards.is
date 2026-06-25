@@ -1559,6 +1559,7 @@ body {
 body.gallery-page {
     --gallery-header-offset: 50px;
     --gallery-timeline-height: 52px;
+    --gallery-photo-bleed: 106%;
     padding-top: 0;
     overflow-x: hidden;
 }
@@ -1697,6 +1698,7 @@ body.gallery-page #photo_container {
 }
 
 body.gallery-page .gallery-month {
+    padding: 0;
     margin-bottom: 80px;
     scroll-margin-top: var(--gallery-header-offset);
     scroll-margin-bottom: calc(var(--gallery-timeline-height) + 4px);
@@ -1756,14 +1758,14 @@ body.gallery-page .photoElement .photoBox:not(.is-loaded)::after {
 
 body.gallery-page .photoElement .photoBox img.gallery-photo {
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 50%;
-    width: 104% !important;
-    max-width: 104% !important;
-    height: 100%;
+    width: var(--gallery-photo-bleed) !important;
+    max-width: var(--gallery-photo-bleed) !important;
+    height: var(--gallery-photo-bleed);
     object-fit: cover;
     object-position: center;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     display: block;
     opacity: 0;
     transition: opacity 0.35s ease;
