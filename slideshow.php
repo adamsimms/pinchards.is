@@ -51,7 +51,9 @@ pinchard_layout_head("Pinchard's Island — Slideshow", [
 pinchard_layout_nav(['active' => 'slideshow']);
 ?>
     <h1 class="visually-hidden">Pinchard's Island Slideshow</h1>
-    <div class="slideshow-viewport" id="slideshow" aria-live="polite" aria-label="Photograph slideshow"></div>
+    <div class="slideshow-viewport" id="slideshow" aria-live="polite" aria-label="Photograph slideshow">
+        <p class="slideshow-date" id="slideshowDate" aria-live="polite"></p>
+    </div>
 
 <?php
 $footerScripts = '<script>' . "\n";
@@ -65,7 +67,7 @@ $footerScripts .= <<<'JS'
 (function($) {
     var cfg = window.pinchardSlideshow;
     var container = document.getElementById('slideshow');
-    var navDate = document.getElementById('navSlideshowDate');
+    var navDate = document.getElementById('slideshowDate');
     if (!cfg.images.length) {
         container.textContent = 'No photographs available.';
         return;

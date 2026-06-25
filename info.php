@@ -383,11 +383,50 @@ pinchard_layout_nav(['active' => 'info']);
     'extra_scripts' => <<<'JS'
     <script>
         (function() {
+            var toc = document.querySelector('.info-toc');
+            var nav = toc ? toc.querySelector('nav') : null;
             var sectionIds = ['about', 'why', 'where', 'how', 'hardware', 'installation', 'who', 'citation', 'contact'];
             var links = document.querySelectorAll('.info-toc nav a');
             var sections = sectionIds.map(function(id) {
                 return document.getElementById(id);
             }).filter(Boolean);
+
+            function updateScrollFades() {
+                if (!toc || !nav) {
+                    return;
+                }
+                var maxScroll = nav.scrollWidth - nav.clientWidth;
+                var scrollLeft = nav.scrollLeft;
+                toc.classList.toggle('is-fade-right', maxScroll > 2 && scrollLeft < maxScroll - 2);
+                toc.classList.toggle('is-fade-left', scrollLeft > 2);
+            }
+
+            function scrollActiveLinkIntoView() {
+                if (!nav) {
+                    return;
+                }
+                var active = nav.querySelector('a.is-active');
+                if (!active) {
+                    return;
+                }
+                var navRect = nav.getBoundingClientRect();
+                var linkRect = active.getBoundingClientRect();
+                if (linkRect.left < navRect.left) {
+                    nav.scrollLeft -= (navRect.left - linkRect.left) + 16;
+                } else if (linkRect.right > navRect.right) {
+                    nav.scrollLeft += (linkRect.right - navRect.right) + 16;
+                }
+                updateScrollFades();
+            }
+
+            if (nav) {
+                nav.addEventListener('scroll', updateScrollFades, { passive: true });
+                window.addEventListener('resize', updateScrollFades);
+                if ('ResizeObserver' in window) {
+                    new ResizeObserver(updateScrollFades).observe(nav);
+                }
+                updateScrollFades();
+            }
 
             if (!sections.length || !('IntersectionObserver' in window)) {
                 return;
@@ -404,6 +443,7 @@ pinchard_layout_nav(['active' => 'info']);
                         link.removeAttribute('aria-current');
                     }
                 });
+                scrollActiveLinkIntoView();
             }
 
             var observer = new IntersectionObserver(function(entries) {

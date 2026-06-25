@@ -95,7 +95,6 @@ function pinchard_layout_nav(array $options = []): void
 <?php if ($active === 'slideshow'): ?>
             <button type="button" class="nav-slideshow-control" id="navSlideshowToggle" aria-label="Pause slideshow">
                 <span class="nav-slideshow-icon" aria-hidden="true"></span>
-                <span class="nav-slideshow-date" id="navSlideshowDate" aria-live="polite"></span>
             </button>
 <?php else: ?>
             <a href="slideshow.php" class="<?= pinchard_h($slideshowClass) ?>" aria-label="Watch slideshow"></a>
