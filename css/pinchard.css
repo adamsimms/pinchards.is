@@ -566,6 +566,12 @@ aside {
 .detail_content_view .inner_area {
     margin-top: 16px;
 }
+.detail_content_view .citation_rect {
+    font-family: 'circular-bold', sans-serif;
+    font-size: 18px;
+    line-height: 24px;
+    color: #F05F40;
+}
 
 .detail_view .mapcontainer {
     padding: 32px;
@@ -1560,7 +1566,7 @@ body.gallery-page {
     --gallery-header-offset: 50px;
     --gallery-timeline-height: 52px;
     --gallery-photo-bleed: 106%;
-    padding-top: 0;
+    padding-top: var(--gallery-header-offset);
     overflow-x: hidden;
 }
 

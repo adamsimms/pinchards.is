@@ -262,6 +262,22 @@ function pinchard_citation_photo_template(): string
 		. '/index.php?filename=[FILENAME].JPG. Accessed [Month Day, Year].';
 }
 
+/** Suggested citation for an individual Cloudberry photograph. */
+function pinchard_citation_photo(string $filename, string $datetime): string
+{
+	$url = pinchard_absolute_url('/index.php', ['filename' => $filename]);
+	$photoId = pinchard_photo_title($filename);
+	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
+	$timestamp = $dt !== false ? $dt->format('F j, Y, g:i A') : $datetime;
+
+	return 'Cloudberry. Automated photograph, '
+		. $timestamp
+		. '; photo ID ' . $photoId
+		. ' (' . $filename . '). '
+		. $url
+		. '. Accessed [Month Day, Year].';
+}
+
 /** Cabin location defaults when GPS EXIF is missing. */
 function pinchard_cloudberry_gps_defaults(): array
 {

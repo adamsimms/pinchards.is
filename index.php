@@ -154,6 +154,7 @@ try {
         ? 'Photograph from Pinchard\'s Island — ' . $dt->format('F j, Y \a\t g:i A') . '.'
         : 'Photograph from Pinchard\'s Island.';
     $photoAlt = pinchard_photo_alt_text($datetime);
+    $photoCitation = pinchard_citation_photo($filename, $datetime);
 
     $jsonLd = [
         [
@@ -304,6 +305,12 @@ try {
         echo 'Altitude:';
     }
 ?>
+                        </div>
+                    </div>
+                    <div class="inner_area">
+                        <div class="detail_rect citation_rect" aria-hidden="true">&ldquo;</div>
+                        <div class="inner_data">
+                            <button type="button" class="citation-copy-btn detail-citation-copy" data-citation="<?= pinchard_h($photoCitation) ?>" aria-label="Copy citation to clipboard">Copy citation</button>
                         </div>
                     </div>
                 </div>
