@@ -177,14 +177,42 @@ aside {
 }
 
 .navbar-default .nav_cloudberry {
-    position: absolute;
-    left: 16px;
-    top: 14px;
+    position: relative;
+    left: auto;
+    top: auto;
     background: url(../images/icon-cloudberry.svg) no-repeat;
     background-size: contain;
     height: 24px;
     width: 24px;
     opacity: .6;
+    flex-shrink: 0;
+}
+
+.navbar-default .nav-left-icons {
+    position: absolute;
+    left: 16px;
+    top: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.navbar-default .nav_slideshow {
+    position: relative;
+    background: url(../images/icon-slideshow.svg) no-repeat;
+    background-size: contain;
+    height: 24px;
+    width: 24px;
+    opacity: .6;
+    flex-shrink: 0;
+}
+
+.navbar-default .nav_slideshow.active,
+.navbar-default .nav_slideshow:hover,
+.navbar-default .nav_slideshow:focus {
+    background: url(../images/icon-slideshow_hover.svg) no-repeat;
+    background-size: contain;
+    opacity: 1;
 }
 
 .navbar-default .nav_cloudberry.active, .navbar-default .nav_cloudberry:hover, .navbar-default .nav_cloudberry:focus {
@@ -329,23 +357,25 @@ aside {
 .preview {
     position: relative;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     padding-top: 50px;
+    box-sizing: border-box;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    overflow-y: hidden;
-    overflow-x: hidden;
+    overflow: hidden;
+    touch-action: pan-y pinch-zoom;
 }
 .preview.overflow_shown{
-    overflow-y: initial;
+    overflow-y: auto;
 }
 .btn_arrow {
     width: 100%;
-    height: 16px;
+    height: 3rem;
+    min-height: 48px;
     background-image: url('../images/arrow.svg');
     background-size: 17px 7px;
     background-repeat: no-repeat;
@@ -356,6 +386,12 @@ aside {
     -webkit-transition: all 0.35s;
     -moz-transition: all 0.35s;
     transition: all 0.35s;
+    border: none;
+    background-color: white;
+    flex-shrink: 0;
+    font-size: 0;
+    color: transparent;
+    padding: 0;
 }
 .btn_arrow.down_arrow {
     background-image: url('../images/arrow.svg');
@@ -368,9 +404,24 @@ aside {
 .detail_view {
     width: 100%;
     background-color: white;
-    margin-top: calc( 100vh - 50px - 16px);
-    overflow: auto;
-    position: absolute;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1020;
+    max-height: min(85vh, 720px);
+    transform: translateY(calc(100% - 3rem));
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+}
+.detail_view.open {
+    transform: translateY(0);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.detail_view .detail_drawer-inner {
+    max-height: inherit;
 }
 .detail_view .detail_container {
     padding: 32px;
@@ -648,10 +699,40 @@ option {
 
 #preview_image {
     position: absolute;
-    top: 50px;
-    width: 104%;
-    height: 100%;
-    object-fit: cover;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 3rem;
+    width: 100%;
+}
+
+.preview .placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.photo-context-nav {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    z-index: 1010;
+    font-size: 14px;
+}
+.photo-context-nav a {
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 6px 12px;
+    border-radius: 4px;
+    display: inline-block;
+}
+.photo-context-nav a:hover,
+.photo-context-nav a:focus {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.65);
 }
 
 .picker_area {
@@ -1169,4 +1250,263 @@ body {
   filter: blur(50px);
   /* this is needed so Safari keeps sharp edges */
   transform: scale(1);
+}
+
+/* —— Gallery page —— */
+body.gallery-page {
+    padding-top: 50px;
+}
+
+body.gallery-page .content_area {
+    padding: 0 0 8px;
+    border: none;
+}
+
+body.gallery-page #photo_container {
+    padding: 0 32px;
+    margin-top: 0;
+    border: none;
+    max-width: none;
+    width: 100%;
+}
+
+body.gallery-page .gallery-month-strip {
+    position: sticky;
+    top: 50px;
+    z-index: 1025;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid #e5e5e5;
+    padding: 10px 32px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    scrollbar-width: thin;
+}
+
+body.gallery-page .gallery-month-strip a {
+    display: inline-block;
+    margin-right: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    color: rgba(0, 0, 0, 0.7);
+    text-decoration: none;
+    font-size: 14px;
+    border: 1px solid #e0e0e0;
+}
+
+body.gallery-page .gallery-month-strip a:hover,
+body.gallery-page .gallery-month-strip a:focus {
+    color: #F05F40;
+    border-color: #F05F40;
+}
+
+body.gallery-page .gallery-month {
+    margin-bottom: 80px;
+    scroll-margin-top: 110px;
+}
+
+body.gallery-page .gallery-month:last-child {
+    margin-bottom: 32px;
+}
+
+body.gallery-page .gallery-month-title {
+    font-family: 'circular-bold', sans-serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 48px 0 28px;
+    padding-left: 0;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+body.gallery-page #photo_container > .photos,
+body.gallery-page .gallery-month .photos {
+    margin: 0 !important;
+    border: none;
+}
+
+body.gallery-page .photos {
+    width: 100% !important;
+    border: none;
+}
+
+body.gallery-page .photoElement {
+    padding: 0;
+    margin-bottom: 0;
+    border: none;
+}
+
+body.gallery-page .photoElement .photoBox {
+    max-width: none;
+    margin: 0;
+}
+
+body.gallery-page .photoElement .photoBox img {
+    width: 104% !important;
+    max-width: 104% !important;
+}
+
+body.gallery-page .photoElement a {
+    border-radius: 0;
+    border: none;
+}
+
+body.gallery-page img.lazy {
+    background-image: url('../images/loading.gif');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 18px 18px;
+    border: none;
+    animation: gallery-fadein 0.6s ease;
+}
+
+@keyframes gallery-fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+body.gallery-page .photo-date-mobile {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    body.gallery-page .photo-box-caption {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.85);
+        height: auto;
+        min-height: 36px;
+        position: relative;
+    }
+    body.gallery-page .photoBox .photo-box-caption .photo-box-caption-content {
+        position: relative;
+        top: auto;
+        transform: none;
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+/* —— Info page TOC & status —— */
+body.info-page .info-toc {
+    position: sticky;
+    top: 50px;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid #e5e5e5;
+    padding: 12px 0;
+    margin-bottom: 8px;
+}
+
+body.info-page .info-toc nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+body.info-page .info-toc a {
+    font-size: 14px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    color: rgba(0, 0, 0, 0.7);
+    text-decoration: none;
+    border: 1px solid #e5e5e5;
+}
+
+body.info-page .info-toc a:hover,
+body.info-page .info-toc a:focus {
+    color: #F05F40;
+    border-color: #F05F40;
+}
+
+body.info-page .info-status {
+    text-align: center;
+    padding: 24px 16px 8px;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+body.info-page .info-status .info-cta {
+    margin-top: 12px;
+}
+
+body.info-page .info-status .info-cta a {
+    margin: 0 6px;
+    font-weight: 600;
+}
+
+body.info-page .hardware-accordion .accordion-button {
+    font-family: 'circular-bold', sans-serif;
+    font-size: 1.1rem;
+    padding: 16px 20px;
+}
+
+body.info-page .hardware-accordion .accordion-button:not(.collapsed) {
+    color: #F05F40;
+    background-color: #fff8f6;
+}
+
+body.info-page .hardware-accordion .accordion-body {
+    font-size: 17px;
+    line-height: 1.55;
+}
+
+body.info-page .hardware-accordion .accordion-body h4 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+/* —— Slideshow page —— */
+body.slideshow-page {
+    padding-top: 50px;
+    background: #000;
+    overflow: hidden;
+}
+
+body.slideshow-page .slideshow-viewport {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 50px);
+    background: #000;
+}
+
+body.slideshow-page .slideshow-viewport img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+body.slideshow-page .slideshow-controls {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1030;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px 16px;
+    border-radius: 4px;
+}
+
+@media (max-width: 767px) {
+    body.gallery-page .gallery-month-strip {
+        padding: 10px 16px;
+    }
+    body.gallery-page #photo_container {
+        padding: 0 16px;
+    }
+    body.gallery-page .gallery-month-title {
+        font-size: 2rem;
+    }
+    .detail_content_view .title {
+        font-size: 32px;
+    }
+    .detail_view .detail_container,
+    .detail_view .mapcontainer {
+        padding: 20px 16px;
+    }
 }
