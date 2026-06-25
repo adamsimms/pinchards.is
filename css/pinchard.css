@@ -861,6 +861,24 @@ body.info-page {
     overflow-x: clip;
 }
 
+body.info-page .info-hero {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    margin: 0 0 20px;
+}
+
+body.info-page .info-hero img {
+    display: block;
+    width: 100%;
+    height: 60vh;
+    min-height: 280px;
+    max-height: 70vh;
+    margin: 0;
+    object-fit: cover;
+    object-position: center;
+}
+
 body.info-page img.info_img {
     display: block;
     max-width: 100%;

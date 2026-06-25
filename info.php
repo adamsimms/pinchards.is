@@ -58,12 +58,8 @@
         </div>
     </nav>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-10 col-lg-8">
-                <img src="images/info/pano.jpg" class="img-fluid info_img" alt="Cabin">
-            </div>
-        </div>
+    <div class="info-hero">
+        <img src="images/info/pano.jpg" class="img-fluid info_img" alt="Cabin">
     </div>
 
     <div class = "how_section">
