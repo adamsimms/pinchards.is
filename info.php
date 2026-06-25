@@ -1,115 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
 
-<head>
+declare(strict_types=1);
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+require_once __DIR__ . '/lib/bootstrap.php';
+require_once __DIR__ . '/lib/partials/layout.php';
 
-    <title>Pinchard's Island</title>
+$latestLabel = null;
+$latestUrl = 'index.php';
 
-    <!-- Bootstrap Core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
+try {
+    $cfg = pinchard_config();
+    $photos = getObjectList($cfg['s3_bucket_full']);
+    usort($photos, fn ($a, $b) => $a['date'] <=> $b['date']);
+    $latest = pinchard_latest_photo($photos);
+    if ($latest !== null) {
+        $latestUrl = 'index.php?filename=' . rawurlencode($latest['filename']);
+        $dt = DateTime::createFromFormat('Y/m/d H:i:s', $latest['date']);
+        if ($dt !== false) {
+            $latestLabel = $dt->format('F j, Y \a\t g:i A');
+        }
+    }
+} catch (RuntimeException | \Aws\Exception\AwsException $e) {
+    // Status block degrades gracefully without S3.
+}
 
-    <!-- Custom Fonts -->
-    <link href="vendor/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+$copyrightYear = (int) date('Y');
 
-    <!-- Plugin CSS -->
-    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+pinchard_layout_head("Pinchard's Island — About Cloudberry", [
+    'description' => 'Cloudberry is a solar-powered, off-the-grid photography project documenting Pinchard\'s Island, Newfoundland — one photograph per hour.',
+    'body_class' => 'info-page',
+]);
 
-    <!-- Theme CSS -->
-    <link href="css/pinchard.css" rel="stylesheet">
-
-    <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.css" />
-    <link type="text/css" rel="stylesheet" href="./vendor/lightbox/featherlight.gallery.css" />
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.js"></script>
-    <![endif]-->
-
-    <script src="vendor/exifjs/exif.js"></script>
-
-    <!-- Favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/favicon/manifest.json">
-    <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="/favicon/favicon.ico">
-    <meta name="msapplication-config" content="/favicon/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
-
-</head>
-
-<body id="page-top" class="info-page">
-    <nav id="mainNav" class="navbar navbar-default fixed-top">
-        <a href="gallery.php" class="link-to-gallery nav_cloudberry"></a>
-        <a class="nav_info active" href="info.php"></a>
-        <div class="title">
-            <a href="index.php">pinchards.is</a>
-        </div>
-    </nav>
-
+pinchard_layout_nav(['active' => 'info']);
+?>
     <div class="info-hero">
-        <img src="images/info/pano.jpg" class="img-fluid info_img" alt="Cabin">
+        <img src="images/info/pano.jpg" class="img-fluid info_img" alt="View from Precious Memories cabin on Pinchard's Island">
     </div>
 
-    <div class = "how_section">
-        <div class = "container">
+    <div class="info-status">
+<?php if ($latestLabel !== null): ?>
+        <p><strong>Last photograph:</strong> <?= pinchard_h($latestLabel) ?></p>
+<?php endif; ?>
+        <p class="info-cta">
+            <a href="<?= pinchard_h($latestUrl) ?>">View latest photo</a>
+            &middot;
+            <a href="gallery.php">Browse the archive</a>
+        </p>
+    </div>
+
+    <div class="info-toc">
+        <nav aria-label="On this page">
+            <a href="#about">About</a>
+            <a href="#why">Why</a>
+            <a href="#where">Where</a>
+            <a href="#how">How</a>
+            <a href="#hardware">Hardware</a>
+            <a href="#installation">Installation</a>
+            <a href="#who">Who</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </div>
+
+    <div class="how_section" id="about">
+        <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB hotspot, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
 
-                <p>The photographs depict a view of Pinchard’s Island from a small, family owned cabin named “Precious Memories.” The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
+                <p>The photographs depict a view of Pinchard's Island from a small, family owned cabin named "Precious Memories." The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
-                <p>The view is static–in the sense that camera is always capturing the same frame; however, the lighting of the frame can vary drastically from one image to another. These photographs are a continuation of the moments the locals spend in the cabin glancing out the window at the surrounding landscape. </p>
-            </div>
-            </div>
-          </div>
-      </div>
+                <p>The view is static–in the sense that camera is always capturing the same frame; however, the lighting of the frame can vary drastically from one image to another. These photographs are a continuation of the moments the locals spend in the cabin glancing out the window at the surrounding landscape.</p>
+            </div></div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-10 col-lg-8">
-                <img src="images/info/precious-moments.jpg" class="img-fluid info_img" alt="Cabin">
+                <img src="images/info/precious-moments.jpg" class="img-fluid info_img" alt="Precious Memories cabin">
             </div>
         </div>
     </div>
 
-      <div class = "how_section">
-          <div class = "container">
-              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
+    <div class="how_section" id="why">
+        <div class="container">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Okay, but why Pinchard's Island?</h3>
 
-                <p><a href="http://adamsim.ms/" target="_blank">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank">Pinchard’s Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
+                <p><a href="http://adamsim.ms/" target="_blank" rel="noopener noreferrer">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank" rel="noopener noreferrer">Pinchard's Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
 
-                <img src="https://static1.squarespace.com/static/50e5fc10e4b0291e3b9b75c6/588f654e725e2506f4c22cd9/588f68e56a4963c410121736/1485793514975/10_adam_simms_sisters.jpg" class="img-fluid info_img" alt="Pinchard's Island Sisters" />
+                <img src="images/info/pinchards-island-sisters.jpg" class="img-fluid info_img" alt="Pinchard's Island Sisters">
 
-                <p>Shortly after Newfoundland joined Canada as it’s 10th province, Pinchard’s Island was <a href="http://adamsim.ms/resettlement/" target="_blank">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and create new ones.<p>
-              </div>
-            </div>
-          </div>
-      </div>
+                <p>Shortly after Newfoundland joined Canada as it's 10th province, Pinchard's Island was <a href="http://adamsim.ms/resettlement/" target="_blank" rel="noopener noreferrer">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and create new ones.</p>
+            </div></div>
+        </div>
+    </div>
 
-      <div class = "how_section">
-          <div class = "container">
-              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-
+    <div class="how_section" id="where">
+        <div class="container">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Where is Pinchard's Island?</h3>
-
                 <p>Pinchard's Island is situated at the northern edge of Bonavista Bay, Newfoundland, Canada. It was one of the first settled sites in Bonavista Bay but is no longer inhabited.</p>
-
-              </div>
-            </div>
-          </div>
-      </div>
+            </div></div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row justify-content-center">
@@ -121,302 +114,247 @@
         </div>
     </div>
 
-      <div class = "how_section">
-          <div class = "container">
-              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
+    <div class="how_section" id="how">
+        <div class="container">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>How?</h3>
 
                 <p>Adam and Angela met early May 2017 to briefly discuss the possibility of collaborating together. The idea was loose, but the goal was to take photos of the island remotely, upload the images via the cellular network and access them from anywhere. We both shared connections to Newfoundland, and a passion for art and technology, so we set out to see what was possible.</p>
 
                 <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.</p>
 
-                <p>We used <a href="http://www.trello.com/" target="_blank">Trello</a> to plan every aspect of the project, communicate, and document ongoing research:</p>
-
-              </div>
-            </div>
-          </div>
-      </div>
+                <p>We used <a href="http://www.trello.com/" target="_blank" rel="noopener noreferrer">Trello</a> to plan every aspect of the project, communicate, and document ongoing research:</p>
+            </div></div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-10 col-lg-8">
-                <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank"><img src="images/info/trello.jpg" class="img-fluid info_img" alt="trello"></a>
+                <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank" rel="noopener noreferrer"><img src="images/info/trello.jpg" class="img-fluid info_img" alt="Trello project board"></a>
             </div>
         </div>
     </div>
 
-      <div class = "how_section">
-          <div class = "container">
-              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
+    <div class="how_section">
+        <div class="container">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <p>Designing a system that worked was only the start of the project. Every slight adjustment that we made to the system, such as moving from electricity to solar power, putting the USB hotspot in a case or using different USB cables introduced new problems that we had to constantly monitor and resolve. Once we felt confident in our system, we had to be realistic that once the system was installed on the island, we would not be able to physically be there to troubleshoot any problem that might arise. This forced us to evaluate the entire solution and implement different components to help reduce the risk factor of the project.</p>
 
-                <img src="images/info/notebook.jpg" class="img-fluid info_img" alt="Notebook" />
+                <img src="images/info/notebook.jpg" class="img-fluid info_img" alt="Project notebook">
 
-                <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below you’ll find a system diagram and an outline of all the hardware and software used to create Cloudberry.</p>
+                <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below you'll find a system diagram and an outline of all the hardware and software used to create Cloudberry.</p>
 
-                <h3>The Cloudberry System</h3>
-              </div>
-            </div>
-          </div>
-      </div>
+                <h3 id="hardware">The Cloudberry System</h3>
+            </div></div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-10 col-lg-8">
-                <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img" alt="Cloudberry System"></a>
+                <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank" rel="noopener noreferrer"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img" alt="Cloudberry system diagram"></a>
             </div>
         </div>
     </div>
 
-      <div class = "how_section">
-          <div class = "container">
-              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <h3>What we used:</h3><br />
+    <div class="how_section">
+        <div class="container">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
+                <h3>What we used:</h3>
 
-                <h4><strong><a href="https://www.amazon.ca/GoPro-MAIN-91068-HERO4-BLACK/dp/B00NIYNUF2" target="_blank">GoPro HERO4 Black</a> with 16gb micro SD Card.</strong></h4>
-                <p>We initially wanted to use the GoPro HERO5, but the Cam Do enclosure did not support the GoPro HERO5 at the time. Creating a DIY weatherproof enclosure didn’t add any benefit since the image quality between GoPro HERO4 and GoPro HERO5 is the same; therefore, we made the decision to go with the GoPro HERO4.</p><br />
-
-                <h4><strong><a href="https://cam-do.com/collections/schedulers/products/blink-gopro-time-lapse-controller" target="_blank">Cam Do Blink Interval Timer</a></strong></h4>
-                <p>The interval timer turns on the GoPro every hour between 8 AM and 8 PM. The GoPro is modified with the <a href="https://cam-do.com/products/csi-pro-firmware" target="_blank">Pro-csiController</a> firmware from Cam Do and runs a custom `autoexec` script to take a photo, turn on the GoPro WiFi and then put the camera in standby mode to conserve power. In the event that something goes wrong, such as no power for a period of time, the interval timer will attempt to turn on the camera when suffiecent power is available. As long as the camera WiFi is enabled we can wake and control the camera remotely via the Raspberry Pi.</p><br />
-
-                <h4><strong><a href="https://www.raspberrypi.org/products/raspberry-pi-3-model-b/" target="_blank">Raspberry Pi 3 Model B</a></strong></h4>
-                <p>Standard Raspberry Pi with a <a href="https://www.adafruit.com/product/1583" target="_blank">16GB Noobs SD Card</a> running <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank">Raspbian OS</a>.</p><br />
-
-                <h4><strong><a href="http://www.uugear.com/product/wittypi2/" target="_blank">WittyPi 2</a></strong></h4>
-                <p>A real time clock (RTC) that turns on the Raspberry Pi night for 30 minutes. The Raspberry Pi runs a Python script that:</p>
-                <ol>
-                  <li>Wakes up the GoPro via WiFi.</li>
-                	<li>Downloads and deletes the latest images from the GoPro.</li>
-                	<li>Uploads the images to an Amazon Web Services S3 Bucket and deletes the images from the Raspberry Pi.</li>
-                	<li>Puts the GoPro into standby mode and shuts down the Raspberry Pi to conserve power.</li>
-                </ol><br /><br />
-
-                <h4><strong><a href="https://store.arduino.cc/usa/arduino-pro-mini" target="_blank">Arduino Pro Mini</a> + <a href="https://www.adafruit.com/product/904" target="_blank">High Side DC Current Sensor Breakout Board</a></strong></h4>
-                <p>We added a power-monitoring meter to avoid power issues that might corrupt the SD Card if the Raspberry Pi shuts down unexpectedly. In the event that the power supply is low, the Arduino triggers the WittyPi 2 to shut down the Raspberry Pi until there is sufficient battery to power the device.</p><br />
-
-                <h4><strong><a href="http://www.switchdoc.com/dual-watchdog-timer/" target="_blank">WatchDog</a> from Switch Doc</strong></h4>
-                <p>Since the Raspberry Pi is managed remotely the WatchDog monitors the health of the Raspberry Pi and automatically restarts the system in the event of a malfunction.</p><br />
-
-                <h4><strong><a href="http://www.bell.ca/Mobility/Products/Huawei-E8372-Turbo-Stick" target="_blank">HAUWEI LTE E8372</a> USB Hotspot</strong></h4>
-                <p>The USB hotspot is connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. This allows us to connect to the internet via USB and reserve the Raspberry Pi WiFi to connect to the GoPro WiFi. At ±6mb per photo, 13 photos per day, we’re using ±2.3gb per month.</p><br />
-
-                <h4><strong>USB cables, extensions, and repeaters</strong></h4>
-                <p>All cables were weatherproof with plastic tubing and electrical tape.</p><br />
-
-                <h4><strong><a href="https://cam-do.com/collections/enclosures/products/dry-enclosure-hero-3-black" target="_blank">GoPro Weatherproof Enclosure</a> with <a href="https://cam-do.com/collections/accessories/products/ram-swivel-mount-kit-for-outdoor-enclosure" target="_blank">Swivle Mount Kit</a> from Cam Do</strong></h4>
-                <p>Home of the GoPro. We made several modifications to the enclosure:</p>
-                <ul>
-                  <li>The case has an opening on the top, which seemed problematic considering the harsh environment. We deduced to silicone the entire top opening to avoid potential leaking.</li>
-                  <li>We drilled a hole in the bottom of the case to connect a USB cord with a repeater to power the GoPro. We applied silicone the USB cable around the entire opening of the hole to prevent potential leaking.</li>
-                  <li>The enclosure comes with a standard screw on clear camera filter attached to the opening for the GoPro lens. We appliked silicone to the entire edge of the filter to prevent potential leaking.</li>
-                  <li>The first mornings we were getting condensation build up on the filter preventing visibility to the GoPro lens. We decided to remove the air pressure filter of the Cam Do case in an attempt to allow more air flow. Since this modification, the filter did not accumulate any further condensation. </li>
-                </ul><br /><br />
-
-                <h4><strong><a href="https://www.nanuk.com/nanuk-910/" target="_blank">Nanunk 910 Case</a></strong></h4>
-                <p>Holds and insulates the Raspberry Pi with add-ons and the USB hotspot.</p><br />
-
-                <h4><strong>130 Watt Solar Power System</strong></h4>
-                <p>We worked with Gerry of <a href="http://www.nfenergies.com/" target="_blank">Newfound Energies</a> in St. John’s Newfoundland to help design a solar panel system that would intermittently power the system we were designing. Because Pinchard’s Island receives approximately 1-1.5 hours of sunlight during the winter, we decided to go with a larger solar power system in hopes that it would be enough to power the system during the winter, allow for the charging of other devices (laptops, phones, etc) during the summer and an investment in system that could be used for future projects.</p>
-
-                <ul>
-                  <li>130-watt solar panel pointed at ±20 degrees towards the path of the sun during the winter. Adjusted to ±60 degrees in the summer.</li>
-                  <li>40 amp solar charge controller</li>
-                  <li>1500-watt inverter</li>
-                  <li>Four 6 volt, 385 amp hour deep cycle batteries</li>
-                  <li>30 amp automatic transfer switch</li>
-                  <li>30 amp battery charger</li>
-                </ul><br /><br />
-
-                <h4><strong>DIY Weatherproof Box</strong></h4>
-                <p>Roger built an insulated, weatherproof housing unit for the solar power system.</p><br />
-
-                <h4><strong><a href="http://www.dataplicity.com/" target="_blank">Dataplicity</a></strong></h4>
-                <p>Allows us to connect and control to the Raspberry Pi remotely via the command line interface.</p><br />
-
-                <h4><strong><a href="https://aws.amazon.com/" target="_blank">Amazon Web Services</a></strong></h4>
-                <p>S3 Bucket for the storing the photographs with CloudFront to deliver the images to this website.</p><br />
-
-                <h4><strong><a href="https://github.com/KonradIT/goprowifihack" target="_blank">GoPro WiFi Hack</a> from KonradIT</strong></h4>
-                <p>A series of wifi commands that enable to to control the GoPro remotely.</p><br />
-              </div>
-            </div>
-          </div>
-      </div>
+                <div class="accordion hardware-accordion" id="hardwareAccordion">
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-gopro">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-gopro-body" aria-expanded="false" aria-controls="hw-gopro-body">GoPro HERO4 Black with 16gb micro SD Card</button>
+                        </h4>
+                        <div id="hw-gopro-body" class="accordion-collapse collapse" aria-labelledby="hw-gopro" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>We initially wanted to use the GoPro HERO5, but the Cam Do enclosure did not support the GoPro HERO5 at the time. Creating a DIY weatherproof enclosure didn't add any benefit since the image quality between GoPro HERO4 and GoPro HERO5 is the same; therefore, we made the decision to go with the GoPro HERO4.</p>
+                                <p><a href="https://www.amazon.ca/GoPro-MAIN-91068-HERO4-BLACK/dp/B00NIYNUF2" target="_blank" rel="noopener noreferrer">GoPro HERO4 Black on Amazon</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-blink">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-blink-body" aria-expanded="false" aria-controls="hw-blink-body">Cam Do Blink Interval Timer</button>
+                        </h4>
+                        <div id="hw-blink-body" class="accordion-collapse collapse" aria-labelledby="hw-blink" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>The interval timer turns on the GoPro every hour between 8 AM and 8 PM. The GoPro is modified with the <a href="https://cam-do.com/products/csi-pro-firmware" target="_blank" rel="noopener noreferrer">Pro-csiController</a> firmware from Cam Do and runs a custom <code>autoexec</code> script to take a photo, turn on the GoPro WiFi and then put the camera in standby mode to conserve power.</p>
+                                <p><a href="https://cam-do.com/collections/schedulers/products/blink-gopro-time-lapse-controller" target="_blank" rel="noopener noreferrer">Cam Do Blink Interval Timer</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-pi">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-pi-body" aria-expanded="false" aria-controls="hw-pi-body">Raspberry Pi 3 Model B</button>
+                        </h4>
+                        <div id="hw-pi-body" class="accordion-collapse collapse" aria-labelledby="hw-pi" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>Standard Raspberry Pi with a <a href="https://www.adafruit.com/product/1583" target="_blank" rel="noopener noreferrer">16GB Noobs SD Card</a> running <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank" rel="noopener noreferrer">Raspbian OS</a>.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-witty">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-witty-body" aria-expanded="false" aria-controls="hw-witty-body">WittyPi 2</button>
+                        </h4>
+                        <div id="hw-witty-body" class="accordion-collapse collapse" aria-labelledby="hw-witty" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>A real time clock (RTC) that turns on the Raspberry Pi at night for 30 minutes. The Raspberry Pi runs a Python script that:</p>
+                                <ol>
+                                    <li>Wakes up the GoPro via WiFi.</li>
+                                    <li>Downloads and deletes the latest images from the GoPro.</li>
+                                    <li>Uploads the images to an Amazon Web Services S3 Bucket and deletes the images from the Raspberry Pi.</li>
+                                    <li>Puts the GoPro into standby mode and shuts down the Raspberry Pi to conserve power.</li>
+                                </ol>
+                                <p><a href="http://www.uugear.com/product/wittypi2/" target="_blank" rel="noopener noreferrer">WittyPi 2</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-arduino">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-arduino-body" aria-expanded="false" aria-controls="hw-arduino-body">Arduino Pro Mini + Current Sensor</button>
+                        </h4>
+                        <div id="hw-arduino-body" class="accordion-collapse collapse" aria-labelledby="hw-arduino" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>We added a power-monitoring meter to avoid power issues that might corrupt the SD Card if the Raspberry Pi shuts down unexpectedly. In the event that the power supply is low, the Arduino triggers the WittyPi 2 to shut down the Raspberry Pi until there is sufficient battery to power the device.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-watchdog">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-watchdog-body" aria-expanded="false" aria-controls="hw-watchdog-body">WatchDog from Switch Doc</button>
+                        </h4>
+                        <div id="hw-watchdog-body" class="accordion-collapse collapse" aria-labelledby="hw-watchdog" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>Since the Raspberry Pi is managed remotely the WatchDog monitors the health of the Raspberry Pi and automatically restarts the system in the event of a malfunction.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-hotspot">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-hotspot-body" aria-expanded="false" aria-controls="hw-hotspot-body">Huawei LTE E8372 USB Hotspot</button>
+                        </h4>
+                        <div id="hw-hotspot-body" class="accordion-collapse collapse" aria-labelledby="hw-hotspot" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>The USB hotspot is connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. At ±6mb per photo, 13 photos per day, we're using ±2.3gb per month.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-enclosure">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-enclosure-body" aria-expanded="false" aria-controls="hw-enclosure-body">GoPro Weatherproof Enclosure</button>
+                        </h4>
+                        <div id="hw-enclosure-body" class="accordion-collapse collapse" aria-labelledby="hw-enclosure" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>Home of the GoPro. We made several modifications to the enclosure including silicone sealing, a drilled power port, and removing the air pressure filter to reduce condensation on the lens filter.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-solar">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-solar-body" aria-expanded="false" aria-controls="hw-solar-body">130 Watt Solar Power System</button>
+                        </h4>
+                        <div id="hw-solar-body" class="accordion-collapse collapse" aria-labelledby="hw-solar" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p>We worked with Gerry of <a href="http://www.nfenergies.com/" target="_blank" rel="noopener noreferrer">Newfound Energies</a> in St. John's Newfoundland to design a solar panel system for intermittent power in harsh winter conditions.</p>
+                                <ul>
+                                    <li>130-watt solar panel pointed at ±20 degrees towards the path of the sun during the winter.</li>
+                                    <li>40 amp solar charge controller</li>
+                                    <li>1500-watt inverter</li>
+                                    <li>Four 6 volt, 385 amp hour deep cycle batteries</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h4 class="accordion-header" id="hw-cloud">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-cloud-body" aria-expanded="false" aria-controls="hw-cloud-body">Remote access &amp; cloud storage</button>
+                        </h4>
+                        <div id="hw-cloud-body" class="accordion-collapse collapse" aria-labelledby="hw-cloud" data-bs-parent="#hardwareAccordion">
+                            <div class="accordion-body">
+                                <p><a href="http://www.dataplicity.com/" target="_blank" rel="noopener noreferrer">Dataplicity</a> allows remote CLI access to the Raspberry Pi.</p>
+                                <p><a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">Amazon Web Services</a> S3 stores photographs; CloudFront delivers images to this website.</p>
+                                <p><a href="https://github.com/KonradIT/goprowifihack" target="_blank" rel="noopener noreferrer">GoPro WiFi Hack</a> from KonradIT enables remote camera control.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div></div>
+        </div>
+    </div>
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-10 col-lg-8">
-                <img src="images/info/boat.jpg" class="img-fluid info_img" alt="Boat">
+                <img src="images/info/boat.jpg" class="img-fluid info_img" alt="Boat approaching Pinchard's Island">
             </div>
         </div>
     </div>
 
-      <div class = "how_section">
-          <div class = "container">
-              <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
+    <div class="how_section" id="installation">
+        <div class="container">
+            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Installation</h3>
-                <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments. We had to consider cable lengths, accessibility,  architecture of the cabin and predict the potential weather problems. Based on our research of solar irradiance for the geocoordinates of the cabin, we decided to tilt the solar panel at an angle of 20 degrees since the summer was coming to an end and the winter months would prove to be the most challenging for sunlight. We also had  instal the panel slightly over the heave of the roof to prevent the build up of ice and snow, but this was risky since it was difficult to tightly secure the panel to the roof in the event of high winds and slightly positions the panel out of the sun’s path.</p>
+                <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments.</p>
 
-                <img src="images/info/solar-install.jpg" class="img-fluid info_img" alt="Solar Power Install" />
+                <img src="images/info/solar-install.jpg" class="img-fluid info_img" alt="Solar power installation">
 
-                <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Prior to arriving at the island, we were confused about what would be the best thing to capture; the landscape, the ocean, something else entirely. We were reliant on the outside structure of the cabin to orient the frame and through a process of elimination, we made a decision. Pointing the camera towards the south was directly in line with the path of the sun caused the image to be blasted throughout the day. The east and the west also was affected by the same blasting in the morning or the evening and only offered views of the landscape. Pointing the camera towards the north avoided the blasting issue and offers the view of both the landscape and the ocean, which seems to offer more diverse photographs. This frame also felt right since the placement of the camera is near the north facing window and reminds us of the inside view from the cabin window.</p>
+                <p>The second step was to choose the frame of the photograph and install the Cam Do enclosure. Pointing the camera towards the north avoided sun blasting and offers views of both the landscape and the ocean.</p>
 
-                <img src="images/info/cam-do.jpg" class="img-fluid info_img" alt="Cam Do Enclosure" />
-
-                <p>Next, it was time to assemble the camera components together and test. We connected the Cam Do interval timer to the GoPro and powered camera via USB cable and repeater plugged into the solar power. The new USB cords we introduced were causing the camera to detect a USB power mode when the camera was turned on, which conflicted with the `autoexec` script that we wrote to take the photo, turn on WiFi and put the camera in standby mode. After half a day of troubleshooting, we had to rewrite the script to re-sequence the code to control the camera and go through a series of tests that component.</p>
-
-                <p>Once we stabilized the camera component, we introduced the Raspberry Pi and its add-ons. The initial test had this component of the system performing well; the WittyPi was booting and shutting down the Raspberry Pi on schedule, the Raspberry Pi was connecting to the GoPro WiFi enabling us to access the camera and the USB hotspot was providing the internet to upload the images to the AWS S3 Bucket. However, once we settled the Raspberry Pi and its add-ons in the Nanuk case, it significantly impacted the WiFi signal to the point where we were not able to maintain a connection to the GoPro via WiFi. This resulted in us completely rewiring the power to this component of the system to allow the Raspberry Pi be positioned as close to the camera as possible to improve the WiFi signal strength.</p>
-
-                <img src="images/info/pi.jpg" class="img-fluid info_img" alt="Cloudberry" />
+                <img src="images/info/cam-do.jpg" class="img-fluid info_img" alt="Cam Do enclosure">
 
                 <p>Once the entire system was in place, we monitored everything for a full day cycle before locking up all of the cases and leaving the island.</p>
-            </div>
-            </div>
+
+                <img src="images/info/pi.jpg" class="img-fluid info_img" alt="Raspberry Pi assembly">
+            </div></div>
         </div>
     </div>
 
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-10 col-lg-8">
-                <img src="images/info/yay.jpg" class="img-fluid info_img" alt="Creators">
+                <img src="images/info/yay.jpg" class="img-fluid info_img" alt="Cloudberry creators">
             </div>
         </div>
     </div>
 
-    <div class="who_section">
-        <div class = "container">
+    <div class="who_section" id="who">
+        <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Who Are you?</h3>
-                <div class = "row people_row">
-                    <div class = "col-sm-4 people_col_1">
-                        <div class = "people"><img src="/images/people/adam-simms.jpg" /></div>
-                        <div class = "job"><strong>Adam Simms</strong> is a Photographer pursuing his MFA in Studio Arts, Photography at Concordia University. </div>
-                        <a href="http://adamsim.ms/" target="_blank" class="link">www</a>
+                <div class="row people_row">
+                    <div class="col-sm-4 people_col_1">
+                        <div class="people"><img src="/images/people/adam-simms.jpg" alt="Adam Simms" /></div>
+                        <div class="job"><strong>Adam Simms</strong> is a Photographer pursuing his MFA in Studio Arts, Photography at Concordia University.</div>
+                        <a href="http://adamsim.ms/" target="_blank" rel="noopener noreferrer" class="link">www</a>
                     </div>
-                    <div class = "col-sm-4 people_col_2">
-                        <div class = "people"><img src="/images/people/angela-gabereaux.jpg" /></div>
-                        <div class = "job"><strong>Angela Gabereaux</strong> is software developer, system architech, hacker, maker, media artist and teacher.</div>
-                        <a href="http://www.angelagabereaux.com/" target="_blank" class="link">www</a>
+                    <div class="col-sm-4 people_col_2">
+                        <div class="people"><img src="/images/people/angela-gabereaux.jpg" alt="Angela Gabereaux" /></div>
+                        <div class="job"><strong>Angela Gabereaux</strong> is software developer, system architect, hacker, maker, media artist and teacher.</div>
+                        <a href="http://www.angelagabereaux.com/" target="_blank" rel="noopener noreferrer" class="link">www</a>
                     </div>
-                    <div class = "col-sm-4 people_col_3">
-                        <div class = "people"><img src="/images/people/roger-knight.jpg" /></div>
-                        <div class = "job"><strong>Roger Knight</strong> is a heavy equipment operator and carpenter. </div>
+                    <div class="col-sm-4 people_col_3">
+                        <div class="people"><img src="/images/people/roger-knight.jpg" alt="Roger Knight" /></div>
+                        <div class="job"><strong>Roger Knight</strong> is a heavy equipment operator and carpenter.</div>
                     </div>
                 </div>
-            </div>
-            </div>
+            </div></div>
         </div>
     </div>
-    <div class="contact_section">
-        <div class = "container">
+
+    <div class="contact_section" id="contact">
+        <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>CONTACT</h3>
-                <p><a href="mailto:info@pinchards.is" class = "link">info@pinchards.is</a></p>
-                <div class ="copyright">
-                    Copyright @2017
+                <p><a href="mailto:info@pinchards.is" class="link">info@pinchards.is</a></p>
+                <div class="copyright">
+                    Copyright &copy; 2017&ndash;<?= $copyrightYear ?> Adam Simms &amp; Angela Gabereaux
                 </div>
-            </div>
-            </div>
+            </div></div>
         </div>
     </div>
 
-    <!-- Large Image
-
-    <img src="images/photo/1.jpg" class="img-fluid info_img" alt=""> -->
-
-
-    <!-- Two-Up Images
-
-    <div class = "row">
-        <div class = "col-sm-6">
-            <img src="images/photo/1.jpg" class="img-fluid info_img" alt="">
-        </div>
-        <div class = "col-sm-6">
-            <img src="images/photo/1.jpg" class="img-fluid info_img" alt="">
-        </div>
-    </div> -->
-
-    <!-- Thumbnail Images
-    <div class = "row about_images">
-        <div class = "col-sm-4">
-            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-fluid info_img" alt=""/></a>
-        </div>
-        <div class = "col-sm-4">
-            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-fluid info_img" alt="" /></a>
-        </div>
-        <div class = "col-sm-4">
-            <a class="gallery" href="images/photo/1.jpg"><img src="images/photo/1.jpg" class="img-fluid info_img" alt="" /></a>
-        </div>
-    </div> -->
-
-    <!-- Hero Image
-
-    <img src="images/photo/1.jpg" class="img-fluid info_img" alt=""> -->
-
-    <!-- CODE
-
-    <div class = "code_area">
-        <code></code>
-    </div> -->
-
-    <!-- QUOTE
-
-    <div class = "sub_container">
-        <div class = "sub_content">
-            "Quote"
-        </div>
-        <div class = "sub_content_name">
-            - Author
-        </div>
-    </div> -->
-
-
-    <!-- jQuery -->
-    <script src="vendor/jquery/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
-
-    <!-- Plugin JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>
-    <script src="vendor/scrollreveal/scrollreveal.js"></script>
-    <script src="vendor/magnific-popup/jquery.magnific-popup.js"></script>
-
-    <!-- Theme JavaScript -->
-    <script src="js/pinchard.js"></script>
-    <script src="./vendor/lightbox/featherlight.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./vendor/lightbox/featherlight.gallery.js" type="text/javascript" charset="utf-8"></script>
-
-    <script>
-        $(document).ready(function(){
-                $('.gallery').featherlightGallery({
-                        gallery: {
-                                fadeIn: 300,
-                                fadeOut: 300
-                        },
-                        openSpeed:    300,
-                        closeSpeed:   300
-                });
-                $('.gallery2').featherlightGallery({
-                        gallery: {
-                                next: 'next »',
-                                previous: '« previous'
-                        },
-                        variant: 'featherlight-gallery2'
-                });
-        });
-    </script>
-
-    <!-- Google Analytics -->
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1XKSQNT5M"></script>
-    <script>
-         window.dataLayer = window.dataLayer || [];
-         function gtag(){dataLayer.push(arguments);}
-         gtag('js', new Date());
-
-         gtag('config', 'G-G1XKSQNT5M');
-    </script>
-</body>
-
-</html>
+<?php pinchard_layout_footer(); ?>
