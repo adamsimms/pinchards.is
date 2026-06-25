@@ -123,7 +123,7 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
             border: none;
         }
 
-        #photo_container>.row {
+        #photo_container > .photos {
             margin: 0px !important;
             border: none;
         }
@@ -225,8 +225,7 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
     </nav>
     <div class="content_area">
         <div class="container" id="photo_container">
-            <div class="row">
-                <div class="photos" id="photos">
+            <div class="row photos g-0" id="photos">
                     <?php foreach ($array as $photo) : ?>
                         <div class="col-md-5ths col-sm-6 col-12 photoElement">
                             <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="photoBox">
@@ -237,7 +236,6 @@ usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
                             </a>
                         </div>
                     <?php endforeach; ?>
-                </div>
             </div>
         </div>
     </div>

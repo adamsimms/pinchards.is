@@ -613,8 +613,7 @@ option {
 }
 
 .photos {
-    display: inline-block;
-    width: calc(100% - 25px);
+    width: 100%;
 }
 
 .day.floating {
@@ -623,6 +622,8 @@ option {
 }
 
 .photos.floating {
+    display: inline-block;
+    width: calc(100% - 25px);
     margin-left: 20px;
 }
 
