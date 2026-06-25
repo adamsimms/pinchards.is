@@ -51,12 +51,13 @@ if ($awsKey !== null && $awsSecret !== null) {
 	}
 	$s3Config['credentials'] = $creds;
 } else {
-	throw new RuntimeException(
-		'AWS credentials are not set. The SDK was about to use the EC2 instance metadata service (169.254.169.254), which does not exist on DreamHost shared hosting.'
-		. ' Add readable ' . pinchard_root() . '/secrets.local.php next to index.php with your IAM key and secret (see secrets.local.php.example).'
-		. ' If the file exists, ensure putenv is not disabled and also assign $_ENV in that file (the example shows both).'
-		. ' Your site path is ' . pinchard_root() . ' — upload secrets.local.php to the same folder as index.php for this domain.'
-	);
+	$msg = 'AWS credentials are not set. Add secrets.local.php or fix GitHub Actions secrets (AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY).';
+	if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+		throw new RuntimeException($msg);
+	}
+	http_response_code(503);
+	header('Content-Type: text/plain; charset=utf-8');
+	exit('Photo service is temporarily unavailable.');
 }
 
 $s3 = new S3Client($s3Config);

@@ -10,6 +10,11 @@ if ($token === null) {
 	exit('Map unavailable. Add MAPBOX_ACCESS_TOKEN to secrets.local.php on the server.');
 }
 
+if (!str_starts_with($token, 'pk.')) {
+	http_response_code(503);
+	exit('Map unavailable. MAPBOX_ACCESS_TOKEN must be a Mapbox public token (pk.*), not a secret token (sk.*).');
+}
+
 $je = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 ?>
 <!DOCTYPE html>
@@ -28,12 +33,15 @@ $je = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 <body>
 <div id="map"></div>
 <script>
-	mapboxgl.accessToken = <?= json_encode($token, $je) ?>;
 	var map = new mapboxgl.Map({
+		accessToken: <?= json_encode($token, $je) ?>,
 		container: 'map',
 		zoom: 9,
 		center: [-53.4878, 49.1974],
 		style: 'mapbox://styles/mapbox/satellite-v9'
+	});
+	map.on('error', function (event) {
+		console.error('Mapbox error:', event && event.error ? event.error : event);
 	});
 </script>
 

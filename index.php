@@ -49,10 +49,18 @@
 <body id="page-top">
     <?php
 
+    use Aws\Exception\AwsException;
+
+    try {
     require_once __DIR__ . '/lib/bootstrap.php';
     $cfg = pinchard_config();
 
-    $requestedFn = isset($_GET['fn']) && $_GET['fn'] !== '' ? (string) $_GET['fn'] : null;
+    $requestedFn = null;
+    if (isset($_GET['filename']) && $_GET['filename'] !== '') {
+        $requestedFn = (string) $_GET['filename'];
+    } elseif (isset($_GET['fn']) && $_GET['fn'] !== '') {
+        $requestedFn = (string) $_GET['fn'];
+    }
 
     $array = getObjectList($cfg['s3_bucket_full']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
@@ -180,17 +188,25 @@
 
         return floatval($parts[0]) / floatval($parts[1]);
     }
+    } catch (RuntimeException | AwsException $e) {
+        http_response_code(503);
+        header('Content-Type: text/plain; charset=utf-8');
+        if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+            exit($e->getMessage());
+        }
+        exit('Photo viewer is temporarily unavailable.');
+    }
     ?>
 
     <nav id="mainNav" class="navbar navbar-default fixed-top">
         <a href="gallery.php" class="link-to-gallery nav_cloudberry"></a>
         <a class="nav_info" href="info.php"></a>
         <div class="title">
-            <a href="index.php?fn=<?= pinchard_h($prev_filename) ?>" <?= ($prev_filename === null || $prev_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
+            <a href="index.php?filename=<?= pinchard_h($prev_filename) ?>" <?= ($prev_filename === null || $prev_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
                 <div class="arrow left"></div>
             </a>
             <a href="index.php">pinchards.is</a>
-            <a href="index.php?fn=<?= pinchard_h($next_filename) ?>" <?= ($next_filename === null || $next_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
+            <a href="index.php?filename=<?= pinchard_h($next_filename) ?>" <?= ($next_filename === null || $next_filename === '') ? 'style="visibility: hidden;"' : '' ?>>
                 <div class="arrow right"></div>
             </a>
         </div>
@@ -209,14 +225,7 @@
                         <div class="detail_rect title_rect"><img src="images/icon-number.svg" /></div>
                         <div class="title">
                             <?php
-                            $filename_array = explode(".", $filename);
-                            $splited_file_name = "";
-                            for ($i = 0; $i < count($filename_array) - 1; $i++) {
-                                $splited_file_name .= $filename_array[$i];
-                            }
-                            $final_title = explode("GOPR", $splited_file_name);
-
-                            echo $final_title[1];
+                            echo pinchard_h(pathinfo($filename, PATHINFO_FILENAME));
                             ?>
                         </div>
                     </div>
