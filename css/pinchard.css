@@ -248,17 +248,35 @@ aside {
     -webkit-appearance: none;
 }
 
+.navbar-default .nav-slideshow-control:not(.is-paused) {
+    border-color: #F05F40;
+}
+
 .navbar-default .nav-slideshow-control:hover,
 .navbar-default .nav-slideshow-control:focus {
-    border-color: #F05F40;
     text-decoration: none;
     background-image: none;
     color: rgba(0, 0, 0, 0.65);
     outline: none;
 }
 
+.navbar-default .nav-slideshow-control:not(.is-paused):hover,
+.navbar-default .nav-slideshow-control:not(.is-paused):focus {
+    border-color: #F05F40;
+}
+
+.navbar-default .nav-slideshow-control.is-paused,
+.navbar-default .nav-slideshow-control.is-paused:hover,
+.navbar-default .nav-slideshow-control.is-paused:focus {
+    border-color: #ccc;
+}
+
 .navbar-default .nav-slideshow-control:focus-visible {
     box-shadow: 0 0 0 2px rgba(240, 95, 64, 0.35);
+}
+
+.navbar-default .nav-slideshow-control.is-paused:focus-visible {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
 }
 
 .navbar-default .nav-slideshow-control .nav-slideshow-icon {
@@ -1335,7 +1353,7 @@ body {
 /* —— Gallery page —— */
 body.gallery-page {
     --gallery-content-inset: 48px;
-    --gallery-header-offset: 108px;
+    --gallery-header-offset: 78px;
     padding-top: 50px;
     overflow-x: hidden;
 }
@@ -1355,7 +1373,7 @@ body.gallery-page .gallery-header {
     z-index: 100;
     background: #fff;
     border-bottom: 1px solid #e5e5e5;
-    padding: 14px 0 12px;
+    padding: 10px 0 6px;
 }
 
 body.gallery-page .gallery-timeline-scroll {
@@ -1371,17 +1389,16 @@ body.gallery-page .gallery-timeline-scroll {
 body.gallery-page .gallery-timeline-track {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
     position: relative;
     width: 100%;
-    padding: 2px 0 4px;
+    padding: 0;
     box-sizing: border-box;
 }
 
 body.gallery-page .gallery-timeline-track::before {
     content: '';
     position: absolute;
-    top: 7px;
+    top: 5px;
     left: 0;
     right: 0;
     height: 2px;
@@ -1393,21 +1410,13 @@ body.gallery-page .gallery-timeline-marker {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    padding: 0 4px;
+    gap: 6px;
+    padding: 0;
     text-decoration: none;
     position: relative;
     z-index: 1;
     flex: 1 1 0;
     min-width: 0;
-}
-
-body.gallery-page .gallery-timeline-marker:first-child {
-    align-items: flex-start;
-}
-
-body.gallery-page .gallery-timeline-marker:last-child {
-    align-items: flex-end;
 }
 
 body.gallery-page .gallery-timeline-dot {
@@ -1469,7 +1478,7 @@ body.gallery-page .content_area {
 }
 
 body.gallery-page #photo_container {
-    padding: 8px var(--gallery-content-inset) 0;
+    padding: 0 var(--gallery-content-inset);
     margin-top: 0;
     border: none;
     max-width: 100%;
@@ -1743,11 +1752,11 @@ body.slideshow-page .slideshow-viewport img {
 @media (max-width: 767px) {
     body.gallery-page {
         --gallery-content-inset: 24px;
-        --gallery-header-offset: 96px;
+        --gallery-header-offset: 68px;
     }
 
     body.gallery-page .gallery-header {
-        padding: 10px 0;
+        padding: 8px 0 4px;
     }
 
     body.gallery-page .gallery-timeline-scroll {
@@ -1759,7 +1768,7 @@ body.slideshow-page .slideshow-viewport img {
     }
 
     body.gallery-page #photo_container {
-        padding: 8px var(--gallery-content-inset) 16px;
+        padding: 0 var(--gallery-content-inset) 16px;
     }
     .detail_content_view .title {
         font-size: 32px;
