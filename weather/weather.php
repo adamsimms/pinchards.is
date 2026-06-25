@@ -4,48 +4,25 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../lib/env.php';
 require_once __DIR__ . '/../lib/helpers.php';
+require_once __DIR__ . '/../lib/geomet.php';
 
 pinchard_rate_limit('weather', 120, 3600);
 
 header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: public, max-age=600');
 
-$key = pinchard_env_non_empty('RAPIDAPI_KEY');
-if ($key === null) {
-	http_response_code(500);
-	echo json_encode(['error' => 'RAPIDAPI_KEY not configured. Add it to secrets.local.php (see secrets.local.php.example).']);
-	exit;
+$lat = PINCHARD_WEATHER_LAT;
+$lon = PINCHARD_WEATHER_LON;
+
+if (isset($_GET['lat'], $_GET['lon']) && is_numeric($_GET['lat']) && is_numeric($_GET['lon'])) {
+	$lat = (float) $_GET['lat'];
+	$lon = (float) $_GET['lon'];
 }
 
-$curl = curl_init();
+$payload = pinchard_geomet_weather_payload($lat, $lon);
 
-curl_setopt_array($curl, [
-	CURLOPT_URL => 'https://dark-sky.p.rapidapi.com/47.7119,-52.7254?lang=en&units=auto',
-	CURLOPT_RETURNTRANSFER => true,
-	CURLOPT_FOLLOWLOCATION => true,
-	CURLOPT_ENCODING => '',
-	CURLOPT_MAXREDIRS => 10,
-	CURLOPT_TIMEOUT => 30,
-	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-	CURLOPT_CUSTOMREQUEST => 'GET',
-	CURLOPT_HTTPHEADER => [
-		'x-rapidapi-host: dark-sky.p.rapidapi.com',
-		'x-rapidapi-key: ' . $key,
-	],
-]);
-
-$response = curl_exec($curl);
-$err = curl_error($curl);
-$code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-curl_close($curl);
-
-if ($err) {
+if (isset($payload['error'])) {
 	http_response_code(502);
-	echo json_encode(['error' => 'cURL error', 'detail' => $err]);
-	exit;
 }
 
-if ($code >= 400) {
-	http_response_code($code);
-}
-
-echo $response !== false ? $response : json_encode(['error' => 'Empty response']);
+echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

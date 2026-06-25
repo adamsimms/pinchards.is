@@ -36,7 +36,6 @@ if ($awsKey === '' || $awsSecret === '') {
 
 $region = pinchard_env('AWS_DEFAULT_REGION', 'us-east-1');
 $googleMapsKey = pinchard_env('GOOGLE_MAPS_API_KEY');
-$rapidApiKey = pinchard_env('RAPIDAPI_KEY');
 $mapboxToken = pinchard_env('MAPBOX_ACCESS_TOKEN');
 
 $lines = [
@@ -61,13 +60,6 @@ if ($googleMapsKey !== '') {
 	$lines[] = '// Google Maps JavaScript API (browser key) — index.php photo map';
 	$lines[] = '$googleMapsKey = ' . pinchard_php_str($googleMapsKey) . ';';
 	array_push($lines, ...pinchard_putenv_block('GOOGLE_MAPS_API_KEY', 'googleMapsKey'));
-}
-
-if ($rapidApiKey !== '') {
-	$lines[] = '';
-	$lines[] = '// RapidAPI — weather/weather.php';
-	$lines[] = '$rapidApiKey = ' . pinchard_php_str($rapidApiKey) . ';';
-	array_push($lines, ...pinchard_putenv_block('RAPIDAPI_KEY', 'rapidApiKey'));
 }
 
 if ($mapboxToken !== '') {
