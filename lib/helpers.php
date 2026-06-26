@@ -114,6 +114,35 @@ function pinchard_group_photos_by_month(array $photos): array
 }
 
 /**
+ * Group photos chronologically by calendar day (Y-m-d).
+ *
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return array<string, array{label: string, long_label: string, month_key: string, photos: list<array{filename: string, date: string, show_date?: string}>}>
+ */
+function pinchard_group_photos_by_day(array $photos): array
+{
+	$photosByDay = [];
+	foreach ($photos as $photo) {
+		$dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
+		if ($dt === false) {
+			continue;
+		}
+		$dayKey = $dt->format('Y-m-d');
+		if (!isset($photosByDay[$dayKey])) {
+			$photosByDay[$dayKey] = [
+				'label' => $dt->format('M j'),
+				'long_label' => $dt->format('F j, Y'),
+				'month_key' => $dt->format('Y-m'),
+				'photos' => [],
+			];
+		}
+		$photosByDay[$dayKey]['photos'][] = $photo;
+	}
+
+	return $photosByDay;
+}
+
+/**
  * @return array{month_key: string, label: string, gallery_url: string}|null
  */
 function pinchard_gallery_context_for_photo(string $date): ?array
