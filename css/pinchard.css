@@ -170,7 +170,7 @@ aside {
 }
 .navbar-default .nav-photo-prev.is-hidden,
 .navbar-default .nav-photo-next.is-hidden {
-    visibility: hidden;
+    display: none;
     pointer-events: none;
 }
 .navbar-default .nav-photo-prev,
@@ -226,11 +226,13 @@ aside {
 }
 .navbar-default .nav_cloudberry {
     display: block;
-    background: url(../images/icon-cloudberry.svg) no-repeat center;
+    background-image: url(../images/icon-cloudberry.svg);
+    background-repeat: no-repeat;
+    background-position: center;
     background-size: var(--nav-icon-size);
     width: var(--nav-icon-hit);
     height: var(--nav-icon-hit);
-    opacity: .6;
+    opacity: 1;
     flex-shrink: 0;
 }
 .navbar-default .nav_slideshow {
@@ -337,7 +339,7 @@ aside {
 }
 
 .navbar-default .nav_cloudberry.active, .navbar-default .nav_cloudberry:hover, .navbar-default .nav_cloudberry:focus {
-    background: url(../images/icon-cloudberry_hover.svg) no-repeat center;
+    background-image: url(../images/icon-cloudberry_hover.svg);
     background-size: var(--nav-icon-size);
     opacity: 1;
 }
@@ -970,12 +972,18 @@ option {
         padding: 0 12px;
     }
 
+    .navbar-default .nav-bar-start,
+    .navbar-default .nav-bar-end {
+        flex: 0 0 auto;
+    }
+
     .navbar-default .nav-bar-start {
         gap: 8px;
     }
 
     .navbar-default .nav-bar-center {
-        max-width: min(100%, 220px);
+        flex: 1 1 auto;
+        max-width: none;
     }
 
     .navbar-default .nav-bar-center .title-brand,
@@ -984,12 +992,17 @@ option {
     }
 
     .viewer-timeline {
-        gap: 0;
+        gap: 6px;
         padding: 0 4px 0 12px;
     }
 
     .viewer-timeline-date {
-        display: none;
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: 42vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 11px;
     }
 
     .navbar-default .nav-slideshow-control .nav-slideshow-icon {
