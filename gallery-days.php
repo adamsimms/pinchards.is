@@ -12,6 +12,10 @@ try {
     $array = getObjectList($cfg['s3_bucket_thumbnails']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
     $photosByDay = pinchard_group_photos_by_day($array);
+    $maxPhotosPerDay = 1;
+    foreach ($photosByDay as $dayGroup) {
+        $maxPhotosPerDay = max($maxPhotosPerDay, count($dayGroup['photos']));
+    }
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
     http_response_code(503);
     header('Content-Type: text/plain; charset=utf-8');
@@ -42,7 +46,7 @@ pinchard_layout_head("Pinchard's Island — Day Gallery", [
 pinchard_layout_nav(['active' => 'gallery']);
 ?>
     <h1 class="visually-hidden">Pinchard's Island Day Gallery</h1>
-    <div class="gallery-days-layout">
+    <div class="gallery-days-layout" style="--gallery-days-max-photos: <?= (int) $maxPhotosPerDay ?>">
         <div class="gallery-days-scroll" id="galleryDaysScroll" tabindex="0" aria-label="Day gallery filmstrip. Drag or scroll horizontally to browse days. Arrow keys move between photographs.">
             <div class="gallery-days-track" id="galleryDaysTrack">
 <?php foreach ($photosByDay as $dayKey => $dayGroup): ?>

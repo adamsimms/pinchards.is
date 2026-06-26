@@ -1852,7 +1852,12 @@ body.gallery-page .photo-date-mobile {
 /* —— Day gallery experiment (horizontal day columns) —— */
 body.gallery-days-page {
     --gallery-days-nav-offset: 50px;
-    --gallery-days-column-width: 132px;
+    --gallery-days-top-gap: 10px;
+    --gallery-days-date-gap: 2px;
+    --gallery-days-date-row: 16px;
+    --gallery-days-max-photos: 13;
+    --gallery-days-photo-height: calc((100dvh - var(--gallery-days-nav-offset) - var(--gallery-days-top-gap) - var(--gallery-days-date-row) - var(--gallery-days-date-gap) - (var(--gallery-days-max-photos) - 1) * 1px) / var(--gallery-days-max-photos));
+    --gallery-days-column-width: calc(var(--gallery-days-photo-height) * 288 / 224);
     padding-top: 0;
     overflow: hidden;
 }
@@ -1889,10 +1894,10 @@ body.gallery-days-page .gallery-days-scroll.is-dragging .gallery-day-photo {
 body.gallery-days-page .gallery-days-track {
     display: flex;
     flex-direction: row;
-    align-items: stretch;
+    align-items: flex-start;
     width: max-content;
-    height: 100%;
-    padding: 0;
+    min-height: 100%;
+    padding: var(--gallery-days-top-gap) 0 0;
     gap: 0;
 }
 
@@ -1901,8 +1906,7 @@ body.gallery-days-page .gallery-day-column {
     flex-direction: column;
     flex: 0 0 var(--gallery-days-column-width);
     width: var(--gallery-days-column-width);
-    height: 100%;
-    position: relative;
+    height: auto;
     scroll-margin-left: 0;
     border-right: 1px solid #ececec;
 }
@@ -1912,41 +1916,35 @@ body.gallery-days-page .gallery-day-column:last-child {
 }
 
 body.gallery-days-page .gallery-day-label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
+    flex: 0 0 auto;
     margin: 0;
-    padding: 1px 4px;
+    padding: 0 4px var(--gallery-days-date-gap);
     font-family: 'circular-std', sans-serif;
     font-size: 10px;
     font-weight: 600;
-    line-height: 1.1;
+    line-height: var(--gallery-days-date-row);
+    height: var(--gallery-days-date-row);
     text-align: center;
     color: rgba(0, 0, 0, 0.72);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    background: rgba(255, 255, 255, 0.88);
-    pointer-events: none;
 }
 
 body.gallery-days-page .gallery-day-stack {
     display: flex;
     flex-direction: column;
-    flex: 1 1 0;
-    min-height: 0;
-    height: 100%;
+    flex: 0 0 auto;
     gap: 1px;
     width: 100%;
 }
 
 body.gallery-days-page .gallery-day-photo {
     display: block;
-    flex: 1 1 0;
-    min-height: 0;
+    flex: 0 0 var(--gallery-days-photo-height);
     width: 100%;
+    height: var(--gallery-days-photo-height);
+    min-height: var(--gallery-days-photo-height);
     overflow: hidden;
     position: relative;
     background: #f2f2f2;
@@ -2008,12 +2006,13 @@ body.gallery-days-page .gallery-day-photo .photo-box-caption-content {
 
 @media (max-width: 767px) {
     body.gallery-days-page {
-        --gallery-days-column-width: 108px;
+        --gallery-days-top-gap: 8px;
+        --gallery-days-date-row: 14px;
     }
 
     body.gallery-days-page .gallery-day-label {
         font-size: 9px;
-        padding: 1px 2px;
+        padding: 0 2px var(--gallery-days-date-gap);
     }
 }
 
