@@ -47,9 +47,7 @@ pinchard_layout_nav(['active' => 'gallery']);
             <div class="gallery-days-track" id="galleryDaysTrack">
 <?php foreach ($photosByDay as $dayKey => $dayGroup): ?>
                 <section class="gallery-day-column" id="day-<?= pinchard_h($dayKey) ?>" aria-label="<?= pinchard_h($dayGroup['long_label']) ?>">
-                    <header class="gallery-day-header">
-                        <div class="gallery-day-label" title="<?= pinchard_h($dayGroup['long_label']) ?>"><?= pinchard_h($dayGroup['label']) ?></div>
-                    </header>
+                    <div class="gallery-day-label" title="<?= pinchard_h($dayGroup['long_label']) ?>"><?= pinchard_h($dayGroup['label']) ?></div>
                     <div class="gallery-day-stack">
 <?php foreach ($dayGroup['photos'] as $photo): ?>
                         <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="gallery-day-photo photoBox">

@@ -1902,6 +1902,7 @@ body.gallery-days-page .gallery-day-column {
     flex: 0 0 var(--gallery-days-column-width);
     width: var(--gallery-days-column-width);
     height: 100%;
+    position: relative;
     scroll-margin-left: 0;
     border-right: 1px solid #ececec;
 }
@@ -1910,18 +1911,14 @@ body.gallery-days-page .gallery-day-column:last-child {
     border-right: none;
 }
 
-body.gallery-days-page .gallery-day-header {
-    flex: 0 0 auto;
-    box-sizing: border-box;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: #fff;
-}
-
 body.gallery-days-page .gallery-day-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
     margin: 0;
-    padding: 2px 4px 3px;
+    padding: 1px 4px;
     font-family: 'circular-std', sans-serif;
     font-size: 10px;
     font-weight: 600;
@@ -1931,13 +1928,16 @@ body.gallery-days-page .gallery-day-label {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    background: rgba(255, 255, 255, 0.88);
+    pointer-events: none;
 }
 
 body.gallery-days-page .gallery-day-stack {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-height: 0;
+    height: 100%;
     gap: 1px;
     width: 100%;
 }
@@ -2013,7 +2013,7 @@ body.gallery-days-page .gallery-day-photo .photo-box-caption-content {
 
     body.gallery-days-page .gallery-day-label {
         font-size: 9px;
-        padding: 2px 2px 3px;
+        padding: 1px 2px;
     }
 }
 
