@@ -14,6 +14,17 @@ function pinchard_show_date(DateTime $dt): string
 	return $dt->format('F j @ H:i');
 }
 
+/** Time-only label for compact gallery overlays (e.g. 18:09). */
+function pinchard_show_time(string $date): string
+{
+	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $date);
+	if ($dt === false) {
+		return '';
+	}
+
+	return $dt->format('H:i');
+}
+
 /** Scheme + host for absolute URLs (e.g. https://www.pinchards.is). */
 function pinchard_site_origin(): string
 {
@@ -131,6 +142,7 @@ function pinchard_group_photos_by_day(array $photos): array
 		if (!isset($photosByDay[$dayKey])) {
 			$photosByDay[$dayKey] = [
 				'label' => $dt->format('M j'),
+				'day_number' => $dt->format('j'),
 				'long_label' => $dt->format('F j, Y'),
 				'month_key' => $dt->format('Y-m'),
 				'photos' => [],
@@ -231,6 +243,17 @@ function pinchard_month_timeline_label(string $monthKey): string
 	}
 
 	return $dt->format('M Y');
+}
+
+/** Full month label for day gallery separators (e.g. August 2017). */
+function pinchard_month_full_label(string $monthKey): string
+{
+	$dt = DateTime::createFromFormat('Y-m', $monthKey);
+	if ($dt === false) {
+		return $monthKey;
+	}
+
+	return $dt->format('F Y');
 }
 
 /**
