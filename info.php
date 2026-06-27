@@ -8,19 +8,24 @@ require_once __DIR__ . '/lib/partials/citation.php';
 
 $copyrightYear = (int) date('Y');
 
+$cfg = pinchard_config();
+$cloudberryPhotos = getObjectList($cfg['s3_bucket_thumbnails']);
+usort($cloudberryPhotos, fn ($a, $b) => $a['date'] <=> $b['date']);
+$cloudberryArchiveSpan = pinchard_cloudberry_archive_span($cloudberryPhotos);
+
 pinchard_layout_head("Pinchard's Island — About Cloudberry", [
-    'description' => 'Cloudberry is a solar-powered, off-the-grid photography project documenting Pinchard\'s Island, Newfoundland — one photograph per hour.',
+    'description' => 'Cloudberry was a solar-powered, off-the-grid photography project that documented Pinchard\'s Island, Newfoundland — one photograph per hour.',
     'body_class' => 'info-page',
     'json_ld' => [
         [
             '@type' => 'AboutPage',
             'name' => 'About Cloudberry',
-            'description' => 'Cloudberry is a solar-powered, off-the-grid photography project documenting Pinchard\'s Island, Newfoundland — one photograph per hour.',
+            'description' => 'Cloudberry was a solar-powered, off-the-grid photography project that documented Pinchard\'s Island, Newfoundland — one photograph per hour.',
             'url' => pinchard_absolute_url('/info.php'),
             'mainEntity' => [
                 '@type' => 'CreativeWork',
                 'name' => 'Cloudberry',
-                'description' => 'An off-the-grid, solar-powered, long-term photography project documenting Pinchard\'s Island, Newfoundland.',
+                'description' => 'An off-the-grid, solar-powered, long-term photography project that documented Pinchard\'s Island, Newfoundland.',
                 'creator' => [
                     ['@type' => 'Person', 'name' => 'Adam Simms'],
                     ['@type' => 'Person', 'name' => 'Angela Gabereaux'],
@@ -56,11 +61,15 @@ pinchard_layout_nav(['active' => 'info']);
     <div class="how_section" id="about">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <p><strong>Cloudberry</strong> is an off the grid, solar powered, long term photography project. Using a GoPro, a Raspberry Pi and a USB cellular modem, the system we designed takes one photograph per hour between 8 AM and 8 PM each day and uploads the images via a cellular network to this website.</p>
+                <p><strong>Cloudberry</strong> was an off-the-grid, solar-powered, long-term photography project. Using a GoPro, a Raspberry Pi, and a USB cellular modem, the system we designed took one photograph per hour between 8 AM and 8 PM each day and uploaded the images via a cellular network to this website.</p>
 
-                <p>The photographs depict a view of Pinchard's Island from a small, family owned cabin named "Precious Memories." The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
+                <p>The photographs depict a view of Pinchard's Island from a small, family-owned cabin named "Precious Memories." The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
-                <p>The view is static–in the sense that camera is always capturing the same frame; however, the lighting of the frame can vary drastically from one image to another. These photographs are a continuation of the moments the locals spend in the cabin glancing out the window at the surrounding landscape.</p>
+                <p>The view was static—in the sense that the camera always captured the same frame; however, the lighting of the frame could vary drastically from one image to another. They extend the habit of glancing out the cabin window at the surrounding landscape.</p>
+
+                <?php if ($cloudberryArchiveSpan !== null): ?>
+                <p>Cloudberry operated from <?= pinchard_h($cloudberryArchiveSpan['start']) ?> through <?= pinchard_h($cloudberryArchiveSpan['end']) ?>. The camera system eventually failed—likely from cold, weathering, too little sun, or some combination—and was never recovered. The complete archive remains on this site.</p>
+                <?php endif; ?>
             </div></div>
         </div>
     </div>
@@ -173,7 +182,7 @@ pinchard_layout_nav(['active' => 'info']);
                         </h4>
                         <div id="hw-blink-body" class="accordion-collapse collapse" aria-labelledby="hw-blink" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p>The interval timer turns on the GoPro every hour between 8 AM and 8 PM. The GoPro is modified with the <a href="https://cam-do.com/products/csi-pro-firmware" target="_blank" rel="noopener noreferrer">Pro-csiController</a> firmware from Cam Do and runs a custom <code>autoexec</code> script to take a photo, turn on the GoPro WiFi and then put the camera in standby mode to conserve power.</p>
+                                <p>The interval timer turned on the GoPro every hour between 8 AM and 8 PM. The GoPro was modified with the <a href="https://cam-do.com/products/csi-pro-firmware" target="_blank" rel="noopener noreferrer">Pro-csiController</a> firmware from Cam Do and ran a custom <code>autoexec</code> script to take a photo, turn on the GoPro WiFi, and then put the camera in standby mode to conserve power.</p>
                                 <p><a href="https://cam-do.com/collections/schedulers/products/blink-gopro-time-lapse-controller" target="_blank" rel="noopener noreferrer">Cam Do Blink Interval Timer</a></p>
                             </div>
                         </div>
@@ -194,12 +203,12 @@ pinchard_layout_nav(['active' => 'info']);
                         </h4>
                         <div id="hw-witty-body" class="accordion-collapse collapse" aria-labelledby="hw-witty" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p>A real time clock (RTC) that turns on the Raspberry Pi at night for 30 minutes. The Raspberry Pi runs a Python script that:</p>
+                                <p>A real time clock (RTC) that turned on the Raspberry Pi at night for 30 minutes. The Raspberry Pi ran a Python script that:</p>
                                 <ol>
-                                    <li>Wakes up the GoPro via WiFi.</li>
-                                    <li>Downloads and deletes the latest images from the GoPro.</li>
-                                    <li>Uploads the images to an Amazon Web Services S3 Bucket and deletes the images from the Raspberry Pi.</li>
-                                    <li>Puts the GoPro into standby mode and shuts down the Raspberry Pi to conserve power.</li>
+                                    <li>Woke up the GoPro via WiFi.</li>
+                                    <li>Downloaded and deleted the latest images from the GoPro.</li>
+                                    <li>Uploaded the images to an Amazon Web Services S3 bucket and deleted the images from the Raspberry Pi.</li>
+                                    <li>Put the GoPro into standby mode and shut down the Raspberry Pi to conserve power.</li>
                                 </ol>
                                 <p><a href="http://www.uugear.com/product/wittypi2/" target="_blank" rel="noopener noreferrer">WittyPi 2</a></p>
                             </div>
@@ -221,7 +230,7 @@ pinchard_layout_nav(['active' => 'info']);
                         </h4>
                         <div id="hw-watchdog-body" class="accordion-collapse collapse" aria-labelledby="hw-watchdog" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p>Since the Raspberry Pi is managed remotely the WatchDog monitors the health of the Raspberry Pi and automatically restarts the system in the event of a malfunction.</p>
+                                <p>Since the Raspberry Pi was managed remotely, the WatchDog monitored the health of the Raspberry Pi and automatically restarted the system in the event of a malfunction.</p>
                             </div>
                         </div>
                     </div>
@@ -231,7 +240,7 @@ pinchard_layout_nav(['active' => 'info']);
                         </h4>
                         <div id="hw-hotspot-body" class="accordion-collapse collapse" aria-labelledby="hw-hotspot" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p>The USB cellular modem is connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. At ±6mb per photo, 13 photos per day, we're using ±2.3gb per month.</p>
+                                <p>The USB cellular modem was connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. At ±6 MB per photo and 13 photos per day, the system used roughly 2.3 GB per month.</p>
                             </div>
                         </div>
                     </div>
@@ -241,7 +250,7 @@ pinchard_layout_nav(['active' => 'info']);
                         </h4>
                         <div id="hw-enclosure-body" class="accordion-collapse collapse" aria-labelledby="hw-enclosure" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p>Home of the GoPro. We made several modifications to the enclosure including silicone sealing, a drilled power port, and removing the air pressure filter to reduce condensation on the lens filter.</p>
+                                <p>Housed the GoPro. We made several modifications to the enclosure including silicone sealing, a drilled power port, and removing the air pressure filter to reduce condensation on the lens filter.</p>
                             </div>
                         </div>
                     </div>
@@ -267,9 +276,9 @@ pinchard_layout_nav(['active' => 'info']);
                         </h4>
                         <div id="hw-cloud-body" class="accordion-collapse collapse" aria-labelledby="hw-cloud" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p><a href="http://www.dataplicity.com/" target="_blank" rel="noopener noreferrer">Dataplicity</a> allows remote CLI access to the Raspberry Pi.</p>
-                                <p><a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">Amazon Web Services</a> S3 stores photographs; CloudFront delivers images to this website.</p>
-                                <p><a href="https://github.com/KonradIT/goprowifihack" target="_blank" rel="noopener noreferrer">GoPro WiFi Hack</a> from KonradIT enables remote camera control.</p>
+                                <p><a href="http://www.dataplicity.com/" target="_blank" rel="noopener noreferrer">Dataplicity</a> allowed remote CLI access to the Raspberry Pi.</p>
+                                <p><a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">Amazon Web Services</a> S3 stored photographs; CloudFront delivered images to this website.</p>
+                                <p><a href="https://github.com/KonradIT/goprowifihack" target="_blank" rel="noopener noreferrer">GoPro WiFi Hack</a> from KonradIT enabled remote camera control.</p>
                             </div>
                         </div>
                     </div>
@@ -349,7 +358,7 @@ pinchard_layout_nav(['active' => 'info']);
                 <?php pinchard_citation_block([
                     'text' => pinchard_citation_archive(),
                     'label' => 'Archive citation',
-                    'hint' => 'Replace the bracketed access date with the day you retrieved this material.',
+                    'hint' => 'The access date reflects the day you loaded this page.',
                     'class' => 'citation-block--spaced-below',
                 ]); ?>
 
@@ -358,7 +367,7 @@ pinchard_layout_nav(['active' => 'info']);
                 <?php pinchard_citation_block([
                     'text' => pinchard_citation_photo_template(),
                     'label' => 'Individual photograph template',
-                    'hint' => 'Replace bracketed fields with values from the photograph you are citing. Update the access date to the day you retrieved the image.',
+                    'hint' => 'Replace bracketed fields with values from the photograph you are citing. The access date reflects the day you loaded this page.',
                 ]); ?>
             </div></div>
         </div>

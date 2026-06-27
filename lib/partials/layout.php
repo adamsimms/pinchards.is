@@ -18,7 +18,7 @@ declare(strict_types=1);
  */
 function pinchard_layout_head(string $title, array $options = []): void
 {
-	$description = $options['description'] ?? "Cloudberry — an off-the-grid, solar-powered long-term photography project documenting Pinchard's Island, Newfoundland.";
+	$description = $options['description'] ?? pinchard_cloudberry_site_description();
 	$ogImage = $options['og_image'] ?? 'https://www.pinchards.is/images/info/pano.jpg';
 	$ogType = $options['og_type'] ?? 'website';
 	$canonical = $options['canonical_url'] ?? pinchard_canonical_url();

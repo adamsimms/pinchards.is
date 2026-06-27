@@ -161,7 +161,7 @@ try {
             '@type' => 'WebSite',
             'name' => "Pinchard's Island — Cloudberry",
             'url' => pinchard_absolute_url('/index.php'),
-            'description' => "Cloudberry — an off-the-grid, solar-powered long-term photography project documenting Pinchard's Island, Newfoundland.",
+            'description' => pinchard_cloudberry_site_description(),
         ],
     ];
     $imageObject = [

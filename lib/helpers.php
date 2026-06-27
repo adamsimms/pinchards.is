@@ -268,6 +268,34 @@ function pinchard_latest_photo(array $photos): ?array
 	return $photos[count($photos) - 1];
 }
 
+/** Default meta description for Cloudberry (completed project). */
+function pinchard_cloudberry_site_description(): string
+{
+	return "Cloudberry — an off-the-grid, solar-powered long-term photography project that documented Pinchard's Island, Newfoundland.";
+}
+
+/**
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return array{start: string, end: string}|null
+ */
+function pinchard_cloudberry_archive_span(array $photos): ?array
+{
+	if ($photos === []) {
+		return null;
+	}
+
+	$startDt = DateTime::createFromFormat('Y/m/d H:i:s', $photos[0]['date']);
+	$endDt = DateTime::createFromFormat('Y/m/d H:i:s', $photos[count($photos) - 1]['date']);
+	if ($startDt === false || $endDt === false) {
+		return null;
+	}
+
+	return [
+		'start' => $startDt->format('F j, Y'),
+		'end' => $endDt->format('F j, Y'),
+	];
+}
+
 /** Convert an EXIF GPS rational string (or number) to float. */
 function pinchard_gps_rational_to_float(mixed $coordPart): float
 {
@@ -302,6 +330,12 @@ function pinchard_gps_to_decimal(array $exifCoord, ?string $hemi): ?float
 	return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
 }
 
+/** Today's date for citation access lines (Chicago-style, Newfoundland local time). */
+function pinchard_citation_access_date(): string
+{
+	return (new DateTime('now', new DateTimeZone('America/St_Johns')))->format('F j, Y');
+}
+
 /** Suggested citation for the Cloudberry archive as a whole. */
 function pinchard_citation_archive(): string
 {
@@ -309,7 +343,7 @@ function pinchard_citation_archive(): string
 
 	return 'Cloudberry (Pinchard\'s Island Photography Archive). '
 		. $url
-		. '. Accessed [Month Day, Year].';
+		. '. Accessed ' . pinchard_citation_access_date() . '.';
 }
 
 /** Template for citing an individual Cloudberry photograph (replace bracketed fields). */
@@ -317,7 +351,7 @@ function pinchard_citation_photo_template(): string
 {
 	return 'Cloudberry. Automated photograph, [Month Day, Year, Time]; photo ID [number] ([FILENAME].JPG). '
 		. pinchard_site_origin()
-		. '/index.php?filename=[FILENAME].JPG. Accessed [Month Day, Year].';
+		. '/index.php?filename=[FILENAME].JPG. Accessed ' . pinchard_citation_access_date() . '.';
 }
 
 /** Suggested citation for an individual Cloudberry photograph. */
@@ -333,7 +367,7 @@ function pinchard_citation_photo(string $filename, string $datetime): string
 		. '; photo ID ' . $photoId
 		. ' (' . $filename . '). '
 		. $url
-		. '. Accessed [Month Day, Year].';
+		. '. Accessed ' . pinchard_citation_access_date() . '.';
 }
 
 /** Cabin location defaults when GPS EXIF is missing. */
