@@ -41,6 +41,14 @@ try {
     $next_filename = $resolved['next_filename'];
     $galleryContext = pinchard_gallery_context_for_photo($datetime);
     $viewerTimeline = pinchard_viewer_timeline($array, $filename, $galleryContext);
+    $viewerFilenames = array_column($array, 'filename');
+    $viewerCurrentIndex = 0;
+    foreach ($viewerFilenames as $i => $viewerFn) {
+        if ($viewerFn === $filename) {
+            $viewerCurrentIndex = $i;
+            break;
+        }
+    }
 
     $cdnFull = $cfg['cdn_url_full'];
     $exif = pinchard_read_photo_exif($filename, $cdnFull);
@@ -277,15 +285,15 @@ try {
                 <div class="detail_content_view">
                     <div>
                         <div class="detail_rect title_rect"><img src="images/icon-number.svg" alt="" /></div>
-                        <div class="title"><?= pinchard_h(pinchard_photo_title($filename)) ?></div>
+                        <div class="title" id="viewerPhotoTitle"><?= pinchard_h(pinchard_photo_title($filename)) ?></div>
                     </div>
                     <div class="datetime_area">
                         <div class="detail_rect"><img src="images/icon-date.svg" alt="" /></div>
-                        <div class="inner_data"><?= $converted_date ?></div>
+                        <div class="inner_data" id="viewerPhotoDate"><?= $converted_date ?></div>
                     </div>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-gopro.svg" alt="" /></div>
-                        <div class="inner_data"><?= implode('<br>', $cameraLines) ?></div>
+                        <div class="inner_data" id="viewerCameraLines"><?= implode('<br>', $cameraLines) ?></div>
                     </div>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-raspberry.svg" alt="" /></div>
@@ -293,7 +301,7 @@ try {
                     </div>
                     <div class="inner_area">
                         <div class="detail_rect"><img src="images/icon-geolocation.svg" alt="" /></div>
-                        <div class="inner_data">
+                        <div class="inner_data" id="viewerGpsLines">
                             Position: <?= $gps_latitude_degree ?>&deg; <?= $gps_latitude_min ?>&acute; <?= $gps_latitude_sec ?>&quot; N,
                             <?= $gps_longitude_degree ?>&deg; <?= $gps_longitude_min ?>&acute; <?= $gps_longitude_sec ?>&quot; W<br>
 <?php
@@ -327,6 +335,10 @@ try {
 $footerScripts = <<<'JS'
     <script>
         window.pinchardViewer = {
+            cdnUrl: CDN_URL,
+            filenames: VIEWER_FILENAMES,
+            currentIndex: VIEWER_CURRENT_INDEX,
+            fadeMs: 500,
             prevUrl: PREV_URL,
             nextUrl: NEXT_URL,
             prefetch: PRELOAD_URLS,
@@ -334,121 +346,7 @@ $footerScripts = <<<'JS'
             timeline: TIMELINE_DATA
         };
     </script>
-    <script>
-        (function() {
-            var placeholder = document.querySelector('.photo-placeholder'),
-                small = placeholder.querySelector('.img-small');
-            var img = new Image();
-            img.src = small.src;
-            img.onload = function() { small.classList.add('loaded'); };
-            var imgLarge = new Image();
-            imgLarge.src = placeholder.dataset.large;
-            imgLarge.onload = function() { imgLarge.classList.add('loaded'); };
-            placeholder.appendChild(imgLarge);
-
-            if (window.pinchardViewer.prefetch) {
-                window.pinchardViewer.prefetch.forEach(function(url) {
-                    var p = new Image();
-                    p.src = url;
-                });
-            }
-        })();
-    </script>
-    <script>
-        (function() {
-            var drawer = document.getElementById('detailDrawer');
-            var toggle = document.getElementById('detailToggle');
-            if (!drawer || !toggle) return;
-
-            toggle.addEventListener('click', function() {
-                var open = drawer.classList.toggle('open');
-                toggle.classList.toggle('down_arrow', open);
-                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-                toggle.setAttribute('aria-label', open ? 'Hide photograph details' : 'Show photograph details');
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
-                var v = window.pinchardViewer;
-                if (e.key === 'ArrowLeft' && v.prevUrl) {
-                    window.location.href = v.prevUrl;
-                } else if (e.key === 'ArrowRight' && v.nextUrl) {
-                    window.location.href = v.nextUrl;
-                }
-            });
-
-            var timelineRange = document.getElementById('viewerTimelineRange');
-            var timelinePosition = document.getElementById('viewerTimelinePosition');
-            var timeline = window.pinchardViewer.timeline;
-            if (timelineRange && timeline && timeline.entries && timeline.entries.length > 1) {
-                function timelineEntry(idx) {
-                    return timeline.entries[Math.max(0, Math.min(timeline.entries.length - 1, idx))];
-                }
-
-                function updateTimelineUi(idx) {
-                    var entry = timelineEntry(idx);
-                    var position = idx + 1;
-                    var count = timeline.entries.length;
-                    timelineRange.setAttribute('aria-valuenow', String(position));
-                    timelineRange.setAttribute('aria-valuetext', 'Photograph ' + position + ' of ' + count + ', ' + entry.d);
-                    if (timelinePosition) {
-                        timelinePosition.textContent = entry.d;
-                    }
-                }
-
-                function navigateToTimelineIndex(idx) {
-                    var entry = timelineEntry(idx);
-                    if (!entry || entry.f === window.pinchardViewer.currentFilename) {
-                        return;
-                    }
-                    window.location.href = 'index.php?filename=' + encodeURIComponent(entry.f);
-                }
-
-                timelineRange.addEventListener('input', function() {
-                    updateTimelineUi(parseInt(timelineRange.value, 10));
-                });
-
-                timelineRange.addEventListener('change', function() {
-                    navigateToTimelineIndex(parseInt(timelineRange.value, 10));
-                });
-
-                timelineRange.addEventListener('pointerdown', function(e) {
-                    e.stopPropagation();
-                });
-
-                timelineRange.addEventListener('touchstart', function(e) {
-                    e.stopPropagation();
-                }, { passive: true });
-
-                timelineRange.addEventListener('touchend', function(e) {
-                    e.stopPropagation();
-                }, { passive: true });
-
-                var timelineNav = document.getElementById('viewerTimeline');
-                if (timelineNav) {
-                    timelineNav.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                    });
-                }
-            }
-
-            var viewer = document.getElementById('photoViewer');
-            var touchStartX = 0;
-            viewer.addEventListener('touchstart', function(e) {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-            viewer.addEventListener('touchend', function(e) {
-                var dx = e.changedTouches[0].screenX - touchStartX;
-                if (Math.abs(dx) < 50) return;
-                var v = window.pinchardViewer;
-                if (dx > 0 && v.prevUrl) {
-                    window.location.href = v.prevUrl;
-                } else if (dx < 0 && v.nextUrl) {
-                    window.location.href = v.nextUrl;
-                }
-            }, { passive: true });
-        })();
-    </script>
+    <script src="js/viewer.js"></script>
 JS;
 
 $preloadUrls = [];
@@ -462,6 +360,9 @@ if ($next_filename !== null && $next_filename !== '') {
 $prevUrl = ($prev_filename !== null && $prev_filename !== '') ? 'index.php?filename=' . rawurlencode($prev_filename) : '';
 $nextUrl = ($next_filename !== null && $next_filename !== '') ? 'index.php?filename=' . rawurlencode($next_filename) : '';
 
+$footerScripts = str_replace('CDN_URL', json_encode($cdnFull, $mapJe), $footerScripts);
+$footerScripts = str_replace('VIEWER_FILENAMES', json_encode($viewerFilenames, $mapJe), $footerScripts);
+$footerScripts = str_replace('VIEWER_CURRENT_INDEX', json_encode($viewerCurrentIndex, $mapJe), $footerScripts);
 $footerScripts = str_replace('PREV_URL', json_encode($prevUrl, $mapJe), $footerScripts);
 $footerScripts = str_replace('NEXT_URL', json_encode($nextUrl, $mapJe), $footerScripts);
 $footerScripts = str_replace('PRELOAD_URLS', json_encode($preloadUrls, $mapJe), $footerScripts);
@@ -478,7 +379,8 @@ if ($pinchardMapboxToken !== null && str_starts_with($pinchardMapboxToken, 'pk.'
     $footerScripts .= '                center: [' . json_encode($mapLon, $mapJe) . ', ' . json_encode($mapLat, $mapJe) . "],\n";
     $footerScripts .= "                zoom: 14\n";
     $footerScripts .= "            });\n";
-    $footerScripts .= '            new mapboxgl.Marker().setLngLat([' . json_encode($mapLon, $mapJe) . ', ' . json_encode($mapLat, $mapJe) . "]).addTo(map);\n";
+    $footerScripts .= '            var marker = new mapboxgl.Marker().setLngLat([' . json_encode($mapLon, $mapJe) . ', ' . json_encode($mapLat, $mapJe) . "]).addTo(map);\n";
+    $footerScripts .= "            window.pinchardPhotoMap = { map: map, marker: marker };\n";
     $footerScripts .= "        });\n    </script>\n";
 }
 
