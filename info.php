@@ -12,20 +12,21 @@ $cfg = pinchard_config();
 $cloudberryPhotos = getObjectList($cfg['s3_bucket_thumbnails']);
 usort($cloudberryPhotos, fn ($a, $b) => $a['date'] <=> $b['date']);
 $cloudberryArchiveSpan = pinchard_cloudberry_archive_span($cloudberryPhotos);
+$cloudberryInfoDescription = pinchard_cloudberry_info_description($cloudberryArchiveSpan);
 
-pinchard_layout_head("Pinchard's Island — About Cloudberry", [
-    'description' => 'Cloudberry was a solar-powered, off-the-grid photography project that documented Pinchard\'s Island, Newfoundland — one photograph per hour.',
+pinchard_layout_head('Cloudberry — About', [
+    'description' => $cloudberryInfoDescription,
     'body_class' => 'info-page',
     'json_ld' => [
         [
             '@type' => 'AboutPage',
             'name' => 'About Cloudberry',
-            'description' => 'Cloudberry was a solar-powered, off-the-grid photography project that documented Pinchard\'s Island, Newfoundland — one photograph per hour.',
+            'description' => $cloudberryInfoDescription,
             'url' => pinchard_absolute_url('/info.php'),
             'mainEntity' => [
                 '@type' => 'CreativeWork',
                 'name' => 'Cloudberry',
-                'description' => 'An off-the-grid, solar-powered, long-term photography project that documented Pinchard\'s Island, Newfoundland.',
+                'description' => pinchard_cloudberry_site_description(),
                 'creator' => [
                     ['@type' => 'Person', 'name' => 'Adam Simms'],
                     ['@type' => 'Person', 'name' => 'Angela Gabereaux'],
@@ -65,7 +66,7 @@ pinchard_layout_nav(['active' => 'info']);
 
                 <p>The photographs depict a view of Pinchard's Island from a small, family-owned cabin named "Precious Memories." The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
-                <p>The view was static—in the sense that the camera always captured the same frame; however, the lighting of the frame could vary drastically from one image to another. They extend the habit of glancing out the cabin window at the surrounding landscape.</p>
+                <p>The view was static—in the sense that the camera always captured the same frame; however, the lighting of the frame could vary drastically from one image to another. They extended the habit of glancing out the cabin window at the surrounding landscape.</p>
 
                 <?php if ($cloudberryArchiveSpan !== null): ?>
                 <p>Cloudberry operated from <?= pinchard_h($cloudberryArchiveSpan['start']) ?> through <?= pinchard_h($cloudberryArchiveSpan['end']) ?>. The camera system eventually failed—likely from cold, weathering, too little sun, or some combination—and was never recovered. The complete archive remains on this site.</p>
@@ -87,11 +88,11 @@ pinchard_layout_nav(['active' => 'info']);
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Okay, but why Pinchard's Island?</h3>
 
-                <p><a href="http://adamsim.ms/" target="_blank" rel="noopener noreferrer">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank" rel="noopener noreferrer">Pinchard's Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
+                <p><a href="http://adamsim.ms/" target="_blank" rel="noopener noreferrer">Adam</a> has been photographing <a href="http://adamsim.ms/pinchards-island/" target="_blank" rel="noopener noreferrer">Pinchard's Island</a> and its previous residents for several years. The harsh weather conditions and the extreme remoteness of the island made it difficult to access the island year round and take images over long periods of time. Cloudberry grew from the desire to be able to photograph the island throughout the year from anywhere via the internet.</p>
 
                 <img src="images/info/pinchards-island-sisters.jpg" class="img-fluid info_img" alt="Pinchard's Island Sisters">
 
-                <p>Shortly after Newfoundland joined Canada as it's 10th province, Pinchard's Island was <a href="http://adamsim.ms/resettlement/" target="_blank" rel="noopener noreferrer">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and create new ones.</p>
+                <p>Shortly after Newfoundland joined Canada as its 10th province, Pinchard's Island was <a href="http://adamsim.ms/resettlement/" target="_blank" rel="noopener noreferrer">resettled</a> in an attempt to modernize the province. Adam has been documenting the return of his grandmother, along with her brothers and sisters, to this island each summer in an attempt to write the future of resettlement by reviving traditions and creating new ones.</p>
             </div></div>
         </div>
     </div>
@@ -124,7 +125,7 @@ pinchard_layout_nav(['active' => 'info']);
 
                 <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.</p>
 
-                <p>We used <a href="http://www.trello.com/" target="_blank" rel="noopener noreferrer">Trello</a> to plan every aspect of the project, communicate, and document ongoing research:</p>
+                <p>We used <a href="http://www.trello.com/" target="_blank" rel="noopener noreferrer">Trello</a> to plan every aspect of the project, communicate, and document our research:</p>
             </div></div>
         </div>
     </div>
@@ -144,24 +145,12 @@ pinchard_layout_nav(['active' => 'info']);
 
                 <img src="images/info/notebook.jpg" class="img-fluid info_img" alt="Project notebook">
 
-                <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below you'll find a system diagram and an outline of all the hardware and software used to create Cloudberry.</p>
+                <p>The entire system took us approximately 3 months to build. This includes the initial idea, research, system design, installation, and final production code. Below is a system diagram and an outline of all the hardware and software used to create Cloudberry.</p>
 
                 <h3 id="hardware">The Cloudberry System</h3>
-            </div></div>
-        </div>
-    </div>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-10 col-lg-8">
-                <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank" rel="noopener noreferrer"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img" alt="Cloudberry system diagram"></a>
-            </div>
-        </div>
-    </div>
+                <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank" rel="noopener noreferrer"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img info-system-diagram" alt="Cloudberry system diagram"></a>
 
-    <div class="how_section">
-        <div class="container">
-            <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>What we used:</h3>
 
                 <div class="accordion hardware-accordion" id="hardwareAccordion">
@@ -220,7 +209,7 @@ pinchard_layout_nav(['active' => 'info']);
                         </h4>
                         <div id="hw-arduino-body" class="accordion-collapse collapse" aria-labelledby="hw-arduino" data-bs-parent="#hardwareAccordion">
                             <div class="accordion-body">
-                                <p>We added a power-monitoring meter to avoid power issues that might corrupt the SD Card if the Raspberry Pi shuts down unexpectedly. In the event that the power supply is low, the Arduino triggers the WittyPi 2 to shut down the Raspberry Pi until there is sufficient battery to power the device.</p>
+                                <p>We added a power-monitoring meter to avoid power issues that might corrupt the SD card if the Raspberry Pi shut down unexpectedly. In the event that the power supply was low, the Arduino triggered the WittyPi 2 to shut down the Raspberry Pi until there was sufficient battery to power the device.</p>
                             </div>
                         </div>
                     </div>
@@ -325,16 +314,16 @@ pinchard_layout_nav(['active' => 'info']);
     <div class="who_section" id="who">
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
-                <h3>Who Are you?</h3>
+                <h3>Who made Cloudberry?</h3>
                 <div class="row people_row">
                     <div class="col-sm-4 people_col_1">
                         <div class="people"><img src="/images/people/adam-simms.jpg" alt="Adam Simms" /></div>
-                        <div class="job"><strong>Adam Simms</strong> is a Photographer pursuing his MFA in Studio Arts, Photography at Concordia University.</div>
+                        <div class="job"><strong>Adam Simms</strong> is a photographer who has documented Pinchard's Island, resettlement, and Newfoundland for many years.</div>
                         <a href="http://adamsim.ms/" target="_blank" rel="noopener noreferrer" class="link">www</a>
                     </div>
                     <div class="col-sm-4 people_col_2">
                         <div class="people"><img src="/images/people/angela-gabereaux.jpg" alt="Angela Gabereaux" /></div>
-                        <div class="job"><strong>Angela Gabereaux</strong> is software developer, system architect, hacker, maker, media artist and teacher.</div>
+                        <div class="job"><strong>Angela Gabereaux</strong> is a software developer, system architect, hacker, maker, media artist, and teacher.</div>
                         <a href="http://www.angelagabereaux.com/" target="_blank" rel="noopener noreferrer" class="link">www</a>
                     </div>
                     <div class="col-sm-4 people_col_3">
@@ -350,7 +339,7 @@ pinchard_layout_nav(['active' => 'info']);
         <div class="container">
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Citing this archive</h3>
-                <p>Researchers and publications are welcome to use Cloudberry photographs with attribution.</p>
+                <p>Researchers and publications are welcome to use Cloudberry photographs with attribution. The archive is complete and no longer receiving new images.</p>
                 <p>The suggested format below follows the <strong>Chicago Manual of Style, Author-Date</strong> system, adapted for a born-digital photograph archive (similar to citing a website or online collection).</p>
 
                 <h4>Citing the archive</h4>
