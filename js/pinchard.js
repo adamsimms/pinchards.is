@@ -1,6 +1,83 @@
 (function($) {
     "use strict";
 
+    var ROUTE_LEAVE_MS = 220;
+    var MAIN_ROUTES = {
+        'index.php': true,
+        'gallery.php': true,
+        'slideshow.php': true,
+        'info.php': true
+    };
+
+    function prefersReducedMotion() {
+        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    }
+
+    function routePathname(pathname) {
+        var segments = pathname.split('/').filter(Boolean);
+        var base = segments.length ? segments[segments.length - 1] : 'index.php';
+        if (base.indexOf('.') === -1) {
+            return 'index.php';
+        }
+        return base;
+    }
+
+    function isMainRouteHref(href) {
+        try {
+            var url = new URL(href, window.location.href);
+            if (url.origin !== window.location.origin) {
+                return false;
+            }
+            var base = routePathname(url.pathname);
+            return MAIN_ROUTES[base] === true;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    function isMainNavLink(link) {
+        return !!(link && link.closest && link.closest('#mainNav') && isMainRouteHref(link.href));
+    }
+
+    function navigateWithTransition(href) {
+        if (prefersReducedMotion() || !href) {
+            window.location.href = href;
+            return;
+        }
+        document.body.classList.add('pinchard-route-leave');
+        document.body.classList.remove('pinchard-route-enter', 'is-ready');
+        window.setTimeout(function() {
+            window.location.href = href;
+        }, ROUTE_LEAVE_MS);
+    }
+
+    window.pinchardNavigate = navigateWithTransition;
+
+    if (!prefersReducedMotion()) {
+        document.body.classList.add('pinchard-route-enter');
+        window.requestAnimationFrame(function() {
+            window.requestAnimationFrame(function() {
+                document.body.classList.add('is-ready');
+            });
+        });
+
+        document.addEventListener('click', function(event) {
+            if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                return;
+            }
+            var link = event.target.closest('a[href]');
+            if (!link || link.target === '_blank' || link.hasAttribute('download') || !isMainNavLink(link)) {
+                return;
+            }
+            var nextUrl = new URL(link.href, window.location.href);
+            if (nextUrl.href === window.location.href) {
+                return;
+            }
+            event.preventDefault();
+            navigateWithTransition(link.href);
+        });
+    }
+
     $(document).on('click', 'a.page-scroll', function(event) {
         var $anchor = $(this);
         $('html, body').stop().animate({
