@@ -1715,11 +1715,14 @@ body {
   transition: opacity 1s linear;
 }
 
-.photo-placeholder img.loaded {
-  opacity: 1;
+.photo-placeholder img.viewer-photo-main {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.photo-placeholder img.loaded {
+  opacity: 1;
 }
 
 .photo-placeholder img.is-fading-in {
