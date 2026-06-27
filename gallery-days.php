@@ -74,8 +74,36 @@ pinchard_layout_footer([
     <script>
         (function() {
             var scrollEl = document.getElementById('galleryDaysScroll');
-            if (!scrollEl) {
+            var layout = document.querySelector('.gallery-days-layout');
+            if (!scrollEl || !layout) {
                 return;
+            }
+
+            function fitPhotoHeights() {
+                var styles = getComputedStyle(layout);
+                var maxPhotos = parseInt(styles.getPropertyValue('--gallery-days-max-photos'), 10) || 13;
+                var colPad = parseFloat(styles.getPropertyValue('--gallery-days-column-pad')) || 12;
+                var dateLine = parseFloat(styles.getPropertyValue('--gallery-days-date-line')) || 11;
+                var dateBand = dateLine + colPad + 1;
+                var available = scrollEl.clientHeight - colPad - dateBand;
+                if (available <= 0 || maxPhotos <= 0) {
+                    return;
+                }
+                var photoHeight = Math.floor(available / maxPhotos);
+                if (photoHeight < 20) {
+                    return;
+                }
+                layout.style.setProperty('--gallery-days-photo-height', photoHeight + 'px');
+                layout.style.setProperty('--gallery-days-column-width', Math.round(photoHeight * 288 / 224) + 'px');
+            }
+
+            fitPhotoHeights();
+            window.addEventListener('resize', fitPhotoHeights);
+            if ('ResizeObserver' in window) {
+                new ResizeObserver(fitPhotoHeights).observe(scrollEl);
+            }
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(fitPhotoHeights);
             }
 
             var photos = scrollEl.querySelectorAll('.gallery-photo[data-src]');
