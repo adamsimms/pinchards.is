@@ -235,6 +235,39 @@ function pinchard_viewer_timeline(array $photos, string $currentFilename, ?array
 	];
 }
 
+/**
+ * Timeline entries for the slideshow scrubber (always the full archive).
+ *
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return array{
+ *   scope: 'archive',
+ *   label: string,
+ *   entries: list<array{f: string, d: string}>,
+ *   index: int,
+ * }|null
+ */
+function pinchard_slideshow_timeline(array $photos): ?array
+{
+	if (count($photos) < 2) {
+		return null;
+	}
+
+	$entries = [];
+	foreach ($photos as $photo) {
+		$entries[] = [
+			'f' => $photo['filename'],
+			'd' => $photo['show_date'] ?? $photo['date'],
+		];
+	}
+
+	return [
+		'scope' => 'archive',
+		'label' => 'Full archive',
+		'entries' => $entries,
+		'index' => 0,
+	];
+}
+
 /** Compact label for gallery timeline scrubber (e.g. Aug 2017). */
 function pinchard_month_timeline_label(string $monthKey): string
 {
