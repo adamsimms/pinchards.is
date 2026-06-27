@@ -56,7 +56,7 @@ pinchard_layout_nav(['active' => 'gallery']);
                     <div class="gallery-day-label" title="<?= pinchard_h($dayGroup['long_label']) ?>"><?= pinchard_h($dayGroup['label']) ?></div>
                     <div class="gallery-day-stack">
 <?php foreach ($dayGroup['photos'] as $photo): ?>
-                        <a href="index.php?filename=<?= pinchard_h($photo['filename']) ?>" class="gallery-day-photo photoBox">
+                        <a href="index.php?filename=<?= pinchard_h(rawurlencode($photo['filename'])) ?>" class="gallery-day-photo photoBox">
                             <img class="gallery-photo img-fluid" data-src="<?= pinchard_h($cdnurl . $photo['filename']) ?>" alt="<?= pinchard_h($photo['show_date'] ?? '') ?>" width="288" height="224">
                             <div class="photo-box-caption">
                                 <div class="photo-box-caption-content"><?= pinchard_h(pinchard_show_time($photo['date'])) ?></div>
@@ -156,45 +156,49 @@ pinchard_layout_footer([
 
             var isDragging = false;
             var dragMoved = false;
-            var dragStartX = 0;
-            var dragScrollLeft = 0;
-            var dragPointerId = null;
+            var pendingDrag = null;
 
             function endDrag() {
                 isDragging = false;
-                dragPointerId = null;
+                pendingDrag = null;
                 scrollEl.classList.remove('is-dragging');
             }
 
             scrollEl.addEventListener('pointerdown', function(e) {
                 if (e.button !== 0) return;
-                isDragging = true;
+                pendingDrag = {
+                    startX: e.clientX,
+                    scrollLeft: scrollEl.scrollLeft,
+                    pointerId: e.pointerId
+                };
                 dragMoved = false;
-                dragStartX = e.clientX;
-                dragScrollLeft = scrollEl.scrollLeft;
-                dragPointerId = e.pointerId;
-                scrollEl.classList.add('is-dragging');
-                if (scrollEl.setPointerCapture) {
-                    scrollEl.setPointerCapture(e.pointerId);
-                }
+                isDragging = false;
             });
 
             scrollEl.addEventListener('pointermove', function(e) {
-                if (!isDragging || e.pointerId !== dragPointerId) return;
-                var delta = e.clientX - dragStartX;
-                if (Math.abs(delta) > 4) {
+                if (!pendingDrag || e.pointerId !== pendingDrag.pointerId) return;
+                var delta = e.clientX - pendingDrag.startX;
+                if (!isDragging) {
+                    if (Math.abs(delta) <= 4) return;
+                    isDragging = true;
                     dragMoved = true;
+                    scrollEl.classList.add('is-dragging');
+                    if (scrollEl.setPointerCapture) {
+                        scrollEl.setPointerCapture(e.pointerId);
+                    }
                 }
-                scrollEl.scrollLeft = dragScrollLeft - delta;
+                scrollEl.scrollLeft = pendingDrag.scrollLeft - delta;
             });
 
-            scrollEl.addEventListener('pointerup', function() {
+            scrollEl.addEventListener('pointerup', function(e) {
+                if (!pendingDrag || e.pointerId !== pendingDrag.pointerId) return;
                 endDrag();
                 window.setTimeout(function() {
                     dragMoved = false;
                 }, 0);
             });
-            scrollEl.addEventListener('pointercancel', function() {
+            scrollEl.addEventListener('pointercancel', function(e) {
+                if (!pendingDrag || e.pointerId !== pendingDrag.pointerId) return;
                 endDrag();
                 dragMoved = false;
             });
@@ -203,6 +207,7 @@ pinchard_layout_footer([
                 link.addEventListener('click', function(e) {
                     if (dragMoved) {
                         e.preventDefault();
+                        return;
                     }
                 });
                 link.addEventListener('dragstart', function(e) {
