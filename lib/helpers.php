@@ -164,11 +164,12 @@ function pinchard_gallery_context_for_photo(string $date): ?array
 		return null;
 	}
 	$monthKey = $dt->format('Y-m');
+	$dayKey = $dt->format('Y-m-d');
 
 	return [
 		'month_key' => $monthKey,
-		'label' => $dt->format('F Y'),
-		'gallery_url' => 'gallery.php#month-' . $monthKey,
+		'label' => $dt->format('F j, Y'),
+		'gallery_url' => 'gallery.php#day-' . $dayKey,
 	];
 }
 
@@ -293,7 +294,39 @@ function pinchard_cloudberry_archive_span(array $photos): ?array
 	return [
 		'start' => $startDt->format('F j, Y'),
 		'end' => $endDt->format('F j, Y'),
+		'range_compact' => $startDt->format('F Y') . '–' . $endDt->format('F Y'),
 	];
+}
+
+/** About-page meta description including archive dates when available. */
+function pinchard_cloudberry_info_description(?array $archiveSpan): string
+{
+	$base = 'Cloudberry was a solar-powered, off-the-grid photography project that documented Pinchard\'s Island, Newfoundland';
+	if ($archiveSpan !== null && isset($archiveSpan['range_compact'])) {
+		return $base . ' (' . $archiveSpan['range_compact'] . ') — one photograph per hour.';
+	}
+
+	return $base . ' — one photograph per hour.';
+}
+
+/** Gallery meta description including archive dates when available. */
+function pinchard_cloudberry_gallery_description(?array $archiveSpan): string
+{
+	$range = ($archiveSpan !== null && isset($archiveSpan['range_compact']))
+		? ' (' . $archiveSpan['range_compact'] . ')'
+		: '';
+
+	return 'Browse the Cloudberry archive' . $range . ' — hourly photographs of Pinchard\'s Island, Newfoundland, one column per day.';
+}
+
+/** Slideshow meta description including archive dates when available. */
+function pinchard_cloudberry_slideshow_description(?array $archiveSpan): string
+{
+	$range = ($archiveSpan !== null && isset($archiveSpan['range_compact']))
+		? ' (' . $archiveSpan['range_compact'] . ')'
+		: '';
+
+	return 'Browse the Cloudberry archive in sequence' . $range . ' — hourly views from Precious Memories cabin on Pinchard\'s Island.';
 }
 
 /** Convert an EXIF GPS rational string (or number) to float. */

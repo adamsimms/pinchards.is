@@ -19,6 +19,8 @@ try {
     $cdnurl = $cfg['cdn_url_full'];
     $array = getObjectList($cfg['s3_bucket_full']);
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
+    $cloudberryArchiveSpan = pinchard_cloudberry_archive_span($array);
+    $slideshowDescription = pinchard_cloudberry_slideshow_description($cloudberryArchiveSpan);
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
     http_response_code(503);
     header('Content-Type: text/plain; charset=utf-8');
@@ -30,18 +32,18 @@ try {
 
 $mapJe = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 
-pinchard_layout_head("Pinchard's Island — Slideshow", [
-    'description' => 'Watch Cloudberry photographs from Pinchard\'s Island in sequence — an hourly documentary of the view from Precious Memories cabin.',
+pinchard_layout_head('Cloudberry — Slideshow', [
+    'description' => $slideshowDescription,
     'body_class' => 'slideshow-page',
     'json_ld' => [
         [
             '@type' => 'WebPage',
-            'name' => "Pinchard's Island — Slideshow",
-            'description' => 'Watch Cloudberry photographs from Pinchard\'s Island in sequence — an hourly documentary of the view from Precious Memories cabin.',
+            'name' => 'Cloudberry — Slideshow',
+            'description' => $slideshowDescription,
             'url' => pinchard_absolute_url('/slideshow.php'),
             'isPartOf' => [
                 '@type' => 'WebSite',
-                'name' => "Pinchard's Island — Cloudberry",
+                'name' => 'Cloudberry',
                 'url' => pinchard_absolute_url('/index.php'),
             ],
         ],
@@ -50,7 +52,7 @@ pinchard_layout_head("Pinchard's Island — Slideshow", [
 
 pinchard_layout_nav(['active' => 'slideshow']);
 ?>
-    <h1 class="visually-hidden">Pinchard's Island Slideshow</h1>
+    <h1 class="visually-hidden">Cloudberry Slideshow</h1>
     <div class="slideshow-viewport" id="slideshow" aria-live="polite" aria-label="Photograph slideshow">
         <p class="slideshow-date" id="slideshowDate" aria-live="polite"></p>
     </div>
