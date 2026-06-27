@@ -69,7 +69,7 @@ pinchard_layout_nav(['active' => 'info']);
                 <p>The view was static—in the sense that the camera always captured the same frame; however, the lighting of the frame could vary drastically from one image to another. They extended the habit of glancing out the cabin window at the surrounding landscape.</p>
 
                 <?php if ($cloudberryArchiveSpan !== null): ?>
-                <p>Cloudberry operated from <?= pinchard_h($cloudberryArchiveSpan['start']) ?> through <?= pinchard_h($cloudberryArchiveSpan['end']) ?>. The camera system eventually failed—likely from cold, weathering, too little sun, or some combination—and was never recovered. The complete archive remains on this site.</p>
+                <p>Cloudberry operated from <?= pinchard_h($cloudberryArchiveSpan['start']) ?> through <?= pinchard_h($cloudberryArchiveSpan['end']) ?>. The camera system eventually failed—likely from cold, weathering, too little sun, or some combination. This website is the archive and documentation of what it captured.</p>
                 <?php endif; ?>
             </div></div>
         </div>

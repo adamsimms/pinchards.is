@@ -211,11 +211,7 @@ try {
         'json_ld' => $jsonLd,
     ]);
 
-    pinchard_layout_nav([
-        'active' => 'index',
-        'prev_filename' => $prev_filename,
-        'next_filename' => $next_filename,
-    ]);
+    pinchard_layout_nav(['active' => 'index']);
 } catch (Throwable $e) {
     http_response_code($e instanceof \Aws\Exception\AwsException || $e instanceof RuntimeException ? 503 : 500);
     header('Content-Type: text/plain; charset=utf-8');
@@ -239,6 +235,12 @@ try {
 
         <div class="detail_view<?= $viewerTimeline !== null ? ' has-timeline' : '' ?>" id="detailDrawer">
             <div class="detail_view-bar">
+                <a href="index.php?filename=<?= pinchard_h($prev_filename ?? '') ?>" class="viewer-photo-prev<?= ($prev_filename === null || $prev_filename === '') ? ' is-hidden' : '' ?>" aria-label="Previous photograph"<?= ($prev_filename === null || $prev_filename === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
+                    <span class="arrow left" aria-hidden="true"></span>
+                </a>
+                <a href="index.php?filename=<?= pinchard_h($next_filename ?? '') ?>" class="viewer-photo-next<?= ($next_filename === null || $next_filename === '') ? ' is-hidden' : '' ?>" aria-label="Next photograph"<?= ($next_filename === null || $next_filename === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
+                    <span class="arrow right" aria-hidden="true"></span>
+                </a>
 <?php if ($viewerTimeline !== null): ?>
 <?php
     $timelineCount = count($viewerTimeline['entries']);

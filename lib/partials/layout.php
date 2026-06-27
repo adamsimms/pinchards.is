@@ -73,16 +73,12 @@ function pinchard_layout_head(string $title, array $options = []): void
 /**
  * @param array{
  *   active?: 'index'|'gallery'|'info'|'slideshow'|null,
- *   prev_filename?: ?string,
- *   next_filename?: ?string,
  *   show_slideshow?: bool,
  * } $options
  */
 function pinchard_layout_nav(array $options = []): void
 {
 	$active = $options['active'] ?? null;
-	$prev = $options['prev_filename'] ?? null;
-	$next = $options['next_filename'] ?? null;
 	$showSlideshow = $options['show_slideshow'] ?? true;
 	$galleryClass = 'link-to-gallery nav_cloudberry' . ($active === 'gallery' ? ' active' : '');
 	$infoClass = 'nav_info' . ($active === 'info' ? ' active' : '');
@@ -91,6 +87,9 @@ function pinchard_layout_nav(array $options = []): void
     <nav id="mainNav" class="navbar navbar-default fixed-top" aria-label="Site">
         <div class="nav-bar-inner">
             <div class="nav-bar-start">
+                <a href="index.php" class="title-brand"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>Cloudberry</a>
+            </div>
+            <div class="nav-bar-end">
                 <a href="gallery.php" class="<?= pinchard_h($galleryClass) ?>" aria-label="Browse photo gallery"></a>
 <?php if ($showSlideshow): ?>
 <?php if ($active === 'slideshow'): ?>
@@ -101,21 +100,6 @@ function pinchard_layout_nav(array $options = []): void
                 <a href="slideshow.php" class="<?= pinchard_h($slideshowClass) ?>" aria-label="Watch slideshow"></a>
 <?php endif; ?>
 <?php endif; ?>
-            </div>
-            <div class="nav-bar-center">
-<?php if ($active === 'index'): ?>
-                <a href="index.php?filename=<?= pinchard_h($prev) ?>" class="nav-photo-prev<?= ($prev === null || $prev === '') ? ' is-hidden' : '' ?>" aria-label="Previous photograph"<?= ($prev === null || $prev === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
-                    <span class="arrow left" aria-hidden="true"></span>
-                </a>
-<?php endif; ?>
-                <a href="index.php" class="title-brand"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>Cloudberry</a>
-<?php if ($active === 'index'): ?>
-                <a href="index.php?filename=<?= pinchard_h($next) ?>" class="nav-photo-next<?= ($next === null || $next === '') ? ' is-hidden' : '' ?>" aria-label="Next photograph"<?= ($next === null || $next === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
-                    <span class="arrow right" aria-hidden="true"></span>
-                </a>
-<?php endif; ?>
-            </div>
-            <div class="nav-bar-end">
                 <a class="<?= pinchard_h($infoClass) ?>" href="info.php" aria-label="About Cloudberry"></a>
             </div>
         </div>
