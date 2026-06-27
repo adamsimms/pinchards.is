@@ -102,17 +102,11 @@ pinchard_layout_nav(['active' => 'info']);
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Where is Pinchard's Island?</h3>
                 <p>Pinchard's Island is situated at the northern edge of Bonavista Bay, Newfoundland, Canada. It was one of the first settled sites in Bonavista Bay but is no longer inhabited.</p>
-            </div></div>
-        </div>
-    </div>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-10 col-lg-8">
                 <div class="info-map">
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20855.569930035457!2d-53.48462861918841!3d49.20157937004537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4b75e272b66fd9bf%3A0xe011372b0d414175!2sPinchards+Island%2C+New-Wes-Valley%2C+NL+A0G+3L0%2C+Canada!5e0!3m2!1sen!2sgr!4v1503767433902" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map of Pinchard's Island"></iframe>
                 </div>
-            </div>
+            </div></div>
         </div>
     </div>
 
@@ -126,15 +120,9 @@ pinchard_layout_nav(['active' => 'info']);
                 <p>Our initial research showed that there were a lot of possibilities as to how we could approach the project, but it was clear from the beginning that every decision would result in many constraints that would affect every decision we made. Power, temperature, weather, sunlight, data limits, storage, remoteness, were all components that constantly determined decision making and the methods in which we worked.</p>
 
                 <p>We used <a href="http://www.trello.com/" target="_blank" rel="noopener noreferrer">Trello</a> to plan every aspect of the project, communicate, and document our research:</p>
-            </div></div>
-        </div>
-    </div>
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-10 col-lg-8">
                 <a href="https://trello.com/b/eYzSO4qQ/shutter-island" target="_blank" rel="noopener noreferrer"><img src="images/info/trello.jpg" class="img-fluid info_img" alt="Trello project board"></a>
-            </div>
+            </div></div>
         </div>
     </div>
 

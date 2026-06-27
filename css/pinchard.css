@@ -1428,7 +1428,7 @@ body.info-page .info-map {
     padding-bottom: 56.25%;
     height: 0;
     overflow: hidden;
-    margin: 20px 0;
+    margin: 1.25rem 0 0;
 }
 
 body.info-page .info-map iframe {
@@ -2064,8 +2064,12 @@ body.slideshow-page .slideshow-viewport img {
     body.info-page .info-layout {
         grid-template-columns: 1fr;
         gap: 0;
-        padding: 0 20px 60px;
+        padding: 0 0 60px;
         max-width: none;
+    }
+
+    body.info-page .info-main {
+        padding: 0 20px;
     }
 
     body.info-page .info-toc {
@@ -2073,9 +2077,9 @@ body.slideshow-page .slideshow-viewport img {
         top: 50px;
         z-index: 100;
         width: 100%;
-        max-width: 100%;
+        max-width: none;
         padding: 8px 0 10px;
-        margin: 0 -20px;
+        margin: 0;
         border-right: none;
         border-bottom: 1px solid #e5e5e5;
         background: rgba(255, 255, 255, 0.97);
