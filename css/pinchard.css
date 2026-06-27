@@ -1852,10 +1852,11 @@ body.gallery-page .photo-date-mobile {
 /* —— Day gallery experiment (horizontal day columns) —— */
 body.gallery-days-page {
     --gallery-days-nav-offset: 50px;
-    --gallery-days-top-gap: 0;
-    --gallery-days-date-band: 20px;
+    --gallery-days-column-pad: 12px;
+    --gallery-days-date-line: 11px;
+    --gallery-days-date-band: calc(var(--gallery-days-date-line) + var(--gallery-days-column-pad) + 1px);
     --gallery-days-max-photos: 13;
-    --gallery-days-photo-height: calc((100dvh - var(--gallery-days-nav-offset) - var(--gallery-days-date-band)) / var(--gallery-days-max-photos));
+    --gallery-days-photo-height: calc((100dvh - var(--gallery-days-nav-offset) - var(--gallery-days-column-pad) - var(--gallery-days-date-band)) / var(--gallery-days-max-photos));
     --gallery-days-column-width: calc(var(--gallery-days-photo-height) * 288 / 224);
     padding-top: 0;
     overflow: hidden;
@@ -1907,6 +1908,7 @@ body.gallery-days-page .gallery-day-column {
     flex: 0 0 var(--gallery-days-column-width);
     width: var(--gallery-days-column-width);
     height: auto;
+    padding-top: var(--gallery-days-column-pad);
     scroll-margin-left: 0;
 }
 
@@ -1924,15 +1926,15 @@ body.gallery-days-page .gallery-day-column:last-child .gallery-day-stack {
 }
 
 body.gallery-days-page .gallery-day-label {
-    flex: 0 0 var(--gallery-days-date-band);
+    flex: 0 0 auto;
     box-sizing: border-box;
     margin: 0;
-    padding: 5px 4px 4px;
+    padding: 0 4px var(--gallery-days-column-pad);
     font-family: 'circular-std', sans-serif;
     font-size: 10px;
     font-weight: 400;
-    line-height: 1;
-    height: var(--gallery-days-date-band);
+    line-height: var(--gallery-days-date-line);
+    min-height: var(--gallery-days-date-line);
     text-align: center;
     color: rgba(0, 0, 0, 0.38);
     white-space: nowrap;
@@ -2012,12 +2014,13 @@ body.gallery-days-page .gallery-day-photo .photo-box-caption-content {
 
 @media (max-width: 767px) {
     body.gallery-days-page {
-        --gallery-days-date-band: 18px;
+        --gallery-days-column-pad: 8px;
+        --gallery-days-date-line: 10px;
     }
 
     body.gallery-days-page .gallery-day-label {
         font-size: 9px;
-        padding: 4px 2px 3px;
+        padding: 0 2px var(--gallery-days-column-pad);
     }
 }
 
