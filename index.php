@@ -159,14 +159,14 @@ try {
     $jsonLd = [
         [
             '@type' => 'WebSite',
-            'name' => "Pinchard's Island — Cloudberry",
+            'name' => 'Cloudberry',
             'url' => pinchard_absolute_url('/index.php'),
             'description' => pinchard_cloudberry_site_description(),
         ],
     ];
     $imageObject = [
         '@type' => 'ImageObject',
-        'name' => "Pinchard's Island — " . pinchard_photo_title($filename),
+        'name' => 'Cloudberry — ' . pinchard_photo_title($filename),
         'description' => $ogDescription,
         'contentUrl' => $imageUrl,
         'dateCreated' => $dt !== false ? $dt->format(DateTime::ATOM) : null,
@@ -202,7 +202,7 @@ try {
 
     $bodyClass = 'viewer-page';
 
-    pinchard_layout_head("Pinchard's Island — " . pinchard_photo_title($filename), [
+    pinchard_layout_head('Cloudberry — ' . pinchard_photo_title($filename), [
         'description' => $ogDescription,
         'og_image' => $imageUrl,
         'og_type' => 'article',
@@ -225,7 +225,7 @@ try {
     exit('Photo viewer is temporarily unavailable.');
 }
 ?>
-    <h1 class="visually-hidden"><?= pinchard_h("Pinchard's Island — " . pinchard_photo_title($filename)) ?></h1>
+    <h1 class="visually-hidden"><?= pinchard_h('Cloudberry — ' . pinchard_photo_title($filename)) ?></h1>
     <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse. Timeline scrubber below jumps through the archive.">
 <?php if ($galleryContext !== null): ?>
         <div class="photo-context-nav">

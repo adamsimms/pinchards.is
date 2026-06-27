@@ -19,7 +19,7 @@ pinchard_microsite_head('Resettled Communities', [
                 <a href="#" class="title-brand">Resettled Communities</a>
             </div>
             <div class="nav-bar-end">
-                <a class="nav_info" href="../info.php" aria-label="About this project"></a>
+                <a class="nav_info" href="../info.php" aria-label="About Cloudberry"></a>
             </div>
         </div>
     </nav>

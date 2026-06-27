@@ -108,7 +108,7 @@ function pinchard_layout_nav(array $options = []): void
                     <span class="arrow left" aria-hidden="true"></span>
                 </a>
 <?php endif; ?>
-                <a href="index.php" class="title-brand"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>pinchards.is</a>
+                <a href="index.php" class="title-brand"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>Cloudberry</a>
 <?php if ($active === 'index'): ?>
                 <a href="index.php?filename=<?= pinchard_h($next) ?>" class="nav-photo-next<?= ($next === null || $next === '') ? ' is-hidden' : '' ?>" aria-label="Next photograph"<?= ($next === null || $next === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
                     <span class="arrow right" aria-hidden="true"></span>
@@ -116,7 +116,7 @@ function pinchard_layout_nav(array $options = []): void
 <?php endif; ?>
             </div>
             <div class="nav-bar-end">
-                <a class="<?= pinchard_h($infoClass) ?>" href="info.php" aria-label="About this project"></a>
+                <a class="<?= pinchard_h($infoClass) ?>" href="info.php" aria-label="About Cloudberry"></a>
             </div>
         </div>
     </nav>
