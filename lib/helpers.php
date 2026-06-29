@@ -18,6 +18,45 @@ function pinchard_fonts_head_html(): string
 	]);
 }
 
+function pinchard_mapbox_gl_version(): string
+{
+	return '3.25.0';
+}
+
+function pinchard_mapbox_gl_css(): string
+{
+	$version = pinchard_mapbox_gl_version();
+
+	return '    <link href="https://api.mapbox.com/mapbox-gl-js/v' . $version . '/mapbox-gl.css" rel="stylesheet">';
+}
+
+function pinchard_mapbox_gl_js(): string
+{
+	$version = pinchard_mapbox_gl_version();
+
+	return '    <script src="https://api.mapbox.com/mapbox-gl-js/v' . $version . '/mapbox-gl.js"></script>';
+}
+
+/** Optional privacy-friendly analytics (GoatCounter or Cloudflare Web Analytics). */
+function pinchard_analytics_footer_html(): string
+{
+	$goat = pinchard_env_non_empty('GOATCOUNTER_SITE_CODE');
+	if ($goat !== null && preg_match('/^[a-z0-9-]+$/i', $goat) === 1) {
+		$endpoint = 'https://' . $goat . '.goatcounter.com/count';
+
+		return '    <script data-goatcounter="' . pinchard_h($endpoint) . '" async src="//gc.zgo.at/count.js"></script>';
+	}
+
+	$cfToken = pinchard_env_non_empty('CLOUDFLARE_WEB_ANALYTICS_TOKEN');
+	if ($cfToken !== null) {
+		$beacon = json_encode(['token' => $cfToken], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+
+		return '    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'' . $beacon . '\'></script>';
+	}
+
+	return '';
+}
+
 /** Short display date for gallery captions and timeline (e.g. March 1 @ 18:09). */
 function pinchard_show_date(DateTime $dt): string
 {
@@ -70,6 +109,64 @@ function pinchard_canonical_url(): string
 	}
 
 	return pinchard_absolute_url($path, $query);
+}
+
+/** Default Open Graph preview image for site pages. */
+function pinchard_default_og_image(): string
+{
+	return 'https://www.pinchards.is/images/info/pano.jpg';
+}
+
+/**
+ * Shared meta description, Open Graph, Twitter Card, and canonical tags.
+ *
+ * @param array{
+ *   og_image?: string,
+ *   og_type?: string,
+ *   canonical_url?: string,
+ *   robots?: string,
+ *   og_site_name?: string,
+ *   author?: string,
+ * } $options
+ */
+function pinchard_seo_head_markup(string $title, string $description, array $options = []): string
+{
+	$ogImage = $options['og_image'] ?? pinchard_default_og_image();
+	$ogType = $options['og_type'] ?? 'website';
+	$canonical = $options['canonical_url'] ?? pinchard_canonical_url();
+	$ogSiteName = $options['og_site_name'] ?? "Pinchard's Island";
+	$author = $options['author'] ?? 'Adam Simms & Angela Gabereaux';
+	$robots = $options['robots'] ?? null;
+
+	$t = pinchard_h($title);
+	$d = pinchard_h($description);
+	$og = pinchard_h($ogImage);
+	$canonicalEsc = pinchard_h($canonical);
+	$authorEsc = pinchard_h($author);
+	$siteNameEsc = pinchard_h($ogSiteName);
+
+	$lines = [
+		'    <meta name="description" content="' . $d . '">',
+		'    <meta name="author" content="' . $authorEsc . '">',
+	];
+	if ($robots !== null && $robots !== '') {
+		$lines[] = '    <meta name="robots" content="' . pinchard_h($robots) . '">';
+	}
+	$lines = array_merge($lines, [
+		'    <meta property="og:title" content="' . $t . '">',
+		'    <meta property="og:description" content="' . $d . '">',
+		'    <meta property="og:image" content="' . $og . '">',
+		'    <meta property="og:type" content="' . pinchard_h($ogType) . '">',
+		'    <meta property="og:url" content="' . $canonicalEsc . '">',
+		'    <meta property="og:site_name" content="' . $siteNameEsc . '">',
+		'    <meta name="twitter:card" content="summary_large_image">',
+		'    <meta name="twitter:title" content="' . $t . '">',
+		'    <meta name="twitter:description" content="' . $d . '">',
+		'    <meta name="twitter:image" content="' . $og . '">',
+		'    <link rel="canonical" href="' . $canonicalEsc . '">',
+	]);
+
+	return implode("\n", $lines) . "\n";
 }
 
 /** Accessible alt text for a photograph from its archive datetime string. */

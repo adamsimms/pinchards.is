@@ -201,7 +201,7 @@ try {
     }
     $jsonLd[] = $imageObject;
 
-    $extraHead = '<link href="https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.css" rel="stylesheet" />' . "\n";
+    $extraHead = pinchard_mapbox_gl_css() . "\n";
     if ($prev_filename !== null && $prev_filename !== '') {
         $extraHead .= '    <link rel="prefetch" href="' . pinchard_h($cdnFull . $prev_filename) . '" as="image">' . "\n";
     }
@@ -371,7 +371,7 @@ $footerScripts = str_replace('CURRENT_FILENAME', json_encode($filename, $mapJe),
 $footerScripts = str_replace('TIMELINE_DATA', json_encode($viewerTimeline ?? null, $mapJe), $footerScripts);
 
 if ($pinchardMapboxToken !== null && str_starts_with($pinchardMapboxToken, 'pk.')) {
-    $footerScripts .= "\n    <script src=\"https://api.mapbox.com/mapbox-gl-js/v3.24.0/mapbox-gl.js\"></script>\n";
+    $footerScripts .= "\n    " . pinchard_mapbox_gl_js() . "\n";
     $footerScripts .= "    <script>\n        document.addEventListener('DOMContentLoaded', function() {\n";
     $footerScripts .= "            var map = new mapboxgl.Map({\n";
     $footerScripts .= '                accessToken: ' . json_encode($pinchardMapboxToken, $mapJe) . ",\n";

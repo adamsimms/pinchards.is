@@ -2072,24 +2072,38 @@ body.info-page .info-toc a.is-active {
     border-left-color: #F05F40;
 }
 
-body.info-page .hardware-accordion .accordion-button {
+body.info-page .hardware-accordion .hardware-details {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background: #fff;
+}
+
+body.info-page .hardware-accordion .hardware-details summary {
     font-family: 'DM Sans', sans-serif;
     font-weight: 700;
     font-size: 1.1rem;
     padding: 16px 20px;
+    cursor: pointer;
+    list-style: none;
 }
 
-body.info-page .hardware-accordion .accordion-button:not(.collapsed) {
+body.info-page .hardware-accordion .hardware-details summary::-webkit-details-marker {
+    display: none;
+}
+
+body.info-page .hardware-accordion .hardware-details[open] summary {
     color: #F05F40;
     background-color: #fff8f6;
 }
 
-body.info-page .hardware-accordion .accordion-body {
+body.info-page .hardware-accordion .hardware-details-body {
     font-size: 17px;
     line-height: 1.55;
+    padding: 0 20px 16px;
 }
 
-body.info-page .hardware-accordion .accordion-body h4 {
+body.info-page .hardware-accordion .hardware-details-body h4 {
     font-size: 1rem;
     margin-bottom: 8px;
 }

@@ -47,6 +47,8 @@ The workflow excludes **`adrift/`**, **`dory/`**, and **`waves/`** on the server
 | `AWS_DEFAULT_REGION` | Optional; omit to use `us-east-1` |
 | `GOOGLE_MAPS_API_KEY` | Optional; browser key for `index.php` map |
 | `MAPBOX_ACCESS_TOKEN` | Optional; `pk.*` token for `maps/` |
+| `GOATCOUNTER_SITE_CODE` | Optional; analytics (see README) |
+| `CLOUDFLARE_WEB_ANALYTICS_TOKEN` | Optional; analytics (see README) |
 
 Runtime secrets are written to `secrets.local.php` during the workflow (not stored in git). After adding or rotating secrets, redeploy (push to `main` or **Actions → Deploy SFTP → Run workflow**). Use **Run workflow → dry_run: true** first to list changes without uploading.
 
@@ -62,7 +64,9 @@ On each deploy, [.github/scripts/write-secrets-local.php](../.github/scripts/wri
 | `AWS_SECRET_ACCESS_KEY` | yes | S3 gallery |
 | `AWS_DEFAULT_REGION` | no (defaults to `us-east-1`) | S3 region |
 | `GOOGLE_MAPS_API_KEY` | no | Photo map on `index.php` |
-| `MAPBOX_ACCESS_TOKEN` | no | `maps/` |
+| `MAPBOX_ACCESS_TOKEN` | no | `maps/` and index.php photo map |
+| `GOATCOUNTER_SITE_CODE` | no | Optional analytics |
+| `CLOUDFLARE_WEB_ANALYTICS_TOKEN` | no | Optional analytics |
 
 Deploy fails if the AWS pair is missing. Optional secrets are omitted from the generated file when unset.
 

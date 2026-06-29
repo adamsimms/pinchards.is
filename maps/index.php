@@ -40,27 +40,31 @@ $je = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 $pageTitle = 'Maps';
 $description = 'Maps of Pinchard\'s Island, Newfoundland — satellite imagery, trees, and resettled communities.';
 $canonical = pinchard_absolute_url('/maps/');
-
-$extraHead = implode("\n", [
-	'    <meta name="description" content="' . pinchard_h($description) . '">',
-	'    <meta property="og:title" content="' . pinchard_h($pageTitle) . '">',
-	'    <meta property="og:description" content="' . pinchard_h($description) . '">',
-	'    <meta property="og:image" content="https://www.pinchards.is/images/info/pano.jpg">',
-	'    <meta property="og:type" content="website">',
-	'    <meta property="og:url" content="' . pinchard_h($canonical) . '">',
-	'    <meta name="twitter:card" content="summary_large_image">',
-	'    <link rel="canonical" href="' . pinchard_h($canonical) . '">',
-	pinchard_mapbox_gl_css(),
-]);
-
 $bodyClass = 'maps-satellite-page' . ($kiosk ? ' maps-satellite-page--kiosk' : '');
+
 pinchard_microsite_head($pageTitle, [
 	'body_attr' => 'id="page-top" class="' . $bodyClass . '"',
-	'extra_head' => $extraHead,
+	'description' => $description,
+	'canonical_url' => $canonical,
+	'extra_head' => pinchard_mapbox_gl_css() . "\n",
+	'json_ld' => [
+		[
+			'@type' => 'WebPage',
+			'name' => $pageTitle,
+			'description' => $description,
+			'url' => $canonical,
+			'isPartOf' => [
+				'@type' => 'WebSite',
+				'name' => "Pinchard's Island",
+				'url' => pinchard_absolute_url('/'),
+			],
+		],
+	],
 ]);
 
 pinchard_maps_nav('satellite', ['kiosk' => $kiosk]);
 ?>
+    <h1 class="visually-hidden">Satellite map of Pinchard's Island, Newfoundland</h1>
     <div class="maps-satellite-shell">
         <div id="map" role="img" aria-label="Satellite map of Pinchard's Island, Newfoundland"></div>
     </div>

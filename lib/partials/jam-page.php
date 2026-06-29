@@ -21,7 +21,13 @@ $slideshowCss = $layoutFill
 
 $extraHead = '<style>body{margin:0;}#slideshow img{' . $slideshowCss . '}</style>';
 
-pinchard_microsite_head($jam_page_title, ['extra_head' => $extraHead]);
+$jamDescription = 'Fullscreen exhibition slideshow from the Cloudberry archive — for projection and direct-link playback only.';
+pinchard_microsite_head($jam_page_title, [
+	'description' => $jamDescription,
+	'canonical_url' => pinchard_absolute_url('/jam/'),
+	'robots' => 'noindex, nofollow',
+	'extra_head' => $extraHead,
+]);
 
 $je = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 ?>
@@ -31,7 +37,8 @@ $shown = 0;
 for ($i = $jam_start; $i < count($array) && $shown < 10; $i++, $shown++) {
 	$photo = $array[$i];
 	$src = htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8');
-	echo "            <img src=\"{$src}\" alt=\"\">\n";
+	$alt = pinchard_h(pinchard_photo_alt_text($photo['date']));
+	echo "            <img src=\"{$src}\" alt=\"{$alt}\">\n";
 }
 ?>
     </div>

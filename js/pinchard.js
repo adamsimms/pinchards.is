@@ -1,4 +1,4 @@
-(function($) {
+(function() {
     "use strict";
 
     var ROUTE_LEAVE_MS = 220;
@@ -83,92 +83,113 @@
         });
     }
 
-    $(document).on('click', 'a.page-scroll', function(event) {
-        var $anchor = $(this);
-        $('html, body').stop().animate({
-            scrollTop: ($($anchor.attr('href')).offset().top - 50)
-        }, 1250, 'easeInOutExpo');
+    document.addEventListener('click', function(event) {
+        var link = event.target.closest('a.page-scroll');
+        if (!link) {
+            return;
+        }
+        var target = document.querySelector(link.getAttribute('href'));
+        if (!target) {
+            return;
+        }
         event.preventDefault();
+        target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
     });
 
-    $('.navbar-collapse ul li a').click(function() {
-        $('.navbar-toggler:visible').click();
-    });
-
-    var $mainNav = $('#mainNav');
-    if ($mainNav.length) {
+    var mainNav = document.getElementById('mainNav');
+    if (mainNav) {
         var affixOffset = 100;
-        $(window).on('scroll', function() {
-            if ($(window).scrollTop() > affixOffset) {
-                $mainNav.addClass('affix');
-            } else {
-                $mainNav.removeClass('affix');
-            }
-        }).trigger('scroll');
+        function updateAffix() {
+            mainNav.classList.toggle('affix', window.scrollY > affixOffset);
+        }
+        window.addEventListener('scroll', updateAffix, { passive: true });
+        updateAffix();
     }
 
     function closeMapsDropdowns() {
-        $('.maps-nav-dropdown.is-open').removeClass('is-open')
-            .find('.maps-nav-dropdown-trigger').attr('aria-expanded', 'false');
+        document.querySelectorAll('.maps-nav-dropdown.is-open').forEach(function(dropdown) {
+            dropdown.classList.remove('is-open');
+            var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
+            if (trigger) {
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+        });
     }
 
     var mapsDropdownCloseTimer = null;
     var mapsDropdownHover = window.matchMedia('(hover: hover) and (pointer: fine)');
 
-    $('.maps-nav-dropdown').on('mouseenter', function() {
-        if (!mapsDropdownHover.matches) {
-            return;
-        }
-        window.clearTimeout(mapsDropdownCloseTimer);
-        closeMapsDropdowns();
-        $(this).addClass('is-open').find('.maps-nav-dropdown-trigger').attr('aria-expanded', 'true');
-    }).on('mouseleave', function() {
-        if (!mapsDropdownHover.matches) {
-            return;
-        }
-        var $dropdown = $(this);
-        window.clearTimeout(mapsDropdownCloseTimer);
-        mapsDropdownCloseTimer = window.setTimeout(function() {
-            $dropdown.removeClass('is-open').find('.maps-nav-dropdown-trigger').attr('aria-expanded', 'false');
-        }, 120);
+    document.querySelectorAll('.maps-nav-dropdown').forEach(function(dropdown) {
+        dropdown.addEventListener('mouseenter', function() {
+            if (!mapsDropdownHover.matches) {
+                return;
+            }
+            window.clearTimeout(mapsDropdownCloseTimer);
+            closeMapsDropdowns();
+            dropdown.classList.add('is-open');
+            var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
+            if (trigger) {
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+        });
+        dropdown.addEventListener('mouseleave', function() {
+            if (!mapsDropdownHover.matches) {
+                return;
+            }
+            window.clearTimeout(mapsDropdownCloseTimer);
+            mapsDropdownCloseTimer = window.setTimeout(function() {
+                dropdown.classList.remove('is-open');
+                var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
+                if (trigger) {
+                    trigger.setAttribute('aria-expanded', 'false');
+                }
+            }, 120);
+        });
     });
 
-    $(document).on('click', '.maps-nav-dropdown-trigger', function(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        var $dropdown = $(this).closest('.maps-nav-dropdown');
-        var isOpen = $dropdown.hasClass('is-open');
-        closeMapsDropdowns();
-        if (!isOpen) {
-            $dropdown.addClass('is-open');
-            $(this).attr('aria-expanded', 'true');
+    document.addEventListener('click', function(event) {
+        var trigger = event.target.closest('.maps-nav-dropdown-trigger');
+        if (trigger) {
+            event.preventDefault();
+            event.stopPropagation();
+            var dropdown = trigger.closest('.maps-nav-dropdown');
+            var isOpen = dropdown.classList.contains('is-open');
+            closeMapsDropdowns();
+            if (!isOpen) {
+                dropdown.classList.add('is-open');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+            return;
         }
-    });
-
-    $(document).on('click', function(event) {
-        if (!$(event.target).closest('.maps-nav-dropdown').length) {
+        if (!event.target.closest('.maps-nav-dropdown')) {
             closeMapsDropdowns();
         }
     });
 
-    $(document).on('keydown', function(event) {
+    document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeMapsDropdowns();
         }
     });
 
-    $(document).on('click', '.citation-copy-btn', function() {
-        var $btn = $(this);
-        var text = $btn.attr('data-citation') || '';
+    document.addEventListener('click', function(event) {
+        var btn = event.target.closest('.citation-copy-btn');
+        if (!btn) {
+            return;
+        }
+        var text = btn.getAttribute('data-citation') || '';
         if (!text) {
             return;
         }
 
         function markCopied() {
-            var original = $btn.data('copy-label') || 'Copy';
-            $btn.addClass('is-copied').text('Copied');
+            var original = btn.dataset.copyLabel || btn.textContent || 'Copy';
+            btn.dataset.copyLabel = original;
+            btn.classList.add('is-copied');
+            btn.textContent = 'Copied';
             window.setTimeout(function() {
-                $btn.removeClass('is-copied').text(original);
+                btn.classList.remove('is-copied');
+                btn.textContent = original;
             }, 2000);
         }
 
@@ -198,5 +219,4 @@
             document.body.removeChild(textarea);
         }
     }
-
-})(jQuery);
+})();

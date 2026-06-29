@@ -141,45 +141,30 @@ pinchard_layout_nav(['active' => 'info']);
 
                 <h3>What we used:</h3>
 
-                <div class="accordion hardware-accordion" id="hardwareAccordion">
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-gopro">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-gopro-body" aria-expanded="false" aria-controls="hw-gopro-body">GoPro HERO4 Black with 16gb micro SD Card</button>
-                        </h4>
-                        <div id="hw-gopro-body" class="accordion-collapse collapse" aria-labelledby="hw-gopro" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                <div class="hardware-accordion">
+                    <details class="hardware-details">
+                        <summary>GoPro HERO4 Black with 16gb micro SD Card</summary>
+                        <div class="hardware-details-body">
                                 <p>We initially wanted to use the GoPro HERO5, but the Cam Do enclosure did not support the GoPro HERO5 at the time. Creating a DIY weatherproof enclosure didn't add any benefit since the image quality between GoPro HERO4 and GoPro HERO5 is the same; therefore, we made the decision to go with the GoPro HERO4.</p>
                                 <p><a href="https://www.amazon.ca/GoPro-MAIN-91068-HERO4-BLACK/dp/B00NIYNUF2" target="_blank" rel="noopener noreferrer">GoPro HERO4 Black on Amazon</a></p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-blink">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-blink-body" aria-expanded="false" aria-controls="hw-blink-body">Cam Do Blink Interval Timer</button>
-                        </h4>
-                        <div id="hw-blink-body" class="accordion-collapse collapse" aria-labelledby="hw-blink" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>Cam Do Blink Interval Timer</summary>
+                        <div class="hardware-details-body">
                                 <p>The interval timer turned on the GoPro every hour between 8 AM and 8 PM. The GoPro was modified with the <a href="https://cam-do.com/products/csi-pro-firmware" target="_blank" rel="noopener noreferrer">Pro-csiController</a> firmware from Cam Do and ran a custom <code>autoexec</code> script to take a photo, turn on the GoPro WiFi, and then put the camera in standby mode to conserve power.</p>
                                 <p><a href="https://cam-do.com/collections/schedulers/products/blink-gopro-time-lapse-controller" target="_blank" rel="noopener noreferrer">Cam Do Blink Interval Timer</a></p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-pi">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-pi-body" aria-expanded="false" aria-controls="hw-pi-body">Raspberry Pi 3 Model B</button>
-                        </h4>
-                        <div id="hw-pi-body" class="accordion-collapse collapse" aria-labelledby="hw-pi" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>Raspberry Pi 3 Model B</summary>
+                        <div class="hardware-details-body">
                                 <p>Standard Raspberry Pi with a <a href="https://www.adafruit.com/product/1583" target="_blank" rel="noopener noreferrer">16GB Noobs SD Card</a> running <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank" rel="noopener noreferrer">Raspbian OS</a>.</p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-witty">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-witty-body" aria-expanded="false" aria-controls="hw-witty-body">WittyPi 2</button>
-                        </h4>
-                        <div id="hw-witty-body" class="accordion-collapse collapse" aria-labelledby="hw-witty" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>WittyPi 2</summary>
+                        <div class="hardware-details-body">
                                 <p>A real time clock (RTC) that turned on the Raspberry Pi at night for 30 minutes. The Raspberry Pi ran a Python script that:</p>
                                 <ol>
                                     <li>Woke up the GoPro via WiFi.</li>
@@ -188,55 +173,35 @@ pinchard_layout_nav(['active' => 'info']);
                                     <li>Put the GoPro into standby mode and shut down the Raspberry Pi to conserve power.</li>
                                 </ol>
                                 <p><a href="http://www.uugear.com/product/wittypi2/" target="_blank" rel="noopener noreferrer">WittyPi 2</a></p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-arduino">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-arduino-body" aria-expanded="false" aria-controls="hw-arduino-body">Arduino Pro Mini + Current Sensor</button>
-                        </h4>
-                        <div id="hw-arduino-body" class="accordion-collapse collapse" aria-labelledby="hw-arduino" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>Arduino Pro Mini + Current Sensor</summary>
+                        <div class="hardware-details-body">
                                 <p>We added a power-monitoring meter to avoid power issues that might corrupt the SD card if the Raspberry Pi shut down unexpectedly. In the event that the power supply was low, the Arduino triggered the WittyPi 2 to shut down the Raspberry Pi until there was sufficient battery to power the device.</p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-watchdog">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-watchdog-body" aria-expanded="false" aria-controls="hw-watchdog-body">WatchDog from Switch Doc</button>
-                        </h4>
-                        <div id="hw-watchdog-body" class="accordion-collapse collapse" aria-labelledby="hw-watchdog" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>WatchDog from Switch Doc</summary>
+                        <div class="hardware-details-body">
                                 <p>Since the Raspberry Pi was managed remotely, the WatchDog monitored the health of the Raspberry Pi and automatically restarted the system in the event of a malfunction.</p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-hotspot">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-hotspot-body" aria-expanded="false" aria-controls="hw-hotspot-body">Huawei LTE E8372 USB Cellular Modem</button>
-                        </h4>
-                        <div id="hw-hotspot-body" class="accordion-collapse collapse" aria-labelledby="hw-hotspot" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>Huawei LTE E8372 USB Cellular Modem</summary>
+                        <div class="hardware-details-body">
                                 <p>The USB cellular modem was connected to the Raspberry Pi USB port with a SIM card and mobile internet plan from Bell Canada. At ±6 MB per photo and 13 photos per day, the system used roughly 2.3 GB per month.</p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-enclosure">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-enclosure-body" aria-expanded="false" aria-controls="hw-enclosure-body">GoPro Weatherproof Enclosure</button>
-                        </h4>
-                        <div id="hw-enclosure-body" class="accordion-collapse collapse" aria-labelledby="hw-enclosure" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>GoPro Weatherproof Enclosure</summary>
+                        <div class="hardware-details-body">
                                 <p>Housed the GoPro. We made several modifications to the enclosure including silicone sealing, a drilled power port, and removing the air pressure filter to reduce condensation on the lens filter.</p>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-solar">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-solar-body" aria-expanded="false" aria-controls="hw-solar-body">130 Watt Solar Power System</button>
-                        </h4>
-                        <div id="hw-solar-body" class="accordion-collapse collapse" aria-labelledby="hw-solar" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>130 Watt Solar Power System</summary>
+                        <div class="hardware-details-body">
                                 <p>We worked with Gerry of <a href="http://www.nfenergies.com/" target="_blank" rel="noopener noreferrer">Newfound Energies</a> in St. John's Newfoundland to design a solar panel system for intermittent power in harsh winter conditions.</p>
                                 <ul>
                                     <li>130-watt solar panel pointed at ±20 degrees towards the path of the sun during the winter.</li>
@@ -244,21 +209,16 @@ pinchard_layout_nav(['active' => 'info']);
                                     <li>1500-watt inverter</li>
                                     <li>Four 6 volt, 385 amp hour deep cycle batteries</li>
                                 </ul>
-                            </div>
                         </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h4 class="accordion-header" id="hw-cloud">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#hw-cloud-body" aria-expanded="false" aria-controls="hw-cloud-body">Remote access &amp; cloud storage</button>
-                        </h4>
-                        <div id="hw-cloud-body" class="accordion-collapse collapse" aria-labelledby="hw-cloud" data-bs-parent="#hardwareAccordion">
-                            <div class="accordion-body">
+                    </details>
+                    <details class="hardware-details">
+                        <summary>Remote access &amp; cloud storage</summary>
+                        <div class="hardware-details-body">
                                 <p><a href="http://www.dataplicity.com/" target="_blank" rel="noopener noreferrer">Dataplicity</a> allowed remote CLI access to the Raspberry Pi.</p>
                                 <p><a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">Amazon Web Services</a> S3 stored photographs; CloudFront delivered images to this website.</p>
                                 <p><a href="https://github.com/KonradIT/goprowifihack" target="_blank" rel="noopener noreferrer">GoPro WiFi Hack</a> from KonradIT enabled remote camera control.</p>
-                            </div>
                         </div>
-                    </div>
+                    </details>
                 </div>
             </div></div>
         </div>

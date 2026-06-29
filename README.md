@@ -47,3 +47,14 @@ See **[docs/DEPLOY.md](docs/DEPLOY.md)** for SSH key setup, repository secrets, 
 Code in this repository is [MIT](LICENSE). Photographs and embedded media are not covered — see the live [About](https://www.pinchards.is/info.php) page for citation and contact.
 
 Fonts: [DM Sans](https://fonts.google.com/specimen/DM+Sans) (Google Fonts, OFL). Vendored libraries retain their own licenses under `vendor/`.
+
+## Analytics (optional)
+
+Google Analytics was removed. To enable privacy-friendly stats, set **one** of these in `secrets.local.php` or GitHub Actions secrets:
+
+| Provider | Cost | Notes |
+|----------|------|-------|
+| [GoatCounter](https://www.goatcounter.com) | Free for personal/non-commercial | Set `GOATCOUNTER_SITE_CODE` to your site code (subdomain). No cookies. |
+| [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) | Free | Set `CLOUDFLARE_WEB_ANALYTICS_TOKEN` from the CF dashboard. No cookies. |
+
+Omit both to run with no analytics script on any page.

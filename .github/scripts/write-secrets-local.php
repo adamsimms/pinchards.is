@@ -37,6 +37,8 @@ if ($awsKey === '' || $awsSecret === '') {
 $region = pinchard_env('AWS_DEFAULT_REGION', 'us-east-1');
 $googleMapsKey = pinchard_env('GOOGLE_MAPS_API_KEY');
 $mapboxToken = pinchard_env('MAPBOX_ACCESS_TOKEN');
+$goatcounterSite = pinchard_env('GOATCOUNTER_SITE_CODE');
+$cfAnalyticsToken = pinchard_env('CLOUDFLARE_WEB_ANALYTICS_TOKEN');
 
 $lines = [
 	'<?php',
@@ -71,6 +73,20 @@ if ($mapboxToken !== '') {
 	$lines[] = '$mapboxToken = ' . pinchard_php_str($mapboxToken) . ';';
 	array_push($lines, ...pinchard_putenv_block('MAPBOX_ACCESS_TOKEN', 'mapboxToken'));
 	}
+}
+
+if ($goatcounterSite !== '') {
+	$lines[] = '';
+	$lines[] = '// GoatCounter — optional privacy-friendly analytics';
+	$lines[] = '$goatcounterSite = ' . pinchard_php_str($goatcounterSite) . ';';
+	array_push($lines, ...pinchard_putenv_block('GOATCOUNTER_SITE_CODE', 'goatcounterSite'));
+}
+
+if ($cfAnalyticsToken !== '') {
+	$lines[] = '';
+	$lines[] = '// Cloudflare Web Analytics — optional';
+	$lines[] = '$cfAnalyticsToken = ' . pinchard_php_str($cfAnalyticsToken) . ';';
+	array_push($lines, ...pinchard_putenv_block('CLOUDFLARE_WEB_ANALYTICS_TOKEN', 'cfAnalyticsToken'));
 }
 
 $lines[] = '';

@@ -7,9 +7,6 @@
     "vendor:prod": "composer install --no-dev --optimize-autoloader && npm run vendor:frontend"
   },
   "devDependencies": {
-    "bootstrap": "5.3.3",
-    "font-awesome": "4.7.0",
-    "jquery": "3.7.1",
-    "slick-carousel": "1.8.1"
+    "bootstrap": "5.3.3"
   }
 }

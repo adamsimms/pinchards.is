@@ -13,6 +13,7 @@ require_once __DIR__ . '/nav.php';
  *   og_type?: string,
  *   canonical_url?: string,
  *   json_ld?: list<array<string, mixed>>,
+ *   robots?: string,
  *   extra_head?: string,
  *   body_class?: string,
  *   body_id?: string,
@@ -21,7 +22,7 @@ require_once __DIR__ . '/nav.php';
 function pinchard_layout_head(string $title, array $options = []): void
 {
 	$description = $options['description'] ?? pinchard_cloudberry_site_description();
-	$ogImage = $options['og_image'] ?? 'https://www.pinchards.is/images/info/pano.jpg';
+	$ogImage = $options['og_image'] ?? pinchard_default_og_image();
 	$ogType = $options['og_type'] ?? 'website';
 	$canonical = $options['canonical_url'] ?? pinchard_canonical_url();
 	$jsonLd = $options['json_ld'] ?? [];
@@ -29,24 +30,19 @@ function pinchard_layout_head(string $title, array $options = []): void
 	$bodyClass = $options['body_class'] ?? '';
 	$bodyId = $options['body_id'] ?? 'page-top';
 	$t = pinchard_h($title);
-	$d = pinchard_h($description);
-	$og = pinchard_h($ogImage);
-	$canonicalEsc = pinchard_h($canonical);
+	$seoMarkup = pinchard_seo_head_markup($title, $description, [
+		'og_image' => $ogImage,
+		'og_type' => $ogType,
+		'canonical_url' => $canonical,
+		'robots' => $options['robots'] ?? null,
+	]);
 	?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="<?= $d ?>">
-    <meta name="author" content="Adam Simms &amp; Angela Gabereaux">
-    <meta property="og:title" content="<?= $t ?>">
-    <meta property="og:description" content="<?= $d ?>">
-    <meta property="og:image" content="<?= $og ?>">
-    <meta property="og:type" content="<?= pinchard_h($ogType) ?>">
-    <meta property="og:url" content="<?= $canonicalEsc ?>">
-    <meta name="twitter:card" content="summary_large_image">
-    <link rel="canonical" href="<?= $canonicalEsc ?>">
+<?= $seoMarkup ?>
     <title><?= $t ?></title>
 <?= pinchard_fonts_head_html() . "\n" ?>
     <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
@@ -90,9 +86,6 @@ function pinchard_layout_footer(array $options = []): void
 	$extraScripts = $options['extra_scripts'] ?? '';
 	$includeViewer = $options['include_viewer'] ?? true;
 	?>
-    <script src="vendor/jquery/jquery.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>
 <?php if ($includeViewer): ?>
     <script src="js/pinchard.js"></script>
 <?php endif; ?>
@@ -100,14 +93,11 @@ function pinchard_layout_footer(array $options = []): void
 	if ($extraScripts !== '') {
 		echo $extraScripts;
 	}
+	$analytics = pinchard_analytics_footer_html();
+	if ($analytics !== '') {
+		echo $analytics . "\n";
+	}
 ?>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1XKSQNT5M"></script>
-    <script>
-         window.dataLayer = window.dataLayer || [];
-         function gtag(){dataLayer.push(arguments);}
-         gtag('js', new Date());
-         gtag('config', 'G-G1XKSQNT5M');
-    </script>
 </body>
 </html>
 <?php

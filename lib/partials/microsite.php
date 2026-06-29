@@ -8,8 +8,13 @@ require_once dirname(__DIR__) . '/helpers.php';
  * Shared head/nav assets for PHP mini-sites under jam/, maps/, light-house/, etc.
  *
  * @param array{
+ *   description?: string,
+ *   og_image?: string,
+ *   og_type?: string,
+ *   canonical_url?: string,
+ *   robots?: string,
+ *   json_ld?: list<array<string, mixed>>,
  *   body_attr?: string,
- *   font_awesome?: bool,
  *   extra_head?: string,
  *   base_path?: string,
  * } $options
@@ -32,10 +37,20 @@ function pinchard_microsite_asset_url(string $path): string
 
 function pinchard_microsite_head(string $title, array $options = []): void
 {
+	$description = $options['description'] ?? pinchard_cloudberry_site_description();
+	$ogImage = $options['og_image'] ?? pinchard_default_og_image();
+	$ogType = $options['og_type'] ?? 'website';
+	$canonical = $options['canonical_url'] ?? pinchard_canonical_url();
+	$jsonLd = $options['json_ld'] ?? [];
 	$bodyAttr = $options['body_attr'] ?? '';
-	$fontAwesome = $options['font_awesome'] ?? false;
 	$extraHead = $options['extra_head'] ?? '';
 	$t = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+	$seoMarkup = pinchard_seo_head_markup($title, $description, [
+		'og_image' => $ogImage,
+		'og_type' => $ogType,
+		'canonical_url' => $canonical,
+		'robots' => $options['robots'] ?? null,
+	]);
 	?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,19 +58,11 @@ function pinchard_microsite_head(string $title, array $options = []): void
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<?= $seoMarkup ?>
     <title><?= $t ?></title>
 <?= pinchard_fonts_head_html() . "\n" ?>
     <link href="<?= pinchard_h(pinchard_microsite_asset_url('vendor/bootstrap/css/bootstrap.css')) ?>" rel="stylesheet">
-<?php if ($fontAwesome): ?>
-    <link href="<?= pinchard_h(pinchard_microsite_asset_url('vendor/font-awesome/css/font-awesome.css')) ?>" rel="stylesheet" type="text/css">
-<?php endif; ?>
     <link href="<?= pinchard_h(pinchard_microsite_asset_url('css/pinchard.css')) ?>" rel="stylesheet">
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.js"></script>
-    <![endif]-->
     <link rel="apple-touch-icon" sizes="180x180" href="<?= pinchard_h(pinchard_microsite_asset_url('favicon/apple-touch-icon.png')) ?>">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= pinchard_h(pinchard_microsite_asset_url('favicon/favicon-32x32.png')) ?>">
     <link rel="icon" type="image/png" sizes="16x16" href="<?= pinchard_h(pinchard_microsite_asset_url('favicon/favicon-16x16.png')) ?>">
@@ -65,11 +72,14 @@ function pinchard_microsite_head(string $title, array $options = []): void
     <meta name="msapplication-config" content="<?= pinchard_h(pinchard_microsite_asset_url('favicon/browserconfig.xml')) ?>">
     <meta name="theme-color" content="#ffffff">
 <?php
+	$jsonLdScript = pinchard_json_ld_script($jsonLd);
+	if ($jsonLdScript !== '') {
+		echo '    ' . $jsonLdScript . "\n";
+	}
 	if ($extraHead !== '') {
 		echo $extraHead;
 	}
 ?>
-    <script src="<?= pinchard_h(pinchard_microsite_asset_url('vendor/jquery/jquery.js')) ?>"></script>
 </head>
 <body<?= $bodyAttr !== '' ? ' ' . $bodyAttr : '' ?>>
 <?php
@@ -108,16 +118,13 @@ function pinchard_microsite_nav(string $title, array $options = []): void
 function pinchard_microsite_scripts_footer(array $options = []): void
 {
 	?>
-    <script src="<?= pinchard_h(pinchard_microsite_asset_url('vendor/bootstrap/js/bootstrap.bundle.js')) ?>"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.js"></script>
     <script src="<?= pinchard_h(pinchard_microsite_asset_url('js/pinchard.js')) ?>"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1XKSQNT5M"></script>
-    <script>
-         window.dataLayer = window.dataLayer || [];
-         function gtag(){dataLayer.push(arguments);}
-         gtag('js', new Date());
-         gtag('config', 'G-G1XKSQNT5M');
-    </script>
+<?php
+	$analytics = pinchard_analytics_footer_html();
+	if ($analytics !== '') {
+		echo $analytics . "\n";
+	}
+?>
 </body>
 </html>
 <?php

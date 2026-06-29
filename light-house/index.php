@@ -11,20 +11,25 @@ $canonical = pinchard_absolute_url('/light-house/');
 $ogImage = 'https://i.vimeocdn.com/video/1032707037-a174af562315f0f4cfbdab65af3ff8a77e57e9845f4ce20abb42f1c1f7628629-d_1280x720?region=us';
 $vimeoSrc = 'https://player.vimeo.com/video/499014653?background=1&autoplay=1&loop=1&muted=1&title=0&byline=0&portrait=0';
 
-$extraHead = implode("\n", [
-	'    <meta name="description" content="' . pinchard_h($description) . '">',
-	'    <meta property="og:title" content="' . pinchard_h($pageTitle) . '">',
-	'    <meta property="og:description" content="' . pinchard_h($description) . '">',
-	'    <meta property="og:image" content="' . pinchard_h($ogImage) . '">',
-	'    <meta property="og:type" content="video.other">',
-	'    <meta property="og:url" content="' . pinchard_h($canonical) . '">',
-	'    <meta name="twitter:card" content="summary_large_image">',
-	'    <link rel="canonical" href="' . pinchard_h($canonical) . '">',
-]);
-
 pinchard_microsite_head($pageTitle, [
 	'body_attr' => 'id="page-top" class="light-house-page"',
-	'extra_head' => $extraHead,
+	'description' => $description,
+	'canonical_url' => $canonical,
+	'og_image' => $ogImage,
+	'og_type' => 'video.other',
+	'json_ld' => [
+		[
+			'@type' => 'WebPage',
+			'name' => $pageTitle,
+			'description' => $description,
+			'url' => $canonical,
+			'isPartOf' => [
+				'@type' => 'WebSite',
+				'name' => "Pinchard's Island",
+				'url' => pinchard_absolute_url('/'),
+			],
+		],
+	],
 ]);
 ?>
     <nav id="mainNav" class="navbar navbar-default fixed-top">
@@ -41,6 +46,8 @@ pinchard_microsite_head($pageTitle, [
         </div>
     </nav>
 
+    <h1 class="visually-hidden"><?= pinchard_h($pageTitle) ?></h1>
+    <p class="visually-hidden"><?= pinchard_h($description) ?></p>
     <div class="light-house-shell">
         <div class="light-house-viewport">
             <iframe

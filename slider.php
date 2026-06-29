@@ -10,6 +10,7 @@ if (isset($_GET['fade']) && $_GET['fade'] !== '') {
 }
 
 require_once __DIR__ . '/lib/bootstrap.php';
+header('X-Robots-Tag: noindex, nofollow');
 $cfg = pinchard_config();
 
 if (isset($_GET['cury']) && !empty($_GET['cury']) && isset($_GET['curm']) && !empty($_GET['curm'])) {
@@ -73,18 +74,25 @@ usort($array, function ($a, $b) {
 });
 
 ?>
-<script src="vendor/jquery/jquery.js"></script>
-<script type="text/javascript" src="vendor/slick/slick.js"></script>
-
-<link rel="stylesheet" type="text/css" href="vendor/slick/slick.css" />
-
 <style>
+    #slideshow {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+    }
     #slideshow img {
         width: 100%;
         position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity var(--fade-ms, 1s) linear;
+    }
+    #slideshow img.is-active {
+        opacity: 1;
+        z-index: 1;
     }
 </style>
-<div id="slideshow" class="slideshow">
+<div id="slideshow" class="slideshow" style="--fade-ms: <?= pinchard_h((string) $fade) ?>s">
     <?php
     for ($i = 0; $i < count($array); $i++) {
         $photo = $array[$i];
@@ -100,63 +108,63 @@ usort($array, function ($a, $b) {
 
 
 <script>
-    var display = <?= json_encode($display) ?> * 1000;
-    var fade = <?= json_encode($fade) ?> * 1000;
-    var firstImg = null;
-    var nextImg = null
-
+(function() {
+    var displayMs = <?= json_encode($display) ?> * 1000;
+    var fadeMs = <?= json_encode($fade) ?> * 1000;
     var imagesArr = <?= json_encode($array, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var cdnurl = <?= json_encode($cdnurl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
-    var currentIndex = 3;
-
-    function handleNext(firstImage) {
-        nextImg = firstImg.first();
-        if (firstImg.next().length > 0) {
-            nextImg = firstImg.next();
-        } else {
-            nextImg = $('.slideshow img').first();
-        }
-
-        firstImg.css({
-            'z-index': '0',
-            'display': 'block'
-        });
-
-        nextImg.css({
-            'z-index': '1',
-
-        })
-        nextImg.fadeIn(fade, 'linear', function() {
-            firstImg.css('display', 'none');
-            firstImg = nextImg;
-            setTimeout(function() {
-                handleNext(firstImg);
-            }, display)
-
-        });
-        var renderedImgsLength = $('.slideshow img').length
-        var firstImageIndex = $('img').index(nextImg)
-
-        if (firstImageIndex == renderedImgsLength - 1) {
-            // load next images if any
-            var count = 0;
-            for (i = firstImageIndex; i < imagesArr.length; i++) {
-                if (count == 10) {
-                    break;
-                }
-                $('.slideshow').append($('<img>', {
-                    style: 'display:none',
-                    src: cdnurl + imagesArr[i]['filename']
-                }));
-                count++
-            }
-        }
+    var slideshow = document.getElementById('slideshow');
+    if (!slideshow || !imagesArr.length) {
+        return;
     }
-    $(document).ready(function() {
 
-        $('.slideshow img').css('display', 'none');
-        firstImg = $('.slideshow img').first();
-        handleNext(firstImg);
+    var renderedCount = Math.min(10, imagesArr.length);
+    var currentIndex = 0;
+    var currentImg = slideshow.querySelector('img');
 
-    });
+    function appendImage(index) {
+        if (index >= imagesArr.length || slideshow.querySelectorAll('img').length >= renderedCount + 10) {
+            return;
+        }
+        var img = document.createElement('img');
+        img.src = cdnurl + imagesArr[index].filename;
+        img.alt = '';
+        img.hidden = true;
+        slideshow.appendChild(img);
+    }
+
+    function showNext() {
+        var imgs = slideshow.querySelectorAll('img');
+        var activeIndex = Array.prototype.indexOf.call(imgs, currentImg);
+        var nextIndex = activeIndex + 1;
+        if (nextIndex >= imgs.length) {
+            nextIndex = 0;
+        }
+        var nextImg = imgs[nextIndex];
+        if (!nextImg) {
+            return;
+        }
+
+        nextImg.hidden = false;
+        nextImg.classList.add('is-active');
+        currentImg.classList.remove('is-active');
+        window.setTimeout(function() {
+            currentImg.hidden = true;
+            currentImg = nextImg;
+            currentIndex = (currentIndex + 1) % imagesArr.length;
+            if (activeIndex === imgs.length - 1) {
+                for (var i = 0; i < 10; i++) {
+                    appendImage(imgs.length + i);
+                }
+            }
+            window.setTimeout(showNext, displayMs);
+        }, fadeMs);
+    }
+
+    if (currentImg) {
+        currentImg.classList.add('is-active');
+        currentImg.hidden = false;
+        window.setTimeout(showNext, displayMs);
+    }
+})();
 </script>

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/microsite.php';
 
-const PINCHARD_MAPBOX_GL_VERSION = '3.25.0';
 const PINCHARD_MAPBOX_SATELLITE_STYLE = 'mapbox://styles/mapbox/standard-satellite';
 const PINCHARD_MAPBOX_SATELLITE_FALLBACK_STYLE = 'mapbox://styles/mapbox/satellite-streets-v12';
 
@@ -32,20 +31,6 @@ function pinchard_maps_nav(?string $active, array $options = []): void
 		'maps_active' => $active,
 		'kiosk' => $options['kiosk'] ?? false,
 	]);
-}
-
-function pinchard_mapbox_gl_css(): string
-{
-	$version = PINCHARD_MAPBOX_GL_VERSION;
-
-	return '    <link href="https://api.mapbox.com/mapbox-gl-js/v' . $version . '/mapbox-gl.css" rel="stylesheet">';
-}
-
-function pinchard_mapbox_gl_js(): string
-{
-	$version = PINCHARD_MAPBOX_GL_VERSION;
-
-	return '    <script src="https://api.mapbox.com/mapbox-gl-js/v' . $version . '/mapbox-gl.js"></script>';
 }
 
 function pinchard_mapbox_gl_assets(): string
