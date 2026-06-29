@@ -450,12 +450,22 @@ function pinchard_cloudberry_gps_defaults(): array
 	];
 }
 
-/** Precious Memories cabin — canonical map center for Cloudberry and /map/. */
+/** Precious Memories cabin — canonical map center for Cloudberry photo viewer. */
 function pinchard_cloudberry_cabin_coords(): array
 {
 	return [
 		'lat' => 49.2025694,
 		'lon' => -53.48586388888953,
+	];
+}
+
+/** Default view for /maps/satellite/ — island and Bonavista Bay context. */
+function pinchard_pinchards_island_satellite_view(): array
+{
+	return [
+		'lat' => 49.1998,
+		'lon' => -53.4865,
+		'zoom' => 12.5,
 	];
 }
 

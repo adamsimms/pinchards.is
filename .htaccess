@@ -11,3 +11,11 @@
 	Header set X-Frame-Options "SAMEORIGIN"
 	Header set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule ^map/?$ /maps/ [R=301,L]
+	RewriteRule ^maps/satellite/?$ /maps/ [R=301,L]
+	RewriteRule ^trees/?$ /maps/trees/ [R=301,L]
+	RewriteRule ^resettled/?$ /maps/resettled/ [R=301,L]
+</IfModule>

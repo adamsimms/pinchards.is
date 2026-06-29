@@ -10,11 +10,11 @@ www.pinchards.is
 | **`lib/`** | `env.php` (local secrets file), `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
 | **Public assets** | `css/`, `js/`, `images/` (site art + `images/photo/` for EXIF temp `tmp.jpg`, thumbnails, and local gallery assets), `fonts/`, `favicon/`, `vendor/`. |
 | **Source / design** | Theme styles: edit `css/pinchard.css` directly. `design/` — Sketch/SVG sources (not served). |
-| **Mini-sites** | `jam/index.php` (fullscreen exhibition slideshow; `?layout=`, `?shuffle=1`, `?start=`, `?display=`, `?fade=`), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (Mapbox satellite kiosk at Precious Memories; `?zoom=`, `?kiosk=1`, `?bearing=`, `?pitch=`). [Adrift](https://github.com/adamsimms/adrift) (Three.js scene at `/adrift/`) is a separate repo with its own deploy. |
+| **Mini-sites** | `jam/index.php` (fullscreen exhibition slideshow; `?layout=`, `?shuffle=1`, `?start=`, `?display=`, `?fade=`), `maps/` (satellite Mapbox view by default; `trees/` & `resettled/` Google My Maps; nav links between views; `?zoom=`, `?kiosk=1`, `?bearing=`, `?pitch=` on satellite), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `dory/` (Sketchfab embed), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/`, `/maps/satellite/` redirect to `/maps/…`. [Adrift](https://github.com/adamsimms/adrift) (Three.js scene at `/adrift/`) is a separate repo with its own deploy. |
 
 ## Secrets (`secrets.local.php`)
 
-The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, and **`MAPBOX_ACCESS_TOKEN`** (for `map/index.php`) via `getenv()` / `$_ENV` (see `lib/env.php`).
+The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, and **`MAPBOX_ACCESS_TOKEN`** (for `maps/`) via `getenv()` / `$_ENV` (see `lib/env.php`).
 
 `lib/env.php` loads **`secrets.local.php`** when present (or legacy **`aws-env.local.php`**). That file is gitignored and **denied by root `.htaccess`** so it should not be fetchable over the web.
 
@@ -28,7 +28,7 @@ On each deploy, [.github/scripts/write-secrets-local.php](.github/scripts/write-
 | `AWS_SECRET_ACCESS_KEY` | yes | S3 gallery |
 | `AWS_DEFAULT_REGION` | no (defaults to `us-east-1`) | S3 region |
 | `GOOGLE_MAPS_API_KEY` | no | Photo map on `index.php` |
-| `MAPBOX_ACCESS_TOKEN` | no | `map/index.php` |
+| `MAPBOX_ACCESS_TOKEN` | no | `maps/` |
 
 Deploy fails if the AWS pair is missing. Optional secrets are omitted from the generated file when unset.
 
@@ -76,7 +76,7 @@ On **push to `main`**, [.github/workflows/deploy-ftp.yml](.github/workflows/depl
 | `AWS_SECRET_ACCESS_KEY` | Matching secret |
 | `AWS_DEFAULT_REGION` | Optional; omit to use `us-east-1` |
 | `GOOGLE_MAPS_API_KEY` | Optional; browser key for `index.php` map |
-| `MAPBOX_ACCESS_TOKEN` | Optional; `pk.*` token for `map/` |
+| `MAPBOX_ACCESS_TOKEN` | Optional; `pk.*` token for `maps/` |
 
 Runtime secrets are written to `secrets.local.php` during the workflow (not stored in git). After adding or rotating secrets, redeploy (push to `main` or **Actions → Deploy SFTP → Run workflow**). Use **Run workflow → dry_run: true** first to list changes without uploading.
 

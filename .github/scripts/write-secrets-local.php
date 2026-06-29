@@ -67,7 +67,7 @@ if ($mapboxToken !== '') {
 		fwrite(STDERR, "Warning: MAPBOX_ACCESS_TOKEN must be a public token (pk.*); omitting from secrets.local.php.\n");
 	} else {
 	$lines[] = '';
-	$lines[] = '// Mapbox GL public token (pk.*) — map/index.php';
+	$lines[] = '// Mapbox GL public token (pk.*) — maps/';
 	$lines[] = '$mapboxToken = ' . pinchard_php_str($mapboxToken) . ';';
 	array_push($lines, ...pinchard_putenv_block('MAPBOX_ACCESS_TOKEN', 'mapboxToken'));
 	}
