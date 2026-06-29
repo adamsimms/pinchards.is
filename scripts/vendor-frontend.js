@@ -78,9 +78,4 @@ copyDir(
   path.join(jqueryUiVendor, 'images')
 );
 
-copyFile(
-  path.join(root, 'vendor/jquery/jquery.js'),
-  path.join(root, 'waves/jquery.js')
-);
-
 console.log('\nDone.');
