@@ -40,7 +40,6 @@ $je = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 $pageTitle = 'Maps';
 $description = 'Maps of Pinchard\'s Island, Newfoundland — satellite imagery, trees, and resettled communities.';
 $canonical = pinchard_absolute_url('/maps/');
-$micrositeBase = pinchard_maps_hub_base();
 
 $extraHead = implode("\n", [
 	'    <meta name="description" content="' . pinchard_h($description) . '">',
@@ -51,28 +50,33 @@ $extraHead = implode("\n", [
 	'    <meta property="og:url" content="' . pinchard_h($canonical) . '">',
 	'    <meta name="twitter:card" content="summary_large_image">',
 	'    <link rel="canonical" href="' . pinchard_h($canonical) . '">',
-	pinchard_mapbox_gl_assets(),
+	pinchard_mapbox_gl_css(),
 ]);
 
 $bodyClass = 'maps-satellite-page' . ($kiosk ? ' maps-satellite-page--kiosk' : '');
 pinchard_microsite_head($pageTitle, [
 	'body_attr' => 'id="page-top" class="' . $bodyClass . '"',
-	'base_path' => $micrositeBase,
 	'extra_head' => $extraHead,
 ]);
 
-pinchard_maps_nav('satellite', ['kiosk' => $kiosk, 'base_path' => $micrositeBase, 'at_maps_root' => true]);
+pinchard_maps_nav('satellite', ['kiosk' => $kiosk]);
 ?>
     <div class="maps-satellite-shell">
         <div id="map" role="img" aria-label="Satellite map of Pinchard's Island, Newfoundland"></div>
     </div>
 
+<?= pinchard_mapbox_gl_js() ?>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            var primaryStyle = <?= json_encode(PINCHARD_MAPBOX_SATELLITE_STYLE, $je) ?>;
+            var fallbackStyle = <?= json_encode(PINCHARD_MAPBOX_SATELLITE_FALLBACK_STYLE, $je) ?>;
+            var usedFallback = false;
+
             var map = new mapboxgl.Map({
                 accessToken: <?= json_encode($token, $je) ?>,
                 container: 'map',
-                style: <?= json_encode(PINCHARD_MAPBOX_SATELLITE_STYLE, $je) ?>,
+                style: primaryStyle,
                 center: [<?= json_encode($view['lon'], $je) ?>, <?= json_encode($view['lat'], $je) ?>],
                 zoom: <?= json_encode($zoom, $je) ?>,
                 bearing: <?= json_encode($bearing, $je) ?>,
@@ -90,10 +94,22 @@ pinchard_maps_nav('satellite', ['kiosk' => $kiosk, 'base_path' => $micrositeBase
 
             map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
 
+            map.on('load', function () {
+                map.resize();
+            });
+
             map.on('error', function (event) {
                 console.error('Mapbox error:', event && event.error ? event.error : event);
+                if (!usedFallback) {
+                    usedFallback = true;
+                    map.setStyle(fallbackStyle);
+                }
+            });
+
+            window.addEventListener('resize', function () {
+                map.resize();
             });
         });
     </script>
 
-<?php pinchard_microsite_scripts_footer(['base_path' => $micrositeBase]); ?>
+<?php pinchard_microsite_scripts_footer(); ?>

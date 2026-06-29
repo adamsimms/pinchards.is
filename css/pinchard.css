@@ -2297,41 +2297,92 @@ body.slideshow-page .slideshow-viewport img.is-fading-out {
     }
 }
 
-/* —— Resettled Communities mini-site (Google My Maps) —— */
-body.resettled-page,
+/* —— Maps embeds (Google My Maps) —— */
 body.maps-embed-page {
     padding-top: 0;
+    margin: 0;
     background: #fff;
     overflow: hidden;
 }
 
-body.resettled-page .resettled-shell,
 body.maps-embed-page .maps-embed-shell {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100dvh;
-    padding-top: 50px;
-    box-sizing: border-box;
+    position: fixed;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    background: #fff;
 }
 
-body.resettled-page .resettled-viewport,
-body.maps-embed-page .maps-embed-viewport {
-    position: relative;
-    flex: 1;
-    min-height: 0;
+body.maps-embed-page .maps-embed-frame {
+    display: block;
     width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* —— Maps subsite nav —— */
+.navbar-default .maps-nav-inner .nav-bar-center {
+    flex: 1 1 auto;
+    max-width: none;
+}
+
+.navbar-default .maps-subnav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 20px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.navbar-default .maps-subnav-link {
+    font-family: 'circular-bold', 'Open Sans', sans-serif;
+    font-size: clamp(13px, 2.4vw, 16px);
+    font-weight: 700;
+    color: #F05F40;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: visible;
+    text-overflow: clip;
+}
+
+.navbar-default .maps-subnav-link:hover,
+.navbar-default .maps-subnav-link:focus {
+    color: rgba(0, 0, 0, 0.7);
+    text-decoration: none;
+}
+
+.navbar-default .maps-subnav-link.is-active {
+    color: #F05F40;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* —— Maps satellite (exhibition / kiosk) —— */
+body.maps-satellite-page {
+    padding-top: 0;
+    margin: 0;
+    background: #0b1a24;
     overflow: hidden;
 }
 
-body.resettled-page .resettled-viewport iframe,
-body.maps-embed-page .maps-embed-viewport iframe {
-    position: absolute;
-    top: -56px;
+body.maps-satellite-page .maps-satellite-shell {
+    position: fixed;
+    top: 50px;
+    right: 0;
+    bottom: 0;
     left: 0;
+}
+
+body.maps-satellite-page--kiosk .maps-satellite-shell {
+    top: 0;
+}
+
+body.maps-satellite-page #map {
     width: 100%;
-    height: calc(100% + 56px);
-    border: 0;
+    height: 100%;
 }
 
 /* —— Light House mini-site (ambient Vimeo) —— */
@@ -2365,57 +2416,4 @@ body.light-house-page .light-house-viewport iframe {
     width: 100%;
     height: 100%;
     border: 0;
-}
-
-/* —— Maps subsite nav —— */
-.navbar-default .maps-subnav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px 18px;
-    flex-wrap: wrap;
-}
-
-.navbar-default .maps-subnav-link {
-    font-family: "Open Sans", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.78);
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.navbar-default .maps-subnav-link:hover,
-.navbar-default .maps-subnav-link:focus {
-    color: #fff;
-    text-decoration: none;
-}
-
-.navbar-default .maps-subnav-link.is-active {
-    color: #fff;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-}
-
-/* —— Maps satellite (exhibition / kiosk) —— */
-body.maps-satellite-page {
-    padding-top: 0;
-    background: #0b1a24;
-    overflow: hidden;
-}
-
-body.maps-satellite-page .maps-satellite-shell {
-    width: 100%;
-    height: 100dvh;
-    padding-top: 50px;
-    box-sizing: border-box;
-}
-
-body.maps-satellite-page--kiosk .maps-satellite-shell {
-    padding-top: 0;
-}
-
-body.maps-satellite-page #map {
-    width: 100%;
-    height: 100%;
 }

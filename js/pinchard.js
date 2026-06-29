@@ -54,12 +54,17 @@
     window.pinchardNavigate = navigateWithTransition;
 
     if (!prefersReducedMotion()) {
-        document.body.classList.add('pinchard-route-enter');
-        window.requestAnimationFrame(function() {
+        var skipRouteEnter = document.body.classList.contains('maps-satellite-page')
+            || document.body.classList.contains('maps-embed-page');
+
+        if (!skipRouteEnter) {
+            document.body.classList.add('pinchard-route-enter');
             window.requestAnimationFrame(function() {
-                document.body.classList.add('is-ready');
+                window.requestAnimationFrame(function() {
+                    document.body.classList.add('is-ready');
+                });
             });
-        });
+        }
 
         document.addEventListener('click', function(event) {
             if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
