@@ -466,7 +466,8 @@ aside {
 
 .navbar-default .nav_maps:hover,
 .navbar-default .nav_maps:focus,
-.navbar-default .nav_maps[aria-expanded="true"] {
+.navbar-default .nav_maps[aria-expanded="true"],
+.navbar-default .nav_maps.is-active {
     background: url(../images/icon-map_hover.svg) no-repeat center;
     background-size: var(--nav-icon-size);
     opacity: 1;
@@ -2346,6 +2347,12 @@ body.maps-embed-page .maps-embed-frame {
 /* —— Maps subsite nav —— */
 .maps-nav-dropdown {
     position: relative;
+    flex-shrink: 0;
+}
+
+.navbar-default .nav-bar-end .maps-nav-dropdown-menu {
+    left: auto;
+    right: 0;
 }
 
 .maps-nav-dropdown-trigger {
