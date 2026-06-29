@@ -30,15 +30,14 @@ function pinchard_maps_nav(?string $active, array $options = []): void
 		return;
 	}
 
-	$galleryHref = pinchard_h(pinchard_microsite_asset_url('gallery.php'));
-	$infoHref = pinchard_h(pinchard_microsite_asset_url('info.php'));
+	$mapsHref = pinchard_h('/maps/');
 	?>
     <nav id="mainNav" class="navbar navbar-default fixed-top" aria-label="Maps">
-        <div class="nav-bar-inner maps-nav-inner">
+        <div class="nav-bar-inner">
             <div class="nav-bar-start">
-                <a href="<?= $galleryHref ?>" class="link-to-gallery nav_cloudberry" aria-label="Browse photo gallery"></a>
+                <a href="<?= $mapsHref ?>" class="title-brand">Maps</a>
             </div>
-            <div class="nav-bar-center maps-subnav" aria-label="Map views">
+            <div class="nav-bar-end maps-subnav" aria-label="Map views">
 <?php foreach (pinchard_maps_sections() as $section): ?>
 <?php
 	$isActive = $active === $section['slug'];
@@ -47,9 +46,6 @@ function pinchard_maps_nav(?string $active, array $options = []): void
 ?>
                 <a href="<?= $href ?>" class="maps-subnav-link<?= $isActive ? ' is-active' : '' ?>"<?= $isActive ? ' aria-current="page"' : '' ?>><?= $label ?></a>
 <?php endforeach; ?>
-            </div>
-            <div class="nav-bar-end">
-                <a class="nav_info" href="<?= $infoHref ?>" aria-label="About Cloudberry"></a>
             </div>
         </div>
     </nav>

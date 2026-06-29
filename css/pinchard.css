@@ -2323,18 +2323,9 @@ body.maps-embed-page .maps-embed-frame {
 }
 
 /* —— Maps subsite nav —— */
-.navbar-default .maps-nav-inner .nav-bar-center {
-    flex: 1 1 auto;
-    max-width: none;
-}
-
-.navbar-default .maps-subnav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px 20px;
+.navbar-default .nav-bar-end.maps-subnav {
+    gap: 12px 20px;
     flex-wrap: wrap;
-    width: 100%;
 }
 
 .navbar-default .maps-subnav-link {
