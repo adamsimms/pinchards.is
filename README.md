@@ -10,17 +10,17 @@ www.pinchards.is
 | **`lib/`** | `env.php` (local secrets file), `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
 | **Public assets** | `css/`, `js/`, `images/` (site art + `images/photo/` for EXIF temp `tmp.jpg`, thumbnails, and local gallery assets), `fonts/`, `favicon/`, `vendor/`. |
 | **Source / design** | Theme styles: edit `css/pinchard.css` directly. `design/` — Sketch/SVG sources (not served). |
-| **Mini-sites** | `jam/` (S3 slideshows), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `adrift/` (Three.js scene), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (`index.php` Mapbox GL), `weather/` (`weather.php` JSON proxy via [MSC GeoMet](https://api.weather.gc.ca/); no API key). |
+| **Mini-sites** | `jam/` (S3 slideshows), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (`index.php` Mapbox GL). [Adrift](https://github.com/adamsimms/adrift) (Three.js scene at `/adrift/`) is a separate repo with its own deploy. |
 
 ## Secrets (`secrets.local.php`)
 
-The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, and **`MAPBOX_ACCESS_TOKEN`** (for `map/index.php`) via `getenv()` / `$_ENV` (see `lib/env.php`). `weather/weather.php` uses Environment Canada **MSC GeoMet** (public, no key).
+The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, and **`MAPBOX_ACCESS_TOKEN`** (for `map/index.php`) via `getenv()` / `$_ENV` (see `lib/env.php`).
 
 `lib/env.php` loads **`secrets.local.php`** when present (or legacy **`aws-env.local.php`**). That file is gitignored and **denied by root `.htaccess`** so it should not be fetchable over the web.
 
 ### Production (GitHub Actions → DreamHost)
 
-On each deploy, [.github/scripts/write-secrets-local.php](.github/scripts/write-secrets-local.php) builds **`secrets.local.php`** from repository secrets and uploads it with the rest of the site over **SFTP/rsync (SSH port 22)**. Rotate keys in **GitHub → Settings → Secrets and variables → Actions**, then push to `main` or run the deploy workflow manually.
+On each deploy, [.github/scripts/write-secrets-local.php](.github/scripts/write-secrets-local.php) builds **`secrets.local.php`** from repository secrets and uploads it with the rest of the site over **SFTP/rsync (SSH port 22)**. The workflow excludes **`adrift/`** on the server (owned by [adamsimms/adrift](https://github.com/adamsimms/adrift)). Rotate keys in **GitHub → Settings → Secrets and variables → Actions**, then push to `main` or run the deploy workflow manually.
 
 | Secret | Required | Used for |
 |--------|----------|----------|
