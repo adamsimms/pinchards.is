@@ -2,6 +2,8 @@
 
 On **push to `main`**, [.github/workflows/deploy-ftp.yml](../.github/workflows/deploy-ftp.yml) syncs the repo to DreamHost with **rsync over SSH** (port 22). DreamHost [requires SFTP/SSH on port 22](https://help.dreamhost.com/hc/en-us/articles/115001051531-FTP-and-SFTP-at-DreamHost); plain FTP and FTPS are not used.
 
+Before rsync, the workflow installs PHP dependencies (`composer install --no-dev`) and copies frontend libraries into `vendor/` (`npm ci && npm run vendor:frontend`). The `vendor/` directory is gitignored; only `vendor/.htaccess` is tracked.
+
 The workflow excludes **`adrift/`**, **`dory/`**, and **`waves/`** on the server (separate repos: [adrift](https://github.com/adamsimms/adrift), [dory](https://github.com/adamsimms/dory), [waves](https://github.com/adamsimms/waves)).
 
 ## One-time SSH key setup

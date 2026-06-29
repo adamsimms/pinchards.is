@@ -37,6 +37,10 @@ function removeIfExists(target) {
 
 console.log('Vendoring frontend dependencies into vendor/...\n');
 
+for (const legacy of ['jquery-ui', 'exifjs', 'lightbox', 'magnific-popup', 'scrollreveal']) {
+  removeIfExists(path.join(root, 'vendor', legacy));
+}
+
 copyFile(
   path.join(root, 'node_modules/jquery/dist/jquery.min.js'),
   path.join(root, 'vendor/jquery/jquery.js')
@@ -53,29 +57,16 @@ copyFile(
 removeIfExists(path.join(root, 'vendor/bootstrap/js/bootstrap.js'));
 removeIfExists(path.join(root, 'vendor/bootstrap/fonts'));
 
-const jqueryUiDist = path.join(root, 'node_modules/jquery-ui/dist');
-const jqueryUiVendor = path.join(root, 'vendor/jquery-ui');
-removeIfExists(jqueryUiVendor);
-ensureDir(jqueryUiVendor);
-copyFile(
-  path.join(jqueryUiDist, 'jquery-ui.js'),
-  path.join(jqueryUiVendor, 'jquery-ui.js')
-);
-copyFile(
-  path.join(jqueryUiDist, 'jquery-ui.min.js'),
-  path.join(jqueryUiVendor, 'jquery-ui.min.js')
-);
-copyFile(
-  path.join(jqueryUiDist, 'themes/base/jquery-ui.css'),
-  path.join(jqueryUiVendor, 'jquery-ui.css')
-);
-copyFile(
-  path.join(jqueryUiDist, 'themes/base/jquery-ui.min.css'),
-  path.join(jqueryUiVendor, 'jquery-ui.min.css')
-);
+removeIfExists(path.join(root, 'vendor/font-awesome'));
 copyDir(
-  path.join(jqueryUiDist, 'themes/base/images'),
-  path.join(jqueryUiVendor, 'images')
+  path.join(root, 'node_modules/font-awesome'),
+  path.join(root, 'vendor/font-awesome')
+);
+
+removeIfExists(path.join(root, 'vendor/slick'));
+copyDir(
+  path.join(root, 'node_modules/slick-carousel/slick'),
+  path.join(root, 'vendor/slick')
 );
 
 console.log('\nDone.');

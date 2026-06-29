@@ -2,11 +2,14 @@
   "name": "pinchards-is",
   "private": true,
   "scripts": {
-    "vendor:frontend": "node scripts/vendor-frontend.js"
+    "vendor:frontend": "node scripts/vendor-frontend.js",
+    "vendor": "composer install && npm run vendor:frontend",
+    "vendor:prod": "composer install --no-dev --optimize-autoloader && npm run vendor:frontend"
   },
   "devDependencies": {
     "bootstrap": "5.3.3",
+    "font-awesome": "4.7.0",
     "jquery": "3.7.1",
-    "jquery-ui": "1.14.1"
+    "slick-carousel": "1.8.1"
   }
 }
