@@ -454,6 +454,24 @@ aside {
     opacity: 1;
 }
 
+.navbar-default .nav_maps {
+    display: block;
+    background: url(../images/icon-map.svg) no-repeat center;
+    background-size: var(--nav-icon-size);
+    width: var(--nav-icon-hit);
+    height: var(--nav-icon-hit);
+    opacity: .6;
+    flex-shrink: 0;
+}
+
+.navbar-default .nav_maps:hover,
+.navbar-default .nav_maps:focus,
+.navbar-default .nav_maps[aria-expanded="true"] {
+    background: url(../images/icon-map_hover.svg) no-repeat center;
+    background-size: var(--nav-icon-size);
+    opacity: 1;
+}
+
 /* Union */
 .navbar-default .union {
     position: absolute;
@@ -2330,7 +2348,14 @@ body.maps-embed-page .maps-embed-frame {
     position: relative;
 }
 
-.maps-nav-dropdown-trigger,
+.maps-nav-dropdown-trigger {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    line-height: 0;
+}
+
 .maps-nav-dropdown-item {
     font-family: 'circular-std', sans-serif;
     font-size: 14px;
@@ -2340,55 +2365,30 @@ body.maps-embed-page .maps-embed-frame {
     white-space: nowrap;
 }
 
-.maps-nav-dropdown-trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    line-height: inherit;
-}
-
-.maps-nav-dropdown-trigger::after {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-top: 2px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid currentColor;
-    opacity: 0.55;
-}
-
-.maps-nav-dropdown-trigger:hover,
-.maps-nav-dropdown-trigger:focus,
-.maps-nav-dropdown-trigger[aria-expanded="true"] {
-    color: #F05F40;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
-
 .maps-nav-dropdown-menu {
     position: absolute;
     top: 100%;
     left: 0;
     z-index: 1040;
-    min-width: 11rem;
-    margin: 6px 0 0;
-    padding: 6px 0;
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 4px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    margin: 0;
+    padding: 8px 0 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transform: translateY(-4px);
     transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.maps-nav-dropdown-panel {
+    min-width: 11rem;
+    padding: 6px 0;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
 .maps-nav-dropdown:hover .maps-nav-dropdown-menu,

@@ -36,16 +36,18 @@ function pinchard_maps_nav(?string $active, array $options = []): void
         <div class="nav-bar-inner">
             <div class="nav-bar-start">
                 <div class="maps-nav-dropdown">
-                    <button type="button" class="maps-nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="mapsNavDropdownMenu" id="mapsNavDropdownTrigger">Maps</button>
+                    <button type="button" class="maps-nav-dropdown-trigger nav_maps" aria-expanded="false" aria-haspopup="true" aria-controls="mapsNavDropdownMenu" id="mapsNavDropdownTrigger" aria-label="Maps"></button>
                     <div class="maps-nav-dropdown-menu" id="mapsNavDropdownMenu" role="menu" aria-labelledby="mapsNavDropdownTrigger">
+                        <div class="maps-nav-dropdown-panel">
 <?php foreach (pinchard_maps_sections() as $section): ?>
 <?php
 	$isActive = $active === $section['slug'];
 	$href = pinchard_h($section['href']);
 	$label = pinchard_h($section['title']);
 ?>
-                        <a href="<?= $href ?>" class="maps-nav-dropdown-item<?= $isActive ? ' is-active' : '' ?>" role="menuitem"<?= $isActive ? ' aria-current="page"' : '' ?>><?= $label ?></a>
+                            <a href="<?= $href ?>" class="maps-nav-dropdown-item<?= $isActive ? ' is-active' : '' ?>" role="menuitem"<?= $isActive ? ' aria-current="page"' : '' ?>><?= $label ?></a>
 <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -112,6 +112,27 @@
             .find('.maps-nav-dropdown-trigger').attr('aria-expanded', 'false');
     }
 
+    var mapsDropdownCloseTimer = null;
+    var mapsDropdownHover = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    $('.maps-nav-dropdown').on('mouseenter', function() {
+        if (!mapsDropdownHover.matches) {
+            return;
+        }
+        window.clearTimeout(mapsDropdownCloseTimer);
+        closeMapsDropdowns();
+        $(this).addClass('is-open').find('.maps-nav-dropdown-trigger').attr('aria-expanded', 'true');
+    }).on('mouseleave', function() {
+        if (!mapsDropdownHover.matches) {
+            return;
+        }
+        var $dropdown = $(this);
+        window.clearTimeout(mapsDropdownCloseTimer);
+        mapsDropdownCloseTimer = window.setTimeout(function() {
+            $dropdown.removeClass('is-open').find('.maps-nav-dropdown-trigger').attr('aria-expanded', 'false');
+        }, 120);
+    });
+
     $(document).on('click', '.maps-nav-dropdown-trigger', function(event) {
         event.preventDefault();
         event.stopPropagation();
