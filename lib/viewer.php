@@ -166,8 +166,9 @@ function pinchard_viewer_photo_payload(
 		}
 	}
 
-	$mapLat = $hasGps ? (float) $lat : 49.2025694;
-	$mapLon = $hasGps ? (float) $lon : -53.48586388888953;
+	$cabinCoords = pinchard_cloudberry_cabin_coords();
+	$mapLat = $hasGps ? (float) $lat : $cabinCoords['lat'];
+	$mapLon = $hasGps ? (float) $lon : $cabinCoords['lon'];
 
 	return [
 		'filename' => $filename,

@@ -153,8 +153,9 @@ try {
     $converted_date = $dt !== false ? $dt->format('l, F jS, Y @ g:i A') : pinchard_h($datetime);
 
     $pinchardMapboxToken = pinchard_env_non_empty('MAPBOX_ACCESS_TOKEN');
-    $mapLat = $hasGps ? (float) $lat : 49.2025694;
-    $mapLon = $hasGps ? (float) $lon : -53.48586388888953;
+    $cabinCoords = pinchard_cloudberry_cabin_coords();
+    $mapLat = $hasGps ? (float) $lat : $cabinCoords['lat'];
+    $mapLon = $hasGps ? (float) $lon : $cabinCoords['lon'];
     $mapJe = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 
     $imageUrl = $cdnFull . $filename;

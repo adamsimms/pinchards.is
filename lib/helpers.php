@@ -450,6 +450,15 @@ function pinchard_cloudberry_gps_defaults(): array
 	];
 }
 
+/** Precious Memories cabin — canonical map center for Cloudberry and /map/. */
+function pinchard_cloudberry_cabin_coords(): array
+{
+	return [
+		'lat' => 49.2025694,
+		'lon' => -53.48586388888953,
+	];
+}
+
 /** Display title for a gallery photo (GoPro: digits after GOPR). */
 function pinchard_photo_title(string $filename): string
 {
