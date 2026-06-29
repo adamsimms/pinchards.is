@@ -48,6 +48,7 @@ function pinchard_layout_head(string $title, array $options = []): void
     <meta name="twitter:card" content="summary_large_image">
     <link rel="canonical" href="<?= $canonicalEsc ?>">
     <title><?= $t ?></title>
+<?= pinchard_fonts_head_html() . "\n" ?>
     <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="css/pinchard.css" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">

@@ -8,6 +8,16 @@ function pinchard_h(?string $value): string
 	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+/** Google Fonts link tags for DM Sans (body + headings). */
+function pinchard_fonts_head_html(): string
+{
+	return implode("\n", [
+		'    <link rel="preconnect" href="https://fonts.googleapis.com">',
+		'    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+		'    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">',
+	]);
+}
+
 /** Short display date for gallery captions and timeline (e.g. March 1 @ 18:09). */
 function pinchard_show_date(DateTime $dt): string
 {

@@ -7,7 +7,6 @@ require_once __DIR__ . '/../../lib/partials/maps.php';
 
 pinchard_microsite_head('53 Trees', [
 	'body_attr' => 'id="page-top" class="maps-embed-page"',
-	'google_fonts' => true,
 	'font_awesome' => true,
 ]);
 

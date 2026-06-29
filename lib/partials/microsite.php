@@ -9,7 +9,6 @@ require_once dirname(__DIR__) . '/helpers.php';
  *
  * @param array{
  *   body_attr?: string,
- *   google_fonts?: bool,
  *   font_awesome?: bool,
  *   extra_head?: string,
  *   base_path?: string,
@@ -34,7 +33,6 @@ function pinchard_microsite_asset_url(string $path): string
 function pinchard_microsite_head(string $title, array $options = []): void
 {
 	$bodyAttr = $options['body_attr'] ?? '';
-	$googleFonts = $options['google_fonts'] ?? false;
 	$fontAwesome = $options['font_awesome'] ?? false;
 	$extraHead = $options['extra_head'] ?? '';
 	$t = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
@@ -48,13 +46,10 @@ function pinchard_microsite_head(string $title, array $options = []): void
     <meta name="description" content="">
     <meta name="author" content="">
     <title><?= $t ?></title>
+<?= pinchard_fonts_head_html() . "\n" ?>
     <link href="<?= pinchard_h(pinchard_microsite_asset_url('vendor/bootstrap/css/bootstrap.css')) ?>" rel="stylesheet">
 <?php if ($fontAwesome): ?>
     <link href="<?= pinchard_h(pinchard_microsite_asset_url('vendor/font-awesome/css/font-awesome.css')) ?>" rel="stylesheet" type="text/css">
-<?php endif; ?>
-<?php if ($googleFonts): ?>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic" rel="stylesheet">
 <?php endif; ?>
     <link href="<?= pinchard_h(pinchard_microsite_asset_url('css/pinchard.css')) ?>" rel="stylesheet">
     <!--[if lt IE 9]>

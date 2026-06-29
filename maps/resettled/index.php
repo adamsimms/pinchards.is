@@ -7,7 +7,6 @@ require_once __DIR__ . '/../../lib/partials/maps.php';
 
 pinchard_microsite_head('Resettled Communities', [
 	'body_attr' => 'id="page-top" class="maps-embed-page"',
-	'google_fonts' => true,
 	'font_awesome' => true,
 ]);
 

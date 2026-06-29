@@ -4,19 +4,6 @@
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
 
-@font-face {
-    font-family: 'circular-std';
-    src: url('../fonts/CircularStd-Book.otf');
-}
-@font-face {
-    font-family: 'circular-bold';
-    src: url('../fonts/CircularStd-Bold.otf');
-}
-@font-face {
-    font-family: 'courier-new';
-    src: url('../fonts/cour.ttf');
-}
-
 html,
 body {
   height: 100%;
@@ -25,7 +12,7 @@ body {
 body {
 /*  font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;*/
 /*font-family: 'Helvetica Neue', Arial, sans-serif;*/
-    font-family: "circular-std";
+    font-family: "DM Sans", sans-serif;
 }
 hr {
   border-color: #F05F40;
@@ -51,8 +38,9 @@ h3,
 h4,
 h5,
 h6 {
-/*  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;*/
-    font-family: "circular-bold";
+/*  font-family: 'DM Sans', sans-serif;*/
+    font-family: "DM Sans", sans-serif;
+    font-weight: 700;
 }
 p {
   font-size: 16px;
@@ -92,7 +80,7 @@ aside {
   --nav-icon-size: 24px;
   --nav-icon-hit: 24px;
   /*font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;*/
-  font-family: "circular-std";
+  font-family: "DM Sans", sans-serif;
   -webkit-transition: all 0.35s;
   -moz-transition: all 0.35s;
   transition: all 0.35s;
@@ -128,7 +116,8 @@ aside {
   gap: 12px;
 }
 .navbar-default .nav-bar-start .title-brand {
-    font-family: 'circular-bold';
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
     font-size: 19px;
     font-weight: 700;
     color: #F05F40;
@@ -168,7 +157,8 @@ aside {
 }
 .navbar-default .nav-bar-center .title-brand,
 .navbar-default .nav-bar-center > a:not(.nav-photo-prev):not(.nav-photo-next) {
-    font-family: 'circular-bold';
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
     font-size: 19px;
     font-weight: 700;
     color: #F05F40;
@@ -981,7 +971,7 @@ option {
 
 .viewer-timeline-date {
     flex-shrink: 0;
-    font-family: 'circular-std', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 12px;
     line-height: 1;
     color: rgba(0, 0, 0, 0.55);
@@ -1226,7 +1216,7 @@ option {
     padding: 16px 0px;
 }
 .how_section .code_area {
-    font-family: "courier-new";
+    font-family: "Courier New", Courier, monospace;
     font-size: 14px;
     padding-top: 16px;
     padding-bottom: 24px;
@@ -1312,7 +1302,8 @@ option {
     margin-bottom: 10px;
 }
 .citation-block-label {
-    font-family: 'circular-bold', sans-serif;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
     font-size: 13px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -1323,7 +1314,8 @@ option {
     border: 1px solid #ddd;
     background: #fff;
     color: #333;
-    font-family: 'circular-bold', sans-serif;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
     font-size: 12px;
     line-height: 1;
     padding: 7px 12px;
@@ -1343,7 +1335,7 @@ option {
 }
 .citation-block-text {
     margin: 0;
-    font-family: 'courier-new', monospace;
+    font-family: 'Courier New', Courier, monospace;
     font-size: 14px;
     line-height: 1.55;
     color: #222;
@@ -1681,7 +1673,7 @@ fieldset[disabled] .btn-primary.active {
   background-color: white;
 }
 .btn {
-  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'DM Sans', sans-serif;
   border: none;
   border-radius: 300px;
   font-weight: 700;
@@ -1848,7 +1840,7 @@ body.gallery-page .gallery-day-label {
     box-sizing: border-box;
     margin: 0;
     padding: 0 4px var(--gallery-days-column-pad);
-    font-family: 'circular-std', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 10px;
     font-weight: 400;
     line-height: var(--gallery-days-date-line);
@@ -2081,7 +2073,8 @@ body.info-page .info-toc a.is-active {
 }
 
 body.info-page .hardware-accordion .accordion-button {
-    font-family: 'circular-bold', sans-serif;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
     font-size: 1.1rem;
     padding: 16px 20px;
 }
@@ -2364,7 +2357,7 @@ body.maps-embed-page .maps-embed-frame {
 }
 
 .maps-nav-dropdown-item {
-    font-family: 'circular-std', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     font-size: 14px;
     font-weight: 400;
     color: rgba(0, 0, 0, 0.65);

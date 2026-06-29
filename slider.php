@@ -102,15 +102,12 @@ usort($array, function ($a, $b) {
 <script>
     var display = <?= json_encode($display) ?> * 1000;
     var fade = <?= json_encode($fade) ?> * 1000;
-    console.log("display=> ", display, "fade => ", fade)
     var firstImg = null;
     var nextImg = null
 
     var imagesArr = <?= json_encode($array, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var cdnurl = <?= json_encode($cdnurl, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     var currentIndex = 3;
-
-    console.log('total images ', imagesArr)
 
     function handleNext(firstImage) {
         nextImg = firstImg.first();
@@ -139,12 +136,9 @@ usort($array, function ($a, $b) {
         });
         var renderedImgsLength = $('.slideshow img').length
         var firstImageIndex = $('img').index(nextImg)
-        console.log('renderedImgsLength =>', renderedImgsLength);
-        console.log('firstImageIndex => ', firstImageIndex);
 
         if (firstImageIndex == renderedImgsLength - 1) {
             // load next images if any
-            console.log('adding new images')
             var count = 0;
             for (i = firstImageIndex; i < imagesArr.length; i++) {
                 if (count == 10) {

@@ -1,0 +1,6 @@
+# Runtime EXIF temp and S3 list cache — read by PHP on disk, not served over HTTP.
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteRule ^tmp\.jpg$ - [F,L]
+	RewriteRule ^\.cache(/.*)?$ - [F,L]
+</IfModule>
