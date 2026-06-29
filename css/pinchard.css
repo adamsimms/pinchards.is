@@ -2326,12 +2326,12 @@ body.maps-embed-page .maps-embed-frame {
 }
 
 /* —— Maps subsite nav —— */
-.navbar-default .nav-bar-end.maps-subnav {
-    gap: 12px 20px;
-    flex-wrap: wrap;
+.maps-nav-dropdown {
+    position: relative;
 }
 
-.navbar-default .maps-subnav-link {
+.maps-nav-dropdown-trigger,
+.maps-nav-dropdown-item {
     font-family: 'circular-std', sans-serif;
     font-size: 14px;
     font-weight: 400;
@@ -2340,18 +2340,88 @@ body.maps-embed-page .maps-embed-frame {
     white-space: nowrap;
 }
 
-.navbar-default .maps-subnav-link:hover,
-.navbar-default .maps-subnav-link:focus {
+.maps-nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    line-height: inherit;
+}
+
+.maps-nav-dropdown-trigger::after {
+    content: '';
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-top: 2px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    opacity: 0.55;
+}
+
+.maps-nav-dropdown-trigger:hover,
+.maps-nav-dropdown-trigger:focus,
+.maps-nav-dropdown-trigger[aria-expanded="true"] {
     color: #F05F40;
     text-decoration: underline;
     text-underline-offset: 3px;
 }
 
-.navbar-default .maps-subnav-link.is-active {
+.maps-nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1040;
+    min-width: 11rem;
+    margin: 6px 0 0;
+    padding: 6px 0;
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+}
+
+.maps-nav-dropdown:hover .maps-nav-dropdown-menu,
+.maps-nav-dropdown.is-open .maps-nav-dropdown-menu,
+.maps-nav-dropdown:focus-within .maps-nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.maps-nav-dropdown-item {
+    display: block;
+    padding: 8px 16px;
+}
+
+.maps-nav-dropdown-item:hover,
+.maps-nav-dropdown-item:focus {
+    color: #F05F40;
+    background: rgba(240, 95, 64, 0.06);
+    text-decoration: none;
+}
+
+.maps-nav-dropdown-item.is-active {
     color: rgba(0, 0, 0, 0.85);
-    font-weight: 400;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .maps-nav-dropdown-menu {
+        transition: none;
+        transform: none;
+    }
 }
 
 /* —— Maps satellite (exhibition / kiosk) —— */

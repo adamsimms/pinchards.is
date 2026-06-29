@@ -30,23 +30,26 @@ function pinchard_maps_nav(?string $active, array $options = []): void
 		return;
 	}
 
-	$mapsHref = pinchard_h('/maps/');
 	$galleryHref = pinchard_h(pinchard_microsite_asset_url('gallery.php'));
 	?>
     <nav id="mainNav" class="navbar navbar-default fixed-top" aria-label="Maps">
         <div class="nav-bar-inner">
             <div class="nav-bar-start">
-                <a href="<?= $mapsHref ?>" class="title-brand">Maps</a>
-            </div>
-            <div class="nav-bar-end maps-subnav" aria-label="Map views">
+                <div class="maps-nav-dropdown">
+                    <button type="button" class="maps-nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="mapsNavDropdownMenu" id="mapsNavDropdownTrigger">Maps</button>
+                    <div class="maps-nav-dropdown-menu" id="mapsNavDropdownMenu" role="menu" aria-labelledby="mapsNavDropdownTrigger">
 <?php foreach (pinchard_maps_sections() as $section): ?>
 <?php
 	$isActive = $active === $section['slug'];
 	$href = pinchard_h($section['href']);
 	$label = pinchard_h($section['title']);
 ?>
-                <a href="<?= $href ?>" class="maps-subnav-link<?= $isActive ? ' is-active' : '' ?>"<?= $isActive ? ' aria-current="page"' : '' ?>><?= $label ?></a>
+                        <a href="<?= $href ?>" class="maps-nav-dropdown-item<?= $isActive ? ' is-active' : '' ?>" role="menuitem"<?= $isActive ? ' aria-current="page"' : '' ?>><?= $label ?></a>
 <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-bar-end">
                 <a href="<?= $galleryHref ?>" class="link-to-gallery nav_cloudberry" aria-label="Browse photo gallery"></a>
             </div>
         </div>

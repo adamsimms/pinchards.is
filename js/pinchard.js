@@ -107,6 +107,35 @@
         }).trigger('scroll');
     }
 
+    function closeMapsDropdowns() {
+        $('.maps-nav-dropdown.is-open').removeClass('is-open')
+            .find('.maps-nav-dropdown-trigger').attr('aria-expanded', 'false');
+    }
+
+    $(document).on('click', '.maps-nav-dropdown-trigger', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var $dropdown = $(this).closest('.maps-nav-dropdown');
+        var isOpen = $dropdown.hasClass('is-open');
+        closeMapsDropdowns();
+        if (!isOpen) {
+            $dropdown.addClass('is-open');
+            $(this).attr('aria-expanded', 'true');
+        }
+    });
+
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('.maps-nav-dropdown').length) {
+            closeMapsDropdowns();
+        }
+    });
+
+    $(document).on('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeMapsDropdowns();
+        }
+    });
+
     $(document).on('click', '.citation-copy-btn', function() {
         var $btn = $(this);
         var text = $btn.attr('data-citation') || '';
