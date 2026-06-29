@@ -147,5 +147,7 @@ jobs:
             --exclude '.git*/' \
             --exclude '.github/' \
             --exclude 'adrift/' \
+            --exclude 'dory/' \
+            --exclude 'waves/' \
             -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22 -l ${user}" \
             ./ "${dest}"

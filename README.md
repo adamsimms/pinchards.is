@@ -10,7 +10,7 @@ www.pinchards.is
 | **`lib/`** | `env.php` (local secrets file), `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
 | **Public assets** | `css/`, `js/`, `images/` (site art + `images/photo/` for EXIF temp `tmp.jpg`, thumbnails, and local gallery assets), `fonts/`, `favicon/`, `vendor/`. |
 | **Source / design** | Theme styles: edit `css/pinchard.css` directly. `design/` — Sketch/SVG sources (not served). |
-| **Mini-sites** | `jam/index.php` (fullscreen exhibition slideshow; `?layout=`, `?shuffle=1`, `?start=`, `?display=`, `?fade=`), `maps/` (satellite Mapbox view by default; `trees/` & `resettled/` Google My Maps; nav links between views; `?zoom=`, `?kiosk=1`, `?bearing=`, `?pitch=` on satellite), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `dory/` (Sketchfab embed), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/`, `/maps/satellite/` redirect to `/maps/…`. [Adrift](https://github.com/adamsimms/adrift) (Three.js scene at `/adrift/`) is a separate repo with its own deploy. |
+| **Mini-sites** | `jam/index.php` (fullscreen exhibition slideshow; `?layout=`, `?shuffle=1`, `?start=`, `?display=`, `?fade=`), `maps/` (satellite Mapbox view by default; `trees/` & `resettled/` Google My Maps; nav links between views; `?zoom=`, `?kiosk=1`, `?bearing=`, `?pitch=` on satellite), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/`, `/maps/satellite/` redirect to `/maps/…`. [Adrift](https://github.com/adamsimms/adrift) (Three.js scene at `/adrift/`), [Dory](https://github.com/adamsimms/dory) (Sketchfab embed at `/dory/`), and [Waves](https://github.com/adamsimms/waves) (ERDDAP-driven WebGL ocean sim at `/waves/`) are separate repos with their own deploys. |
 
 ## Secrets (`secrets.local.php`)
 
@@ -20,7 +20,7 @@ The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional
 
 ### Production (GitHub Actions → DreamHost)
 
-On each deploy, [.github/scripts/write-secrets-local.php](.github/scripts/write-secrets-local.php) builds **`secrets.local.php`** from repository secrets and uploads it with the rest of the site over **SFTP/rsync (SSH port 22)**. The workflow excludes **`adrift/`** on the server (owned by [adamsimms/adrift](https://github.com/adamsimms/adrift)). Rotate keys in **GitHub → Settings → Secrets and variables → Actions**, then push to `main` or run the deploy workflow manually.
+On each deploy, [.github/scripts/write-secrets-local.php](.github/scripts/write-secrets-local.php) builds **`secrets.local.php`** from repository secrets and uploads it with the rest of the site over **SFTP/rsync (SSH port 22)**. The workflow excludes **`adrift/`**, **`dory/`**, and **`waves/`** on the server (owned by [adamsimms/adrift](https://github.com/adamsimms/adrift), [adamsimms/dory](https://github.com/adamsimms/dory), and [adamsimms/waves](https://github.com/adamsimms/waves)). Rotate keys in **GitHub → Settings → Secrets and variables → Actions**, then push to `main` or run the deploy workflow manually.
 
 | Secret | Required | Used for |
 |--------|----------|----------|
