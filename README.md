@@ -10,7 +10,7 @@ www.pinchards.is
 | **`lib/`** | `env.php` (local secrets file), `bootstrap.php` (AWS + S3 + `getObjectList`), `config.php` (bucket + CDN URLs). Core pages load `lib/bootstrap.php`; mini-sites still use `functions_inc.php`, which only forwards to `lib/bootstrap.php`. |
 | **Public assets** | `css/`, `js/`, `images/` (site art + `images/photo/` for EXIF temp `tmp.jpg`, thumbnails, and local gallery assets), `fonts/`, `favicon/`, `vendor/`. |
 | **Source / design** | Theme styles: edit `css/pinchard.css` directly. `design/` — Sketch/SVG sources (not served). |
-| **Mini-sites** | `jam/` (S3 slideshows), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (`index.php` Mapbox GL). [Adrift](https://github.com/adamsimms/adrift) (Three.js scene at `/adrift/`) is a separate repo with its own deploy. |
+| **Mini-sites** | `jam/index.php` (fullscreen exhibition slideshow; `?layout=`, `?shuffle=1`, `?start=`, `?display=`, `?fade=`), `trees/` & `resettled/` (Google My Maps embeds + shared `lib/partials/microsite.php` shell), `waves/` (+ `wave.php` / `wave2.php` ERDDAP viz), `dory/` (Sketchfab embed), `light-house/` (Vimeo), `map/` (`index.php` Mapbox GL). [Adrift](https://github.com/adamsimms/adrift) (Three.js scene at `/adrift/`) is a separate repo with its own deploy. |
 
 ## Secrets (`secrets.local.php`)
 

@@ -5,11 +5,11 @@ declare(strict_types=1);
 /**
  * Jam slideshow page body + scripts. Required variables in scope before include:
  * - $jam_page_title (string)
- * - $jam_layout ('crop'|'fill') crop = index-style framing; fill = index2-style
+ * - $jam_layout ('crop'|'fill') crop = centered crop; fill = full-bleed projection
  * - $display, $fade (float-ish from GET)
  * - $cdnurl (string)
  * - $array (photo rows from pinchard_jam_photo_list)
- * - $jam_start (int, optional) first index for initial images + JS paging (specific.php)
+ * - $jam_start (int, optional) first index for initial images + JS paging (?start=)
  */
 require_once __DIR__ . '/microsite.php';
 

@@ -1,0 +1,9 @@
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	# Legacy exhibition URLs → index.php (query string preserved via QSA)
+	RewriteRule ^index2\.php$ index.php?layout=fill [R=301,L,QSA]
+	RewriteRule ^random\.php$ index.php?shuffle=1 [R=301,L,QSA]
+	RewriteRule ^specific\.php$ index.php [R=301,L,QSA]
+	RewriteRule ^window\.php$ index.php?display=10&fade=2 [R=301,L,QSA]
+</IfModule>
