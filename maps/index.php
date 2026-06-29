@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Satellite view of Pinchard's Island — default /maps/ page.
  *
  * Query params:
- *   zoom=N       default 12.5
+ *   zoom=N       default 13.5
  *   kiosk=1      hide nav for projection / wall display
  *   bearing=N    map bearing in degrees (default 0)
  *   pitch=N      map pitch in degrees (default 0)

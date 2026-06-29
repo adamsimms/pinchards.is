@@ -31,6 +31,7 @@ function pinchard_maps_nav(?string $active, array $options = []): void
 	}
 
 	$mapsHref = pinchard_h('/maps/');
+	$galleryHref = pinchard_h(pinchard_microsite_asset_url('gallery.php'));
 	?>
     <nav id="mainNav" class="navbar navbar-default fixed-top" aria-label="Maps">
         <div class="nav-bar-inner">
@@ -46,6 +47,7 @@ function pinchard_maps_nav(?string $active, array $options = []): void
 ?>
                 <a href="<?= $href ?>" class="maps-subnav-link<?= $isActive ? ' is-active' : '' ?>"<?= $isActive ? ' aria-current="page"' : '' ?>><?= $label ?></a>
 <?php endforeach; ?>
+                <a href="<?= $galleryHref ?>" class="link-to-gallery nav_cloudberry" aria-label="Browse photo gallery"></a>
             </div>
         </div>
     </nav>

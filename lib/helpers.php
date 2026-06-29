@@ -465,7 +465,7 @@ function pinchard_pinchards_island_satellite_view(): array
 	return [
 		'lat' => 49.1998,
 		'lon' => -53.4865,
-		'zoom' => 12.5,
+		'zoom' => 13.5,
 	];
 }
 
