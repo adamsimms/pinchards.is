@@ -2,9 +2,9 @@
 
 [![Deploy SFTP](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml)
 
-[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, an archived off-the-grid photography project on Pinchard's Island, Newfoundland.
+[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and the slow rhythm of a remote community.
 
-PHP site: S3 photo gallery, about page, and mini-sites (maps, exhibition slideshow, video). Photographs are served from S3/CloudFront; this repo is the application code and static assets.
+This repository is the website source — gallery, about page, maps, and exhibition pages that present those photographs online.
 
 ## Contents
 
