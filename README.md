@@ -2,7 +2,7 @@
 
 [![Deploy SFTP](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml)
 
-[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and the slow rhythm of a remote community.
+[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, an autonomous solar-powered camera on Pinchard's Island, Newfoundland. For years it photographed the same view from a remote cabin every daylight hour — off-the-grid life, landscape, and seasons — and this site is the archive.
 
 This repository is the website source — gallery, about page, maps, and exhibition pages that present those photographs online.
 
