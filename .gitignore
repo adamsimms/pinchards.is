@@ -4,6 +4,9 @@ node_modules/
 !/vendor/.htaccess
 
 .DS_Store
+.env
+.env.*
+!.env.example
 *.secret
 cookies.txt
 secrets.local.php

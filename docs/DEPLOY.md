@@ -1,10 +1,12 @@
 # Deploy (GitHub Actions → DreamHost)
 
-On **push to `main`**, [.github/workflows/deploy-ftp.yml](../.github/workflows/deploy-ftp.yml) syncs the repo to DreamHost with **rsync over SSH** (port 22). DreamHost [requires SFTP/SSH on port 22](https://help.dreamhost.com/hc/en-us/articles/115001051531-FTP-and-SFTP-at-DreamHost); plain FTP and FTPS are not used.
+On **push to `main`**, [.github/workflows/deploy.yml](../.github/workflows/deploy.yml) syncs the repo to DreamHost with **rsync over SSH** (port 22). DreamHost [requires SFTP/SSH on port 22](https://help.dreamhost.com/hc/en-us/articles/115001051531-FTP-and-SFTP-at-DreamHost); plain FTP and FTPS are not used.
 
 Before rsync, the workflow installs PHP dependencies (`composer install --no-dev`) and copies frontend libraries into `vendor/` (`npm ci && npm run vendor:frontend`). The `vendor/` directory is gitignored; only `vendor/.htaccess` is tracked.
 
 The workflow excludes **`adrift/`**, **`dory/`**, and **`waves/`** on the server (separate repos: [adrift](https://github.com/adamsimms/adrift), [dory](https://github.com/adamsimms/dory), [waves](https://github.com/adamsimms/waves)).
+
+Runtime secrets are uploaded to **`~/.config/pinchards.is/secrets.local.php`** on the server (one directory above the site root’s home folder, outside the web document root). Legacy `secrets.local.php` and `aws-env.local.php` in the document root are removed on each deploy.
 
 ## One-time SSH key setup
 
@@ -41,20 +43,20 @@ The workflow excludes **`adrift/`**, **`dory/`**, and **`waves/`** on the server
 | `FTP_SERVER` | SSH hostname, e.g. `pinchards.is` or `ps12345.dreamhost.com` (from DreamHost panel) |
 | `FTP_USERNAME` | DreamHost shell/FTP user |
 | `FTP_SERVER_DIR` | **Absolute** site root on the server, e.g. `/home/USER/pinchards.is` |
-| `SSH_DEPLOY_KEY` | Private key for deploy (see setup above); `FTP_PASSWORD` is no longer used |
+| `SSH_DEPLOY_KEY` | Private key for deploy (see setup above) |
 | `AWS_ACCESS_KEY_ID` | IAM access key for the S3 gallery bucket |
 | `AWS_SECRET_ACCESS_KEY` | Matching secret |
 | `AWS_DEFAULT_REGION` | Optional; omit to use `us-east-1` |
 | `GOOGLE_MAPS_API_KEY` | Optional; browser key for `index.php` map |
 | `MAPBOX_ACCESS_TOKEN` | Optional; `pk.*` token for `maps/` |
 
-Runtime secrets are written to `secrets.local.php` during the workflow (not stored in git). After adding or rotating secrets, redeploy (push to `main` or **Actions → Deploy SFTP → Run workflow**). Use **Run workflow → dry_run: true** first to list changes without uploading.
+After adding or rotating secrets, redeploy (push to `main` or **Actions → Deploy SFTP → Run workflow**). Use **Run workflow → dry_run: true** first to list changes without uploading.
 
 ## Secrets on the server
 
 The PHP app reads **`AWS_ACCESS_KEY_ID`**, **`AWS_SECRET_ACCESS_KEY`**, optional **`GOOGLE_MAPS_API_KEY`**, and **`MAPBOX_ACCESS_TOKEN`** via `getenv()` / `$_ENV` (see `lib/env.php`).
 
-On each deploy, [.github/scripts/write-secrets-local.php](../.github/scripts/write-secrets-local.php) builds **`secrets.local.php`** from repository secrets. That file is gitignored and **denied by root `.htaccess`**.
+On each deploy, [.github/scripts/write-secrets-local.php](../.github/scripts/write-secrets-local.php) builds the secrets file from repository secrets and uploads it to **`$(dirname $FTP_SERVER_DIR)/.config/pinchards.is/secrets.local.php`**. That path is outside the web document root. Root `.htaccess` still denies HTTP access to `secrets.local.php` if a legacy copy exists.
 
 | Secret | Required | Used for |
 |--------|----------|----------|
@@ -72,7 +74,7 @@ Copy `secrets.local.php.example` to **`secrets.local.php`** in the repo root and
 
 Set **`PINCHARD_DEBUG=1`** in `secrets.local.php` only when debugging (enables `display_errors`); production leaves errors in the server log.
 
-**Alternatives:** DreamHost/VPS real environment variables with the same names, or a one-off SFTP upload of `secrets.local.php`.
+**Alternatives:** set `PINCHARD_SECRETS_FILE` to an absolute path, use `~/.config/pinchards.is/secrets.local.php`, or configure DreamHost/VPS environment variables with the same names.
 
 ## Future hosting notes
 

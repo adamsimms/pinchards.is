@@ -1,8 +1,8 @@
-# Push to main → sync to DreamHost via SFTP/rsync over SSH (GitHub Actions).
+# Push to main → sync to DreamHost via rsync over SSH (GitHub Actions).
 #
 # Repository secrets (Settings → Secrets and variables → Actions):
 #   Deploy: FTP_SERVER, FTP_USERNAME, FTP_SERVER_DIR, SSH_DEPLOY_KEY
-#   Runtime (written to secrets.local.php on each deploy):
+#   Runtime (uploaded outside the web document root on each deploy):
 #     AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (required)
 #     AWS_DEFAULT_REGION, GOOGLE_MAPS_API_KEY, MAPBOX_ACCESS_TOKEN (optional)
 #
@@ -50,6 +50,7 @@ jobs:
 
       - name: Write secrets.local.php from repository secrets
         env:
+          PINCHARD_SECRETS_OUTPUT: ${{ runner.temp }}/secrets.local.php
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
@@ -127,7 +128,32 @@ jobs:
           ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o ConnectTimeout=20 -p 22 \
             "${user}@${host}" "echo SSH OK from GitHub Actions"
 
-      - name: Remove legacy aws-env.local.php on server
+      - name: Upload secrets outside document root
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          set -euo pipefail
+          host="$(printf '%s' "${FTP_SERVER}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          user="$(printf '%s' "${FTP_USERNAME}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          server_dir="$(printf '%s' "${FTP_SERVER_DIR}" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          server_dir="${server_dir%/}"
+          parent_dir="$(dirname "${server_dir}")"
+          remote_dir="${parent_dir}/.config/pinchards.is"
+          remote_file="${remote_dir}/secrets.local.php"
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -p 22 \
+            "${user}@${host}" \
+            "mkdir -p '${remote_dir}' && chmod 700 '${remote_dir}'"
+          rsync -avz \
+            -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22 -l ${user}" \
+            "${{ runner.temp }}/secrets.local.php" \
+            "${host}:${remote_file}"
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -p 22 \
+            "${user}@${host}" \
+            "chmod 600 '${remote_file}'"
+
+      - name: Remove legacy secrets from document root
         continue-on-error: true
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
@@ -140,7 +166,7 @@ jobs:
           server_dir="${server_dir%/}"
           ssh -i ~/.ssh/deploy_key -o BatchMode=yes -p 22 \
             "${user}@${host}" \
-            "rm -f '${server_dir}/aws-env.local.php'"
+            "rm -f '${server_dir}/secrets.local.php' '${server_dir}/aws-env.local.php'"
 
       - name: SFTP deploy (rsync over SSH)
         env:
@@ -167,5 +193,7 @@ jobs:
             --exclude 'adrift/' \
             --exclude 'dory/' \
             --exclude 'waves/' \
+            --exclude 'secrets.local.php' \
+            --exclude 'aws-env.local.php' \
             -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22 -l ${user}" \
             ./ "${dest}"

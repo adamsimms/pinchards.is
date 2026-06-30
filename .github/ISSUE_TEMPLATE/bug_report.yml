@@ -1,0 +1,44 @@
+name: Bug report
+description: Something is broken on the site or in local development
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting. Please do **not** use this form for security issues — see [SECURITY.md](../SECURITY.md).
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What did you expect vs what you saw?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Click …
+        3. See error …
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: URL or page
+      placeholder: https://www.pinchards.is/info.php
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Live site (pinchards.is)
+        - Local development
+        - GitHub Actions deploy
+    validations:
+      required: true

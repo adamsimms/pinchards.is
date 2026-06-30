@@ -103,7 +103,6 @@ pinchard_maps_nav('satellite', ['kiosk' => $kiosk]);
             });
 
             map.on('error', function (event) {
-                console.error('Mapbox error:', event && event.error ? event.error : event);
                 if (!usedFallback) {
                     usedFallback = true;
                     map.setStyle(fallbackStyle);

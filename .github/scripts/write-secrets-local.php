@@ -76,7 +76,12 @@ if ($mapboxToken !== '') {
 $lines[] = '';
 
 $out = implode("\n", $lines);
-$target = dirname(__DIR__, 2) . '/secrets.local.php';
+$target = pinchard_env('PINCHARD_SECRETS_OUTPUT', dirname(__DIR__, 2) . '/secrets.local.php');
+$targetDir = dirname($target);
+if (!is_dir($targetDir) && !mkdir($targetDir, 0700, true) && !is_dir($targetDir)) {
+	fwrite(STDERR, "Failed to create directory {$targetDir}\n");
+	exit(1);
+}
 if (file_put_contents($target, $out) === false) {
 	fwrite(STDERR, "Failed to write {$target}\n");
 	exit(1);

@@ -1,0 +1,24 @@
+name: Feature or improvement
+description: Suggest a small enhancement or documentation update
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: For large rewrites, please open an issue to discuss before submitting a PR. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: What would this improve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: How would you solve it? Keep scope small if possible.
+    validations:
+      required: true
