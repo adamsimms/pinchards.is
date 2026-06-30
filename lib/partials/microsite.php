@@ -119,12 +119,6 @@ function pinchard_microsite_scripts_footer(array $options = []): void
 {
 	?>
     <script src="<?= pinchard_h(pinchard_microsite_asset_url('js/pinchard.js')) ?>"></script>
-<?php
-	$analytics = pinchard_analytics_footer_html();
-	if ($analytics !== '') {
-		echo $analytics . "\n";
-	}
-?>
 </body>
 </html>
 <?php

@@ -37,26 +37,6 @@ function pinchard_mapbox_gl_js(): string
 	return '    <script src="https://api.mapbox.com/mapbox-gl-js/v' . $version . '/mapbox-gl.js"></script>';
 }
 
-/** Optional privacy-friendly analytics (GoatCounter or Cloudflare Web Analytics). */
-function pinchard_analytics_footer_html(): string
-{
-	$goat = pinchard_env_non_empty('GOATCOUNTER_SITE_CODE');
-	if ($goat !== null && preg_match('/^[a-z0-9-]+$/i', $goat) === 1) {
-		$endpoint = 'https://' . $goat . '.goatcounter.com/count';
-
-		return '    <script data-goatcounter="' . pinchard_h($endpoint) . '" async src="//gc.zgo.at/count.js"></script>';
-	}
-
-	$cfToken = pinchard_env_non_empty('CLOUDFLARE_WEB_ANALYTICS_TOKEN');
-	if ($cfToken !== null) {
-		$beacon = json_encode(['token' => $cfToken], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
-
-		return '    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon=\'' . $beacon . '\'></script>';
-	}
-
-	return '';
-}
-
 /** Short display date for gallery captions and timeline (e.g. March 1 @ 18:09). */
 function pinchard_show_date(DateTime $dt): string
 {

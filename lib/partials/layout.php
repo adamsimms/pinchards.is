@@ -93,10 +93,6 @@ function pinchard_layout_footer(array $options = []): void
 	if ($extraScripts !== '') {
 		echo $extraScripts;
 	}
-	$analytics = pinchard_analytics_footer_html();
-	if ($analytics !== '') {
-		echo $analytics . "\n";
-	}
 ?>
 </body>
 </html>
