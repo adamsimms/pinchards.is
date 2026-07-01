@@ -2,7 +2,7 @@
 
 [![Deploy SFTP](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml)
 
-[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, an autonomous solar-powered camera on Pinchard's Island, Newfoundland. For years it photographed the same view from a remote cabin every daylight hour — off-the-grid life, landscape, and seasons — and this site is the archive.
+[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and the slow rhythm of a remote community.
 
 This repository is the website source — gallery, about page, maps, and exhibition pages that present those photographs online.
 
@@ -12,9 +12,6 @@ This repository is the website source — gallery, about page, maps, and exhibit
 - [Project layout](#project-layout)
 - [Local development](#local-development)
 - [Deploy](#deploy)
-- [Contributing](#contributing)
-- [Security](#security)
-- [License](#license)
 
 ## Quick start
 
@@ -79,21 +76,3 @@ The app loads the first readable file from this list (see `lib/env.php`):
 Production deploys run on push to `main` via [GitHub Actions](.github/workflows/deploy.yml) → rsync over SSH to DreamHost. The workflow runs `composer install --no-dev` and `npm ci && npm run vendor:frontend` before upload, so `vendor/` is built in CI rather than stored in git. Runtime secrets are uploaded to **`~/.config/pinchards.is/secrets.local.php`** on the server (outside the document root), not into the public web tree.
 
 See **[docs/DEPLOY.md](docs/DEPLOY.md)** for SSH key setup, repository secrets, and hosting notes.
-
-## Contributing
-
-Bug fixes, accessibility improvements, and documentation updates are welcome. Please read **[CONTRIBUTING.md](CONTRIBUTING.md)** before opening a pull request.
-
-## Security
-
-To report a vulnerability, see **[SECURITY.md](SECURITY.md)**. Do not open public issues for credential leaks or exploitable bugs.
-
-## License
-
-Code in this repository is [MIT](LICENSE). Photographs and embedded media are not covered — see the live [About](https://www.pinchards.is/info.php) page for citation and contact.
-
-Fonts: [DM Sans](https://fonts.google.com/specimen/DM+Sans) (Google Fonts, OFL). Vendored libraries retain their own licenses under `vendor/`.
-
-## Analytics
-
-Google Analytics was removed. Stats use [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) (free, cookieless), injected automatically at the edge when the domain is proxied through Cloudflare. Enable it in the Cloudflare dashboard under **Analytics → Web analytics → Manage site → Enable** — no code or repository secrets required.
