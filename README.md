@@ -2,9 +2,17 @@
 
 [![Deploy SFTP](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml)
 
-[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and the slow rhythm of a remote community.
+[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and [...]
 
 This repository is the website source — gallery, about page, maps, and exhibition pages that present those photographs online.
+
+## Artist Statement
+
+The simplicity of the Cloudberry photographs belies the complexity of the solar-powered camera system that makes them possible. A camera affixed to Adam’s family’s cabin on Pinchard’s Island takes the photographs continuously throughout the day and uploads them to the internet via cellular network. Able to control the camera and access the images from anywhere, Adam uses technology to maintain a constant presence in a place that is inaccessible most of the year. In capturing a view that recalls the experience of looking out the cabin’s window, the camera stands in for the photographer. Thus, these photographs constitute a political act: they allow an uninterrupted foothold on a place that was effectively erased when the Canadian government resettled the area shortly after Newfoundland became the country’s 10th province.
+
+Comprised of thousands of photographs, the enormity of the Cloudberry project has inspired Adam to explore a new aspect of the sublime in his work. While other projects have focused on the pursuit of a single majestic photograph, Cloudberry inspires awe through its abundance of quotidian images. The title itself parallels this shift: while it may at first evoke the vast Newfoundland sky, Cloudberry in fact references the indigenous wild berry—colloquially known as a “bakeapple”—that flourishes on the seemingly inhospitable land.
+
+The Cloudberry photographs are at once static and dynamic: though the frame remains exactly the same, the landscape is constantly changing. The enormous variety in the images recalls series of Impressionist paintings that show the same scene in different types of light, in all seasons, and throughout the day. The sky, the ocean, and the terrain in the photographs seem to change more readily than the immutable rocks, but even their appearance eventually transforms as the seasons change. Though Cloudberry highlights the specificity of this particular landscape, it also manifests the familiar desire to connect to one’s homeland not as a relic of the past but as a place that is alive.
 
 ## Contents
 
@@ -34,10 +42,10 @@ Open [http://localhost:8080](http://localhost:8080). Map pages also need optiona
 | Area | Purpose |
 |------|---------|
 | **Core pages** | `index.php`, `gallery.php`, `info.php`, `slider.php`, `slideshow.php`, `getphotos.php` at repo root (web document root). |
-| **`lib/`** | `bootstrap.php` (AWS + S3), `config.php` (bucket + CDN URLs), `env.php` (secrets loader). Core pages load `lib/bootstrap.php`; mini-sites use `functions_inc.php`, a shim to the same bootstrap. |
+| **`lib/`** | `bootstrap.php` (AWS + S3), `config.php` (bucket + CDN URLs), `env.php` (secrets loader). Core pages load `lib/bootstrap.php`; mini-sites use `functions_inc.php`, a shim to the same[...] |
 | **Public assets** | `css/`, `js/`, `images/`, `favicon/`. `vendor/` is generated locally and in CI (not committed). |
 | **Source / design** | Edit `css/pinchard.css` for theme styles. `design/` holds Sketch/SVG sources (not served). |
-| **Mini-sites** | `jam/` (fullscreen exhibition slideshow), `maps/` (Mapbox satellite + Google My Maps embeds), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/` redirect to `/maps/…`. |
+| **Mini-sites** | `jam/` (fullscreen exhibition slideshow), `maps/` (Mapbox satellite + Google My Maps embeds), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/` redirect to `/maps[...] |
 | **Docs** | [docs/DEPLOY.md](docs/DEPLOY.md) — SSH keys, GitHub Actions secrets, hosting notes. |
 
 Related projects on the live server (separate repos): [Adrift](https://github.com/adamsimms/adrift), [Dory](https://github.com/adamsimms/dory), [Waves](https://github.com/adamsimms/waves).
@@ -73,6 +81,6 @@ The app loads the first readable file from this list (see `lib/env.php`):
 
 ## Deploy
 
-Production deploys run on push to `main` via [GitHub Actions](.github/workflows/deploy.yml) → rsync over SSH to DreamHost. The workflow runs `composer install --no-dev` and `npm ci && npm run vendor:frontend` before upload, so `vendor/` is built in CI rather than stored in git. Runtime secrets are uploaded to **`~/.config/pinchards.is/secrets.local.php`** on the server (outside the document root), not into the public web tree.
+Production deploys run on push to `main` via [GitHub Actions](.github/workflows/deploy.yml) → rsync over SSH to DreamHost. The workflow runs `composer install --no-dev` and `npm ci && npm run ve[...]
 
 See **[docs/DEPLOY.md](docs/DEPLOY.md)** for SSH key setup, repository secrets, and hosting notes.
