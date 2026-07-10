@@ -9,7 +9,6 @@ declare(strict_types=1);
  *   1. PINCHARD_SECRETS_FILE env var (absolute path)
  *   2. ~/.config/pinchards.is/secrets.local.php (outside web document root on shared hosting)
  *   3. secrets.local.php in site root (local dev)
- *   4. aws-env.local.php in site root (legacy name)
  */
 $pinchardRoot = dirname(__DIR__);
 
@@ -30,7 +29,6 @@ if ($pinchardParent !== $pinchardRoot) {
 }
 
 $pinchardSecretsCandidates[] = $pinchardRoot . '/secrets.local.php';
-$pinchardSecretsCandidates[] = $pinchardRoot . '/aws-env.local.php';
 
 foreach ($pinchardSecretsCandidates as $pinchardSecretsFile) {
 	if (is_readable($pinchardSecretsFile)) {

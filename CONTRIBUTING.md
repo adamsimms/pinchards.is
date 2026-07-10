@@ -32,8 +32,8 @@ Match the existing style in the files you touch:
 
 - **PHP:** 8.1+, `declare(strict_types=1);` in new files, tabs for indentation, helper functions in `lib/helpers.php`.
 - **CSS:** Edit `css/pinchard.css`; the site uses DM Sans via Google Fonts.
-- **JavaScript:** Vanilla JS in `js/pinchard.js` — no jQuery. Keep mini-site scripts self-contained when they must differ from the main site.
-- **Secrets:** Never commit `secrets.local.php`, `.env`, or API keys. Use placeholders in examples only.
+- **JavaScript:** Vanilla JS in `js/` (`pinchard.js`, `viewer.js`, `slideshow.js`, `gsap-motion.js`) — no jQuery. Keep mini-site scripts self-contained when they must differ from the main site.
+- **Secrets:** Never commit `secrets.local.php` or API keys. Use placeholders in examples only.
 
 ## Pull requests
 

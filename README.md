@@ -1,6 +1,6 @@
 # pinchard.is
 
-[![Deploy SFTP](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml)
+[![Deploy](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml)
 
 [www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and [...]
 
@@ -41,11 +41,12 @@ Open [http://localhost:8080](http://localhost:8080). Map pages also need optiona
 
 | Area | Purpose |
 |------|---------|
-| **Core pages** | `index.php`, `gallery.php`, `info.php`, `slider.php`, `slideshow.php`, `getphotos.php` at repo root (web document root). |
-| **`lib/`** | `bootstrap.php` (AWS + S3), `config.php` (bucket + CDN URLs), `env.php` (secrets loader). Core pages load `lib/bootstrap.php`; mini-sites use `functions_inc.php`, a shim to the same[...] |
-| **Public assets** | `css/`, `js/`, `images/`, `favicon/`. `vendor/` is generated locally and in CI (not committed). |
+| **Core pages** | `index.php`, `gallery.php`, `info.php`, `slideshow.php`, `viewer-photo.php` at repo root (web document root). Legacy `/gallery-days.php` and `/slider.php` redirect via `.htaccess`. |
+| **`lib/`** | `bootstrap.php` (AWS + S3), `config.php` (bucket + CDN URLs), `env.php` (secrets loader). Pages and mini-sites load `lib/bootstrap.php` (or `lib/env.php` for maps-only pages). |
+| **Public assets** | `css/`, `js/`, `images/`, `favicon/`. `vendor/` is generated locally and in CI (not committed) — Bootstrap CSS plus GSAP + ScrollTrigger via `npm run vendor:frontend`. |
 | **Source / design** | Edit `css/pinchard.css` for theme styles. `design/` holds Sketch/SVG sources (not served). |
-| **Mini-sites** | `jam/` (fullscreen exhibition slideshow), `maps/` (Mapbox satellite + Google My Maps embeds), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/` redirect to `/maps[...] |
+| **Mini-sites** | `jam/` (fullscreen exhibition slideshow), `maps/` (Mapbox satellite + Google My Maps embeds), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/` redirect to `/maps/…`. |
+| **Scripts** | `scripts/vendor-frontend.js` copies Bootstrap/GSAP into `vendor/`. `scripts/cache-exif-dates.php` backfills capture dates from EXIF into `images/photo/.cache/` (needs AWS credentials). |
 | **Docs** | [docs/DEPLOY.md](docs/DEPLOY.md) — SSH keys, GitHub Actions secrets, hosting notes. |
 
 Related projects on the live server (separate repos): [Adrift](https://github.com/adamsimms/adrift), [Dory](https://github.com/adamsimms/dory), [Waves](https://github.com/adamsimms/waves).
@@ -77,7 +78,6 @@ The app loads the first readable file from this list (see `lib/env.php`):
 1. `PINCHARD_SECRETS_FILE` environment variable (absolute path)
 2. `~/.config/pinchards.is/secrets.local.php` (production — outside the web root)
 3. `secrets.local.php` in the repo root (local dev)
-4. `aws-env.local.php` in the repo root (legacy)
 
 ## Deploy
 

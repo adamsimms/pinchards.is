@@ -6,7 +6,7 @@ Before rsync, the workflow installs PHP dependencies (`composer install --no-dev
 
 The workflow excludes **`adrift/`**, **`dory/`**, and **`waves/`** on the server (separate repos: [adrift](https://github.com/adamsimms/adrift), [dory](https://github.com/adamsimms/dory), [waves](https://github.com/adamsimms/waves)).
 
-Runtime secrets are uploaded to **`~/.config/pinchards.is/secrets.local.php`** on the server (one directory above the site root’s home folder, outside the web document root). Legacy `secrets.local.php` and `aws-env.local.php` in the document root are removed on each deploy.
+Runtime secrets are uploaded to **`~/.config/pinchards.is/secrets.local.php`** on the server (one directory above the site root’s home folder, outside the web document root). Legacy `secrets.local.php` in the document root is removed on each deploy.
 
 ## One-time SSH key setup
 
@@ -50,7 +50,7 @@ Runtime secrets are uploaded to **`~/.config/pinchards.is/secrets.local.php`** o
 | `GOOGLE_MAPS_API_KEY` | Optional; browser key for `index.php` map |
 | `MAPBOX_ACCESS_TOKEN` | Optional; `pk.*` token for `maps/` |
 
-After adding or rotating secrets, redeploy (push to `main` or **Actions → Deploy SFTP → Run workflow**). Use **Run workflow → dry_run: true** first to list changes without uploading.
+After adding or rotating secrets, redeploy (push to `main` or **Actions → Deploy → Run workflow**). Use **Run workflow → dry_run: true** first to list changes without uploading.
 
 ## Secrets on the server
 

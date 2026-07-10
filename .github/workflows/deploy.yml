@@ -10,7 +10,7 @@
 # ~/.ssh/authorized_keys on the server, and store the private key as SSH_DEPLOY_KEY.
 # FTP_SERVER should be the SSH hostname (often your domain or psNNNN.dreamhost.com).
 # FTP_SERVER_DIR must be the absolute remote path, e.g. /home/USER/pinchards.is
-name: Deploy SFTP
+name: Deploy
 
 on:
   push:
@@ -166,9 +166,9 @@ jobs:
           server_dir="${server_dir%/}"
           ssh -i ~/.ssh/deploy_key -o BatchMode=yes -p 22 \
             "${user}@${host}" \
-            "rm -f '${server_dir}/secrets.local.php' '${server_dir}/aws-env.local.php'"
+            "rm -f '${server_dir}/secrets.local.php'"
 
-      - name: SFTP deploy (rsync over SSH)
+      - name: Deploy (rsync over SSH)
         env:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
@@ -190,10 +190,10 @@ jobs:
             --exclude '.git/' \
             --exclude '.git*/' \
             --exclude '.github/' \
+            --exclude '.idea/' \
             --exclude 'adrift/' \
             --exclude 'dory/' \
             --exclude 'waves/' \
             --exclude 'secrets.local.php' \
-            --exclude 'aws-env.local.php' \
             -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22 -l ${user}" \
             ./ "${dest}"
