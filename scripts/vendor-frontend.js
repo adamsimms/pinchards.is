@@ -35,4 +35,15 @@ copyFile(
   path.join(root, 'vendor/bootstrap/css/bootstrap.css')
 );
 
+removeIfExists(path.join(root, 'vendor/gsap'));
+ensureDir(path.join(root, 'vendor/gsap'));
+copyFile(
+  path.join(root, 'node_modules/gsap/dist/gsap.min.js'),
+  path.join(root, 'vendor/gsap/gsap.min.js')
+);
+copyFile(
+  path.join(root, 'node_modules/gsap/dist/ScrollTrigger.min.js'),
+  path.join(root, 'vendor/gsap/ScrollTrigger.min.js')
+);
+
 console.log('\nDone.');

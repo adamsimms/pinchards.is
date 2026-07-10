@@ -1,7 +1,7 @@
 (function() {
     "use strict";
 
-    var ROUTE_LEAVE_MS = 220;
+    var ROUTE_LEAVE_MS = 240;
     var MAIN_ROUTES = {
         'index.php': true,
         'gallery.php': true,
@@ -9,7 +9,12 @@
         'info.php': true
     };
 
+    var motion = window.pinchardMotion;
+
     function prefersReducedMotion() {
+        if (motion && typeof motion.prefersReducedMotion === 'function') {
+            return motion.prefersReducedMotion();
+        }
         return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 
@@ -44,6 +49,10 @@
             window.location.href = href;
             return;
         }
+        if (motion && motion.available && typeof motion.routeLeave === 'function') {
+            motion.routeLeave(href);
+            return;
+        }
         document.body.classList.add('pinchard-route-leave');
         document.body.classList.remove('pinchard-route-enter', 'is-ready');
         window.setTimeout(function() {
@@ -54,16 +63,22 @@
     window.pinchardNavigate = navigateWithTransition;
 
     if (!prefersReducedMotion()) {
-        var skipRouteEnter = document.body.classList.contains('maps-satellite-page')
-            || document.body.classList.contains('maps-embed-page');
+        var handledEnter = motion && motion.available && typeof motion.routeEnter === 'function'
+            ? motion.routeEnter()
+            : false;
 
-        if (!skipRouteEnter) {
-            document.body.classList.add('pinchard-route-enter');
-            window.requestAnimationFrame(function() {
+        if (!handledEnter) {
+            var skipRouteEnter = document.body.classList.contains('maps-satellite-page')
+                || document.body.classList.contains('maps-embed-page');
+
+            if (!skipRouteEnter) {
+                document.body.classList.add('pinchard-route-enter');
                 window.requestAnimationFrame(function() {
-                    document.body.classList.add('is-ready');
+                    window.requestAnimationFrame(function() {
+                        document.body.classList.add('is-ready');
+                    });
                 });
-            });
+            }
         }
 
         document.addEventListener('click', function(event) {
@@ -99,8 +114,17 @@
     var mainNav = document.getElementById('mainNav');
     if (mainNav) {
         var affixOffset = 100;
+        var wasAffixed = mainNav.classList.contains('affix');
         function updateAffix() {
-            mainNav.classList.toggle('affix', window.scrollY > affixOffset);
+            var affixed = window.scrollY > affixOffset;
+            if (affixed === wasAffixed) {
+                return;
+            }
+            wasAffixed = affixed;
+            mainNav.classList.toggle('affix', affixed);
+            if (motion && typeof motion.setNavAffix === 'function') {
+                motion.setNavAffix(mainNav, affixed);
+            }
         }
         window.addEventListener('scroll', updateAffix, { passive: true });
         updateAffix();
@@ -108,10 +132,14 @@
 
     function closeMapsDropdowns() {
         document.querySelectorAll('.maps-nav-dropdown.is-open').forEach(function(dropdown) {
-            dropdown.classList.remove('is-open');
-            var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
-            if (trigger) {
-                trigger.setAttribute('aria-expanded', 'false');
+            if (motion && typeof motion.closeMapsDropdown === 'function') {
+                motion.closeMapsDropdown(dropdown);
+            } else {
+                dropdown.classList.remove('is-open');
+                var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
+                if (trigger) {
+                    trigger.setAttribute('aria-expanded', 'false');
+                }
             }
         });
     }
@@ -126,10 +154,14 @@
             }
             window.clearTimeout(mapsDropdownCloseTimer);
             closeMapsDropdowns();
-            dropdown.classList.add('is-open');
-            var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
-            if (trigger) {
-                trigger.setAttribute('aria-expanded', 'true');
+            if (motion && typeof motion.openMapsDropdown === 'function') {
+                motion.openMapsDropdown(dropdown);
+            } else {
+                dropdown.classList.add('is-open');
+                var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
+                if (trigger) {
+                    trigger.setAttribute('aria-expanded', 'true');
+                }
             }
         });
         dropdown.addEventListener('mouseleave', function() {
@@ -138,10 +170,14 @@
             }
             window.clearTimeout(mapsDropdownCloseTimer);
             mapsDropdownCloseTimer = window.setTimeout(function() {
-                dropdown.classList.remove('is-open');
-                var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
-                if (trigger) {
-                    trigger.setAttribute('aria-expanded', 'false');
+                if (motion && typeof motion.closeMapsDropdown === 'function') {
+                    motion.closeMapsDropdown(dropdown);
+                } else {
+                    dropdown.classList.remove('is-open');
+                    var trigger = dropdown.querySelector('.maps-nav-dropdown-trigger');
+                    if (trigger) {
+                        trigger.setAttribute('aria-expanded', 'false');
+                    }
                 }
             }, 120);
         });
@@ -156,8 +192,12 @@
             var isOpen = dropdown.classList.contains('is-open');
             closeMapsDropdowns();
             if (!isOpen) {
-                dropdown.classList.add('is-open');
-                trigger.setAttribute('aria-expanded', 'true');
+                if (motion && typeof motion.openMapsDropdown === 'function') {
+                    motion.openMapsDropdown(dropdown);
+                } else {
+                    dropdown.classList.add('is-open');
+                    trigger.setAttribute('aria-expanded', 'true');
+                }
             }
             return;
         }
@@ -187,6 +227,9 @@
             btn.dataset.copyLabel = original;
             btn.classList.add('is-copied');
             btn.textContent = 'Copied';
+            if (motion && typeof motion.pulseCitation === 'function') {
+                motion.pulseCitation(btn);
+            }
             window.setTimeout(function() {
                 btn.classList.remove('is-copied');
                 btn.textContent = original;
