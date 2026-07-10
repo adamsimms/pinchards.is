@@ -2223,7 +2223,10 @@ body.info-page .info-toc a {
 }
 
 body.info-page .info-toc a:hover,
-body.info-page .info-toc a:focus,
+body.info-page .info-toc a:focus {
+    color: #F05F40;
+}
+
 body.info-page .info-toc a.is-active {
     color: #F05F40;
     border-left-color: #F05F40;
@@ -2967,14 +2970,13 @@ body.info-page .info-toc-marker {
     pointer-events: none;
     opacity: 0;
     z-index: 1;
-}
-
-body.info-page .info-toc a.is-active {
-    border-left-color: transparent;
+    /* Desktop uses the CSS border only — the sliding marker fights it. */
+    display: none;
 }
 
 @media (max-width: 991px) {
     body.info-page .info-toc-marker {
+        display: block;
         top: auto;
         bottom: 0;
         left: 0;

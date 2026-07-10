@@ -570,35 +570,39 @@
         if (!nav || !available) {
             return;
         }
+        var mobileToc = window.matchMedia('(max-width: 991px)');
+        // Desktop uses a CSS left border; the sliding marker is mobile-only.
+        if (!mobileToc.matches) {
+            mobileToc.addEventListener('change', function () {
+                if (mobileToc.matches) {
+                    initTocMarker();
+                }
+            });
+            return;
+        }
+        if (nav.querySelector('.info-toc-marker')) {
+            return;
+        }
         var marker = document.createElement('span');
         marker.className = 'info-toc-marker';
         marker.setAttribute('aria-hidden', 'true');
         nav.appendChild(marker);
-        var mobileToc = window.matchMedia('(max-width: 991px)');
 
         function moveMarker(active) {
+            if (!mobileToc.matches) {
+                gsap.set(marker, { opacity: 0 });
+                return;
+            }
             if (!active) {
                 gsap.to(marker, { opacity: 0, duration: 0.2 });
                 return;
             }
-            if (mobileToc.matches) {
-                gsap.to(marker, {
-                    opacity: 1,
-                    x: active.offsetLeft,
-                    y: 0,
-                    width: active.offsetWidth,
-                    height: 2,
-                    duration: 0.28,
-                    ease: 'power2.out'
-                });
-                return;
-            }
             gsap.to(marker, {
                 opacity: 1,
-                x: 0,
-                y: active.offsetTop,
-                width: 2,
-                height: active.offsetHeight,
+                x: active.offsetLeft,
+                y: 0,
+                width: active.offsetWidth,
+                height: 2,
                 duration: 0.28,
                 ease: 'power2.out'
             });
@@ -606,23 +610,13 @@
 
         var initial = nav.querySelector('a.is-active') || nav.querySelector('a');
         if (initial) {
-            if (mobileToc.matches) {
-                gsap.set(marker, {
-                    x: initial.offsetLeft,
-                    y: 0,
-                    width: initial.offsetWidth,
-                    height: 2,
-                    opacity: 1
-                });
-            } else {
-                gsap.set(marker, {
-                    x: 0,
-                    y: initial.offsetTop,
-                    width: 2,
-                    height: initial.offsetHeight,
-                    opacity: 1
-                });
-            }
+            gsap.set(marker, {
+                x: initial.offsetLeft,
+                y: 0,
+                width: initial.offsetWidth,
+                height: 2,
+                opacity: 1
+            });
         }
 
         var observer = new MutationObserver(function () {
