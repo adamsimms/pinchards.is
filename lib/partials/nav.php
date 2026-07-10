@@ -55,10 +55,11 @@ function pinchard_site_nav(array $options = []): void
 	$mapsActive = $options['maps_active'] ?? null;
 	$showSlideshow = $options['show_slideshow'] ?? true;
 
-	$indexHref = pinchard_h(pinchard_microsite_asset_url('index.php'));
-	$galleryHref = pinchard_h(pinchard_microsite_asset_url('gallery.php'));
-	$slideshowHref = pinchard_h(pinchard_microsite_asset_url('slideshow.php'));
-	$infoHref = pinchard_h(pinchard_microsite_asset_url('info.php'));
+	// Page links stay unversioned; only static assets use mtime cache-busting.
+	$indexHref = '/index.php';
+	$galleryHref = '/gallery.php';
+	$slideshowHref = '/slideshow.php';
+	$infoHref = '/info.php';
 
 	$galleryClass = 'link-to-gallery nav_gallery' . ($active === 'gallery' ? ' active' : '');
 	$infoClass = 'nav_info' . ($active === 'info' ? ' active' : '');

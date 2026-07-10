@@ -7,6 +7,10 @@
 	Header set X-Content-Type-Options "nosniff"
 	Header set X-Frame-Options "SAMEORIGIN"
 	Header set Referrer-Policy "strict-origin-when-cross-origin"
+	# Prefer short TTL + query-string busting over month-long static caches.
+	<FilesMatch "\.(css|js)$">
+		Header set Cache-Control "public, max-age=86400, must-revalidate"
+	</FilesMatch>
 </IfModule>
 
 <IfModule mod_rewrite.c>

@@ -5,18 +5,14 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/helpers.php';
 
 /**
- * Asset URL for root pages or mini-sites (cache-busted under subdirectories).
+ * Root-relative static asset URL with mtime cache-busting.
+ * Always version CSS/JS/images so Cloudflare/browser caches pick up deploys.
  *
  * @param array{scope?: 'root'|'microsite'} $options
  */
 function pinchard_page_asset_url(string $path, array $options = []): string
 {
 	$path = '/' . ltrim($path, '/');
-	$scope = $options['scope'] ?? 'root';
-	if ($scope !== 'microsite') {
-		return $path;
-	}
-
 	$root = dirname(__DIR__, 2);
 	$full = $root . $path;
 	$version = is_file($full) ? (string) filemtime($full) : '1';
