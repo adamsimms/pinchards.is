@@ -32,15 +32,20 @@ pinchard_microsite_head($pageTitle, [
 	],
 ]);
 ?>
-    <nav id="mainNav" class="navbar navbar-default fixed-top">
+    <nav id="mainNav" class="navbar navbar-default fixed-top" aria-label="Site">
         <div class="nav-bar-inner">
             <div class="nav-bar-start">
-                <a href="../gallery.php" class="link-to-gallery nav_cloudberry" aria-label="Browse photo gallery"></a>
+                <a href="../index.php" class="title-brand title-brand--mark-only" aria-label="Cloudberry home">
+                    <span class="title-brand-mark" aria-hidden="true"></span>
+                </a>
             </div>
             <div class="nav-bar-center">
-                <a href="#" class="title-brand">Light House</a>
+                <a href="#" class="title-brand">
+                    <span class="title-brand-text">Light House</span>
+                </a>
             </div>
             <div class="nav-bar-end">
+                <a href="../gallery.php" class="link-to-gallery nav_gallery" aria-label="Browse photo gallery"></a>
                 <a class="nav_info" href="../info.php" aria-label="About Cloudberry"></a>
             </div>
         </div>

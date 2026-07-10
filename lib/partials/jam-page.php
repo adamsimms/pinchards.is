@@ -9,79 +9,36 @@ declare(strict_types=1);
  * - $display, $fade (float-ish from GET)
  * - $cdnurl (string)
  * - $array (photo rows from pinchard_jam_photo_list)
- * - $jam_start (int, optional) first index for initial images + JS paging (?start=)
+ * - $jam_start (int, optional) first index (?start=)
  */
 require_once __DIR__ . '/microsite.php';
 
 $jam_start = isset($jam_start) ? (int) $jam_start : 0;
 $layoutFill = isset($jam_layout) && $jam_layout === 'fill';
-$slideshowCss = $layoutFill
-	? 'width: 110%; position: absolute; top: 0; left: 0;'
-	: 'width: 100%; position: absolute; top: -180px;';
-
-$extraHead = '<style>body{margin:0;}#slideshow img{' . $slideshowCss . '}</style>';
+$jamBodyClass = 'jam-page ' . ($layoutFill ? 'jam-page--fill' : 'jam-page--crop');
 
 $jamDescription = 'Fullscreen exhibition slideshow from the Cloudberry archive — for projection and direct-link playback only.';
 pinchard_microsite_head($jam_page_title, [
 	'description' => $jamDescription,
 	'canonical_url' => pinchard_absolute_url('/jam/'),
 	'robots' => 'noindex, nofollow',
-	'extra_head' => $extraHead,
+	'body_attr' => 'class="' . pinchard_h($jamBodyClass) . '"',
 ]);
 
-$je = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+$slideshowFadeStyle = '--slideshow-fade: ' . pinchard_h((string) $fade) . 's;';
 ?>
-    <div id="slideshow" class="slideshow">
-<?php
-$shown = 0;
-for ($i = $jam_start; $i < count($array) && $shown < 10; $i++, $shown++) {
-	$photo = $array[$i];
-	$src = htmlspecialchars($cdnurl . $photo['filename'], ENT_QUOTES, 'UTF-8');
-	$alt = pinchard_h(pinchard_photo_alt_text($photo['date']));
-	echo "            <img src=\"{$src}\" alt=\"{$alt}\">\n";
-}
-?>
+    <div class="slideshow-shell jam-slideshow-shell">
+        <div class="slideshow-viewport" id="slideshow" style="<?= $slideshowFadeStyle ?>" aria-live="polite" aria-label="Exhibition slideshow"></div>
     </div>
 
-    <script>
-        var display = <?= json_encode((float) $display) ?> * 1000;
-        var fade = <?= json_encode((float) $fade) ?> * 1000;
-        var start = <?= $jam_start ?>;
-        var firstImg = null;
-        var nextImg = null;
-        var imagesArr = <?= json_encode($array, $je) ?>;
-        var cdnurl = <?= json_encode($cdnurl, $je) ?>;
-
-        function handleNext(firstImage) {
-            nextImg = firstImg.first();
-            if (firstImg.next().length > 0) {
-                nextImg = firstImg.next();
-            } else {
-                nextImg = $('.slideshow img').first();
-            }
-            firstImg.css({ 'z-index': '0', 'display': 'block' });
-            nextImg.css({ 'z-index': '1' });
-            nextImg.fadeIn(fade, 'linear', function() {
-                firstImg.css('display', 'none');
-                firstImg = nextImg;
-                setTimeout(function() { handleNext(firstImg); }, display);
-            });
-            var renderedImgsLength = $('.slideshow img').length;
-            var firstImageIndex = $('img').index(nextImg);
-            if (firstImageIndex === renderedImgsLength - 1) {
-                var count = 0;
-                for (var i = (firstImageIndex + start); i < imagesArr.length; i++) {
-                    if (count === 10) break;
-                    $('.slideshow').append("<img style='display:none' src='" + cdnurl + imagesArr[i]['filename'] + "'/>");
-                    count++;
-                }
-            }
-        }
-        $(document).ready(function() {
-            $('.slideshow img').css('display', 'none');
-            firstImg = $('.slideshow img').first();
-            handleNext(firstImg);
-        });
-    </script>
 <?php
-pinchard_microsite_scripts_footer();
+$footerScripts = pinchard_slideshow_scripts([
+	'display' => (float) $display,
+	'fade' => (float) $fade,
+	'images' => $array,
+	'cdnurl' => $cdnurl,
+	'startIndex' => $jam_start,
+	'scope' => 'microsite',
+]);
+
+pinchard_microsite_scripts_footer(['extra_scripts' => $footerScripts]);

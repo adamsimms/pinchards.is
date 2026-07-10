@@ -2,9 +2,6 @@
 <Files "secrets.local.php">
 	Require all denied
 </Files>
-<Files "aws-env.local.php">
-	Require all denied
-</Files>
 
 <IfModule mod_headers.c>
 	Header set X-Content-Type-Options "nosniff"
@@ -18,4 +15,6 @@
 	RewriteRule ^maps/satellite/?$ /maps/ [R=301,L]
 	RewriteRule ^trees/?$ /maps/trees/ [R=301,L]
 	RewriteRule ^resettled/?$ /maps/resettled/ [R=301,L]
+	RewriteRule ^gallery-days\.php$ /gallery.php [R=301,L]
+	RewriteRule ^slider\.php$ /slideshow.php [R=301,L]
 </IfModule>

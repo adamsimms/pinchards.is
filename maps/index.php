@@ -19,13 +19,11 @@ require_once __DIR__ . '/../lib/partials/maps.php';
 
 $token = pinchard_env_non_empty('MAPBOX_ACCESS_TOKEN');
 if ($token === null) {
-	http_response_code(503);
-	exit('Map unavailable. Add MAPBOX_ACCESS_TOKEN to secrets.local.php on the server.');
+	pinchard_unavailable_page('Map unavailable. Add MAPBOX_ACCESS_TOKEN to secrets.local.php on the server.');
 }
 
 if (!str_starts_with($token, 'pk.')) {
-	http_response_code(503);
-	exit('Map unavailable. MAPBOX_ACCESS_TOKEN must be a Mapbox public token (pk.*), not a secret token (sk.*).');
+	pinchard_unavailable_page('Map unavailable. MAPBOX_ACCESS_TOKEN must be a Mapbox public token (pk.*), not a secret token (sk.*).');
 }
 
 $view = pinchard_pinchards_island_satellite_view();
@@ -76,15 +74,24 @@ pinchard_maps_nav('satellite', ['kiosk' => $kiosk]);
             var primaryStyle = <?= json_encode(PINCHARD_MAPBOX_SATELLITE_STYLE, $je) ?>;
             var fallbackStyle = <?= json_encode(PINCHARD_MAPBOX_SATELLITE_FALLBACK_STYLE, $je) ?>;
             var usedFallback = false;
+            var kiosk = <?= json_encode($kiosk, $je) ?>;
+            var cabin = <?= json_encode(pinchard_cloudberry_cabin_coords(), $je) ?>;
+            var targetZoom = <?= json_encode($zoom, $je) ?>;
+            var targetCenter = [<?= json_encode($view['lon'], $je) ?>, <?= json_encode($view['lat'], $je) ?>];
+            var targetBearing = <?= json_encode($bearing, $je) ?>;
+            var targetPitch = <?= json_encode($pitch, $je) ?>;
+            var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var startZoom = reducedMotion ? targetZoom : Math.max(8, targetZoom - 2.2);
+            var driftTimer = null;
 
             var map = new mapboxgl.Map({
                 accessToken: <?= json_encode($token, $je) ?>,
                 container: 'map',
                 style: primaryStyle,
-                center: [<?= json_encode($view['lon'], $je) ?>, <?= json_encode($view['lat'], $je) ?>],
-                zoom: <?= json_encode($zoom, $je) ?>,
-                bearing: <?= json_encode($bearing, $je) ?>,
-                pitch: <?= json_encode($pitch, $je) ?>,
+                center: targetCenter,
+                zoom: startZoom,
+                bearing: targetBearing,
+                pitch: targetPitch,
                 config: {
                     showPlaceLabels: false,
                     showPointOfInterestLabels: false,
@@ -96,10 +103,72 @@ pinchard_maps_nav('satellite', ['kiosk' => $kiosk]);
                 }
             });
 
-            map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
+            if (!kiosk) {
+                map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'top-right');
+            }
+
+            function addKioskMarker() {
+                if (!kiosk) {
+                    return;
+                }
+                var el = document.createElement('div');
+                el.className = 'maps-kiosk-marker';
+                el.setAttribute('aria-hidden', 'true');
+                new mapboxgl.Marker({ element: el, anchor: 'center' })
+                    .setLngLat([cabin.lon, cabin.lat])
+                    .addTo(map);
+            }
+
+            function startIdleDrift() {
+                if (!kiosk || reducedMotion) {
+                    return;
+                }
+                function drift() {
+                    map.easeTo({
+                        bearing: map.getBearing() + 12,
+                        duration: 90000,
+                        easing: function (t) { return t; }
+                    });
+                }
+                drift();
+                map.on('moveend', function onDriftEnd() {
+                    if (!document.body.classList.contains('maps-satellite-page--kiosk')) {
+                        map.off('moveend', onDriftEnd);
+                        return;
+                    }
+                    driftTimer = window.setTimeout(drift, 400);
+                });
+            }
 
             map.on('load', function () {
                 map.resize();
+                addKioskMarker();
+                if (reducedMotion || startZoom === targetZoom) {
+                    startIdleDrift();
+                    return;
+                }
+                var target = {
+                    center: targetCenter,
+                    zoom: targetZoom,
+                    bearing: targetBearing,
+                    pitch: targetPitch
+                };
+                var onArrive = function () {
+                    startIdleDrift();
+                };
+                if (window.pinchardMotion && typeof window.pinchardMotion.flyInMap === 'function') {
+                    window.pinchardMotion.flyInMap(map, target);
+                    map.once('moveend', onArrive);
+                } else {
+                    map.easeTo({
+                        center: target.center,
+                        zoom: target.zoom,
+                        bearing: target.bearing,
+                        pitch: target.pitch,
+                        duration: 1800
+                    });
+                    map.once('moveend', onArrive);
+                }
             });
 
             map.on('error', function (event) {

@@ -25,16 +25,17 @@ if ($jam_start < 0) {
 }
 
 try {
-	require_once __DIR__ . '/../functions_inc.php';
+	require_once __DIR__ . '/../lib/bootstrap.php';
+	require_once __DIR__ . '/../lib/jam.php';
 
 	[$cdnurl, $array] = pinchard_jam_photo_list();
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
-	http_response_code(503);
-	header('Content-Type: text/plain; charset=utf-8');
 	if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+		http_response_code(503);
+		header('Content-Type: text/plain; charset=utf-8');
 		exit($e->getMessage());
 	}
-	exit('Jam slideshow is temporarily unavailable.');
+	pinchard_unavailable_page('Jam slideshow is temporarily unavailable.');
 }
 
 if (isset($_GET['shuffle']) && $_GET['shuffle'] !== '' && $_GET['shuffle'] !== '0') {

@@ -36,7 +36,7 @@ function pinchard_nav_maps_dropdown(?string $active): void
 }
 
 /**
- * Global site navigation — Cloudberry left; gallery, slideshow, maps, info right.
+ * Global site navigation — Cloudberry logo left; gallery, slideshow, maps, info right.
  *
  * @param array{
  *   active?: 'index'|'gallery'|'slideshow'|'info'|null,
@@ -60,14 +60,17 @@ function pinchard_site_nav(array $options = []): void
 	$slideshowHref = pinchard_h(pinchard_microsite_asset_url('slideshow.php'));
 	$infoHref = pinchard_h(pinchard_microsite_asset_url('info.php'));
 
-	$galleryClass = 'link-to-gallery nav_cloudberry' . ($active === 'gallery' ? ' active' : '');
+	$galleryClass = 'link-to-gallery nav_gallery' . ($active === 'gallery' ? ' active' : '');
 	$infoClass = 'nav_info' . ($active === 'info' ? ' active' : '');
 	$slideshowClass = 'nav_slideshow' . ($active === 'slideshow' ? ' active' : '');
 	?>
     <nav id="mainNav" class="navbar navbar-default fixed-top" aria-label="Site">
         <div class="nav-bar-inner">
             <div class="nav-bar-start">
-                <a href="<?= $indexHref ?>" class="title-brand"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>Cloudberry</a>
+                <a href="<?= $indexHref ?>" class="title-brand"<?= $active === 'index' ? ' aria-current="page"' : '' ?>>
+                    <span class="title-brand-mark" aria-hidden="true"></span>
+                    <span class="title-brand-text">Cloudberry</span>
+                </a>
             </div>
             <div class="nav-bar-end">
                 <a href="<?= $galleryHref ?>" class="<?= pinchard_h($galleryClass) ?>" aria-label="Browse photo gallery"></a>
