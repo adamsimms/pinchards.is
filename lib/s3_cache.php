@@ -32,6 +32,95 @@ function pinchard_s3_list_cache_path(string $bucket): string
 	return pinchard_photo_cache_dir() . '/s3-list-' . md5($bucket) . '.json';
 }
 
+/** Persistent map of filename → EXIF capture time (`Y/m/d H:i:s`). */
+function pinchard_exif_dates_cache_path(): string
+{
+	return pinchard_photo_cache_dir() . '/exif-dates.json';
+}
+
+/**
+ * @return array<string, string>
+ */
+function pinchard_exif_dates_cache_read(): array
+{
+	$path = pinchard_exif_dates_cache_path();
+	if (!is_readable($path)) {
+		return [];
+	}
+
+	$decoded = json_decode((string) file_get_contents($path), true);
+	if (!is_array($decoded) || !isset($decoded['dates']) || !is_array($decoded['dates'])) {
+		return [];
+	}
+
+	$out = [];
+	foreach ($decoded['dates'] as $filename => $date) {
+		if (is_string($filename) && is_string($date) && $date !== '') {
+			$out[$filename] = $date;
+		}
+	}
+
+	return $out;
+}
+
+/**
+ * @param array<string, string> $dates
+ */
+function pinchard_exif_dates_cache_write(array $dates): void
+{
+	pinchard_ensure_photo_cache_dir();
+	ksort($dates);
+	$payload = json_encode([
+		'cached_at' => time(),
+		'dates' => $dates,
+	], JSON_THROW_ON_ERROR);
+	file_put_contents(pinchard_exif_dates_cache_path(), $payload, LOCK_EX);
+}
+
+function pinchard_exif_dates_cache_put(string $filename, DateTime $captureDt): void
+{
+	$dates = pinchard_exif_dates_cache_read();
+	$formatted = $captureDt->format('Y/m/d H:i:s');
+	if (($dates[$filename] ?? null) === $formatted) {
+		return;
+	}
+	$dates[$filename] = $formatted;
+	pinchard_exif_dates_cache_write($dates);
+}
+
+/**
+ * Overlay cached EXIF capture times onto show_date (and capture_date) labels.
+ *
+ * Keeps filename-derived `date` for archive sort/navigation; labels use shutter time.
+ *
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return list<array{filename: string, date: string, show_date: string, capture_date?: string}>
+ */
+function pinchard_apply_exif_dates_to_photos(array $photos): array
+{
+	$exifDates = pinchard_exif_dates_cache_read();
+	if ($exifDates === []) {
+		return $photos;
+	}
+
+	foreach ($photos as &$photo) {
+		$filename = (string) ($photo['filename'] ?? '');
+		$cached = $exifDates[$filename] ?? null;
+		if ($cached === null) {
+			continue;
+		}
+		$dt = DateTime::createFromFormat('Y/m/d H:i:s', $cached);
+		if ($dt === false) {
+			continue;
+		}
+		$photo['capture_date'] = $cached;
+		$photo['show_date'] = pinchard_show_date($dt);
+	}
+	unset($photo);
+
+	return $photos;
+}
+
 /**
  * @return list<array{filename: string, date: string, show_date: string}>|null
  */
@@ -78,55 +167,40 @@ function pinchard_s3_list_cache_write(string $bucket, array $items): void
 	file_put_contents(pinchard_s3_list_cache_path($bucket), $payload, LOCK_EX);
 }
 
-function pinchard_exif_tmp_path(): string
+function pinchard_exif_tmp_path(?string $filename = null): string
 {
-	return pinchard_root() . '/images/photo/tmp.jpg';
-}
-
-function pinchard_exif_tmp_key_path(): string
-{
-	return pinchard_photo_cache_dir() . '/exif-key.txt';
-}
-
-/** True when tmp.jpg already matches the requested S3 object key. */
-function pinchard_exif_tmp_matches_key(string $s3Key): bool
-{
-	$tmpPath = pinchard_exif_tmp_path();
-	$keyPath = pinchard_exif_tmp_key_path();
-	if (!is_readable($tmpPath) || !is_readable($keyPath)) {
-		return false;
+	if ($filename === null || $filename === '') {
+		return pinchard_root() . '/images/photo/tmp.jpg';
 	}
 
-	return trim((string) file_get_contents($keyPath)) === $s3Key;
+	return pinchard_photo_cache_dir() . '/exif-tmp/' . sha1($filename) . '.jpg';
 }
 
-function pinchard_exif_tmp_record_key(string $s3Key): void
-{
-	pinchard_ensure_photo_cache_dir();
-	file_put_contents(pinchard_exif_tmp_key_path(), $s3Key, LOCK_EX);
-}
-
-/** Ensure the directory for tmp.jpg exists (sibling of .cache). */
+/** Ensure the directory for EXIF temp JPEGs exists. */
 function pinchard_ensure_exif_tmp_dir(): void
 {
-	$dir = dirname(pinchard_exif_tmp_path());
+	$dir = pinchard_photo_cache_dir() . '/exif-tmp';
 	if (!is_dir($dir)) {
 		mkdir($dir, 0755, true);
+	}
+	$legacyDir = dirname(pinchard_root() . '/images/photo/tmp.jpg');
+	if (!is_dir($legacyDir)) {
+		mkdir($legacyDir, 0755, true);
 	}
 }
 
 /**
- * Download a full-resolution photo for EXIF parsing (cached per S3 key).
+ * Download a full-resolution photo for EXIF parsing (one temp file per S3 key).
  * Tries S3 first, then the public full-size CDN — same JPEG the viewer displays.
  */
 function pinchard_fetch_photo_for_exif(string $filename, string $cdnUrlFull): bool
 {
-	$tmpPath = pinchard_exif_tmp_path();
-	if (pinchard_exif_tmp_matches_key($filename) && is_readable($tmpPath)) {
+	pinchard_ensure_exif_tmp_dir();
+	$tmpPath = pinchard_exif_tmp_path($filename);
+	if (is_readable($tmpPath) && filesize($tmpPath) > 0) {
 		return true;
 	}
 
-	pinchard_ensure_exif_tmp_dir();
 	$downloaded = false;
 
 	global $s3;
@@ -138,7 +212,7 @@ function pinchard_fetch_photo_for_exif(string $filename, string $cdnUrlFull): bo
 				'Key' => $filename,
 				'SaveAs' => $tmpPath,
 			]);
-			$downloaded = is_readable($tmpPath);
+			$downloaded = is_readable($tmpPath) && filesize($tmpPath) > 0;
 		} catch (Throwable) {
 			$downloaded = false;
 		}
@@ -162,10 +236,6 @@ function pinchard_fetch_photo_for_exif(string $filename, string $cdnUrlFull): bo
 		}
 	}
 
-	if ($downloaded) {
-		pinchard_exif_tmp_record_key($filename);
-	}
-
 	return $downloaded && is_readable($tmpPath);
 }
 
@@ -185,7 +255,7 @@ function pinchard_read_photo_exif(string $filename, string $cdnUrlFull): array
 			return [];
 		}
 
-		$read = exif_read_data(pinchard_exif_tmp_path(), null, true);
+		$read = @exif_read_data(pinchard_exif_tmp_path($filename), null, true);
 		return is_array($read) ? $read : [];
 	} catch (Throwable $e) {
 		if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {

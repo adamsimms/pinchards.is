@@ -10,7 +10,7 @@ try {
     $cdnurl = $cfg['cdn_url_thumbnails'];
 
     $array = getObjectList($cfg['s3_bucket_thumbnails']);
-    usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
+    usort($array, fn ($a, $b) => pinchard_photo_sort_key($a) <=> pinchard_photo_sort_key($b));
     $photosByDay = pinchard_group_photos_by_day($array);
     $maxPhotosPerDay = 1;
     foreach ($photosByDay as $dayGroup) {
@@ -19,12 +19,12 @@ try {
     $cloudberryArchiveSpan = pinchard_cloudberry_archive_span($array);
     $galleryDescription = pinchard_cloudberry_gallery_description($cloudberryArchiveSpan);
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {
-    http_response_code(503);
-    header('Content-Type: text/plain; charset=utf-8');
     if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+        http_response_code(503);
+        header('Content-Type: text/plain; charset=utf-8');
         exit($e->getMessage());
     }
-    exit('Photo gallery is temporarily unavailable.');
+    pinchard_unavailable_page('Photo gallery is temporarily unavailable.');
 }
 
 pinchard_layout_head('Cloudberry — Photo Gallery', [
@@ -49,17 +49,28 @@ pinchard_layout_nav(['active' => 'gallery']);
 ?>
     <h1 class="visually-hidden">Cloudberry Photo Gallery</h1>
     <div class="gallery-days-layout" style="--gallery-days-max-photos: <?= (int) $maxPhotosPerDay ?>">
-        <div class="gallery-days-scroll" id="galleryDaysScroll" tabindex="0" aria-label="Photo gallery filmstrip. Drag or scroll horizontally to browse days. Arrow keys move between photographs.">
+<?php
+    $initialFeedLabel = '';
+    foreach ($photosByDay as $dayGroup) {
+        $initialFeedLabel = $dayGroup['feed_label'] ?? '';
+        break;
+    }
+?>
+        <div class="gallery-feed-date" id="galleryFeedDate" aria-live="polite"><?= pinchard_h($initialFeedLabel) ?></div>
+        <div class="gallery-days-scroll" id="galleryDaysScroll" tabindex="0" aria-label="Photo gallery. On phones, scroll vertically by day. On larger screens, drag or scroll horizontally across days. Arrow keys move between photographs.">
             <div class="gallery-days-track" id="galleryDaysTrack">
 <?php foreach ($photosByDay as $dayKey => $dayGroup): ?>
-                <section class="gallery-day-column" id="day-<?= pinchard_h($dayKey) ?>" aria-label="<?= pinchard_h($dayGroup['long_label']) ?>">
-                    <div class="gallery-day-label" title="<?= pinchard_h($dayGroup['long_label']) ?>"><?= pinchard_h($dayGroup['label']) ?></div>
+                <section class="gallery-day-column" id="day-<?= pinchard_h($dayKey) ?>" aria-label="<?= pinchard_h($dayGroup['long_label']) ?>" data-feed-label="<?= pinchard_h($dayGroup['feed_label']) ?>">
+                    <div class="gallery-day-label" title="<?= pinchard_h($dayGroup['long_label']) ?>">
+                        <span class="gallery-day-label-compact"><?= pinchard_h($dayGroup['label']) ?></span>
+                        <span class="gallery-day-label-feed"><?= pinchard_h($dayGroup['feed_label']) ?></span>
+                    </div>
                     <div class="gallery-day-stack">
 <?php foreach ($dayGroup['photos'] as $photo): ?>
                         <a href="index.php?filename=<?= pinchard_h(rawurlencode($photo['filename'])) ?>" class="gallery-day-photo photoBox">
-                            <img class="gallery-photo img-fluid" data-src="<?= pinchard_h($cdnurl . $photo['filename']) ?>" alt="<?= pinchard_h($photo['show_date'] ?? '') ?>" width="288" height="224">
+                            <img class="gallery-photo img-fluid" data-src="<?= pinchard_h($cdnurl . $photo['filename']) ?>" alt="<?= pinchard_h($photo['show_date'] ?? '') ?>" width="288" height="224" decoding="async">
                             <div class="photo-box-caption">
-                                <div class="photo-box-caption-content"><?= pinchard_h(pinchard_show_time($photo['date'])) ?></div>
+                                <div class="photo-box-caption-content"><?= pinchard_h(pinchard_show_time($photo['capture_date'] ?? $photo['date'])) ?></div>
                             </div>
                         </a>
 <?php endforeach; ?>
@@ -81,7 +92,63 @@ pinchard_layout_footer([
                 return;
             }
 
+            var filmstripQuery = window.matchMedia('(min-width: 768px)');
+            var feedDateEl = document.getElementById('galleryFeedDate');
+            var photos = scrollEl.querySelectorAll('.gallery-photo[data-src]');
+            var photoLinks = scrollEl.querySelectorAll('.gallery-day-photo');
+            var columns = scrollEl.querySelectorAll('.gallery-day-column');
+            var isDragging = false;
+            var dragMoved = false;
+            var pendingDrag = null;
+            var fitRaf = 0;
+            var feedDateRaf = 0;
+            var activeFeedLabel = feedDateEl ? feedDateEl.textContent : '';
+
+            function isFilmstrip() {
+                return filmstripQuery.matches;
+            }
+
+            function updateFeedDate() {
+                if (!feedDateEl || isFilmstrip() || !columns.length) {
+                    return;
+                }
+                var scrollTop = scrollEl.scrollTop;
+                var active = columns[0];
+                var showSticky = false;
+                for (var i = 0; i < columns.length; i++) {
+                    var label = columns[i].querySelector('.gallery-day-label');
+                    var labelHeight = label ? label.offsetHeight : 0;
+                    // Once this day's inline label has scrolled away, it owns the sticky bar.
+                    if (columns[i].offsetTop + labelHeight <= scrollTop + 1) {
+                        active = columns[i];
+                        showSticky = true;
+                    } else {
+                        break;
+                    }
+                }
+                feedDateEl.classList.toggle('is-visible', showSticky);
+                if (!showSticky) {
+                    return;
+                }
+                var nextLabel = active.getAttribute('data-feed-label') || '';
+                if (nextLabel && nextLabel !== activeFeedLabel) {
+                    activeFeedLabel = nextLabel;
+                    feedDateEl.textContent = nextLabel;
+                }
+            }
+
+            function scheduleFeedDateUpdate() {
+                if (feedDateRaf) return;
+                feedDateRaf = requestAnimationFrame(function() {
+                    feedDateRaf = 0;
+                    updateFeedDate();
+                });
+            }
+
             function fitPhotoHeights() {
+                if (!isFilmstrip()) {
+                    return;
+                }
                 var styles = getComputedStyle(layout);
                 var maxPhotos = parseInt(styles.getPropertyValue('--gallery-days-max-photos'), 10) || 13;
                 var colPad = parseFloat(styles.getPropertyValue('--gallery-days-column-pad')) || 12;
@@ -95,22 +162,60 @@ pinchard_layout_footer([
                 if (photoHeight < 20) {
                     return;
                 }
+                var columnWidth = Math.round(photoHeight * 288 / 224);
+                var prevHeight = parseFloat(layout.style.getPropertyValue('--gallery-days-photo-height')) || 0;
+                if (Math.abs(photoHeight - prevHeight) < 2 && prevHeight > 0) {
+                    return;
+                }
                 layout.style.setProperty('--gallery-days-photo-height', photoHeight + 'px');
-                layout.style.setProperty('--gallery-days-column-width', Math.round(photoHeight * 288 / 224) + 'px');
+                layout.style.setProperty('--gallery-days-column-width', columnWidth + 'px');
+            }
+
+            function scheduleFitPhotoHeights() {
+                if (!isFilmstrip()) {
+                    return;
+                }
+                if (fitRaf) return;
+                fitRaf = requestAnimationFrame(function() {
+                    fitRaf = 0;
+                    fitPhotoHeights();
+                });
+            }
+
+            function clearFilmstripSizing() {
+                layout.style.removeProperty('--gallery-days-photo-height');
+                layout.style.removeProperty('--gallery-days-column-width');
+            }
+
+            function onFilmstripModeChange() {
+                if (isFilmstrip()) {
+                    fitPhotoHeights();
+                } else {
+                    clearFilmstripSizing();
+                    endDrag();
+                    updateFeedDate();
+                }
             }
 
             fitPhotoHeights();
-            window.addEventListener('resize', fitPhotoHeights);
+            updateFeedDate();
+            window.addEventListener('resize', scheduleFitPhotoHeights);
+            scrollEl.addEventListener('scroll', scheduleFeedDateUpdate, { passive: true });
             if ('ResizeObserver' in window) {
-                new ResizeObserver(fitPhotoHeights).observe(scrollEl);
+                new ResizeObserver(scheduleFitPhotoHeights).observe(scrollEl);
             }
             if (document.fonts && document.fonts.ready) {
-                document.fonts.ready.then(fitPhotoHeights);
+                document.fonts.ready.then(function() {
+                    if (isFilmstrip()) {
+                        fitPhotoHeights();
+                    }
+                });
             }
-
-            var photos = scrollEl.querySelectorAll('.gallery-photo[data-src]');
-            var photoLinks = scrollEl.querySelectorAll('.gallery-day-photo');
-            var columns = scrollEl.querySelectorAll('.gallery-day-column');
+            if (typeof filmstripQuery.addEventListener === 'function') {
+                filmstripQuery.addEventListener('change', onFilmstripModeChange);
+            } else if (typeof filmstripQuery.addListener === 'function') {
+                filmstripQuery.addListener(onFilmstripModeChange);
+            }
 
             function markLoaded(img) {
                 var box = img.closest('.photoBox');
@@ -146,7 +251,11 @@ pinchard_layout_footer([
                             photoObserver.unobserve(entry.target);
                         }
                     });
-                }, { root: scrollEl, rootMargin: '320px 480px' });
+                }, {
+                    root: scrollEl,
+                    // Prefetch well ahead so 3-up rows are warm before they arrive.
+                    rootMargin: isFilmstrip() ? '160px 240px' : '800px 0px'
+                });
                 photos.forEach(function(img) {
                     photoObserver.observe(img);
                 });
@@ -154,18 +263,15 @@ pinchard_layout_footer([
                 photos.forEach(loadPhoto);
             }
 
-            var isDragging = false;
-            var dragMoved = false;
-            var pendingDrag = null;
-
             function endDrag() {
                 isDragging = false;
                 pendingDrag = null;
                 scrollEl.classList.remove('is-dragging');
             }
 
+            // Mouse-only drag-to-scroll on the desktop filmstrip.
             scrollEl.addEventListener('pointerdown', function(e) {
-                if (e.button !== 0) return;
+                if (!isFilmstrip() || e.pointerType !== 'mouse' || e.button !== 0) return;
                 pendingDrag = {
                     startX: e.clientX,
                     scrollLeft: scrollEl.scrollLeft,
@@ -176,7 +282,7 @@ pinchard_layout_footer([
             });
 
             scrollEl.addEventListener('pointermove', function(e) {
-                if (!pendingDrag || e.pointerId !== pendingDrag.pointerId) return;
+                if (!isFilmstrip() || !pendingDrag || e.pointerId !== pendingDrag.pointerId) return;
                 var delta = e.clientX - pendingDrag.startX;
                 if (!isDragging) {
                     if (Math.abs(delta) <= 4) return;
@@ -221,6 +327,7 @@ pinchard_layout_footer([
             });
 
             scrollEl.addEventListener('wheel', function(e) {
+                if (!isFilmstrip()) return;
                 var delta = e.deltaX;
                 if (e.shiftKey && e.deltaY !== 0) {
                     delta = e.deltaY;
@@ -255,14 +362,18 @@ pinchard_layout_footer([
                 target.classList.add('is-keyboard-focus');
                 target.setAttribute('tabindex', '0');
                 target.focus({ preventScroll: true });
-                var colLeft = col.offsetLeft;
-                var colRight = colLeft + col.offsetWidth;
-                var viewLeft = scrollEl.scrollLeft;
-                var viewRight = viewLeft + scrollEl.clientWidth;
-                if (colLeft < viewLeft) {
-                    scrollEl.scrollTo({ left: colLeft, behavior: 'smooth' });
-                } else if (colRight > viewRight) {
-                    scrollEl.scrollTo({ left: colRight - scrollEl.clientWidth, behavior: 'smooth' });
+                if (isFilmstrip()) {
+                    var colLeft = col.offsetLeft;
+                    var colRight = colLeft + col.offsetWidth;
+                    var viewLeft = scrollEl.scrollLeft;
+                    var viewRight = viewLeft + scrollEl.clientWidth;
+                    if (colLeft < viewLeft) {
+                        scrollEl.scrollTo({ left: colLeft, behavior: 'smooth' });
+                    } else if (colRight > viewRight) {
+                        scrollEl.scrollTo({ left: colRight - scrollEl.clientWidth, behavior: 'smooth' });
+                    }
+                } else {
+                    target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
                 }
             }
 
@@ -278,6 +389,9 @@ pinchard_layout_footer([
             }
 
             scrollEl.addEventListener('keydown', function(e) {
+                if (!isFilmstrip()) {
+                    return;
+                }
                 var pos = focusedPosition();
                 if (document.activeElement !== scrollEl && !document.activeElement.classList.contains('gallery-day-photo')) {
                     focusPhoto(0, 0);
@@ -300,6 +414,9 @@ pinchard_layout_footer([
             });
 
             scrollEl.addEventListener('focus', function() {
+                if (!isFilmstrip()) {
+                    return;
+                }
                 if (!document.activeElement.classList.contains('gallery-day-photo')) {
                     focusPhoto(0, 0);
                 }
@@ -309,9 +426,14 @@ pinchard_layout_footer([
                 if (!target) return;
                 var dayIndex = Array.prototype.indexOf.call(columns, target);
                 requestAnimationFrame(function() {
-                    scrollEl.scrollTo({ left: target.offsetLeft, behavior: 'auto' });
-                    if (dayIndex >= 0) {
-                        focusPhoto(dayIndex, 0);
+                    if (isFilmstrip()) {
+                        scrollEl.scrollTo({ left: target.offsetLeft, behavior: 'auto' });
+                        if (dayIndex >= 0) {
+                            focusPhoto(dayIndex, 0);
+                        }
+                    } else {
+                        scrollEl.scrollTop = target.offsetTop;
+                        updateFeedDate();
                     }
                 });
             }

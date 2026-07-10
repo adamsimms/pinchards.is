@@ -8,6 +8,88 @@ function pinchard_h(?string $value): string
 	return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * Minimal branded unavailable page (503 by default) with a quiet CSS fade-in.
+ * Used when gallery/S3/config cannot serve the requested surface.
+ */
+function pinchard_unavailable_page(string $message, int $status = 503): never
+{
+	http_response_code($status);
+	header('Content-Type: text/html; charset=utf-8');
+	$title = pinchard_h('Cloudberry — Unavailable');
+	$body = pinchard_h($message);
+	echo <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>{$title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; margin: 0; }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "DM Sans", sans-serif;
+            background: #0a0a0a;
+            color: rgba(255, 255, 255, 0.88);
+            text-align: center;
+            padding: 24px;
+        }
+        .pinchard-empty-state {
+            max-width: 28rem;
+            opacity: 0;
+            animation: pinchard-empty-in 0.7s ease forwards;
+        }
+        .pinchard-empty-state a {
+            color: #F05F40;
+            text-decoration: none;
+        }
+        .pinchard-empty-state a:hover,
+        .pinchard-empty-state a:focus {
+            text-decoration: underline;
+        }
+        .pinchard-empty-brand {
+            display: block;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        .pinchard-empty-message {
+            font-size: 1.05rem;
+            line-height: 1.55;
+            margin: 0 0 1.25rem;
+        }
+        @keyframes pinchard-empty-in {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .pinchard-empty-state {
+                animation: none;
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pinchard-empty-state">
+        <span class="pinchard-empty-brand">Cloudberry</span>
+        <p class="pinchard-empty-message">{$body}</p>
+        <p><a href="/index.php">Back to photographs</a></p>
+    </div>
+</body>
+</html>
+HTML;
+	exit;
+}
+
 /** Google Fonts link tags for DM Sans (body + headings). */
 function pinchard_fonts_head_html(): string
 {
@@ -37,10 +119,46 @@ function pinchard_mapbox_gl_js(): string
 	return '    <script src="https://api.mapbox.com/mapbox-gl-js/v' . $version . '/mapbox-gl.js"></script>';
 }
 
-/** Short display date for gallery captions and timeline (e.g. March 1 @ 18:09). */
+/** Short display date for gallery captions and timeline (e.g. MAR · 18:09). */
 function pinchard_show_date(DateTime $dt): string
 {
-	return $dt->format('F j @ H:i');
+	return strtoupper($dt->format('M')) . ' · ' . $dt->format('H:i');
+}
+
+/** Long display date for the photo detail drawer (e.g. Thursday, March 1st, 2018 @ 6:07 PM). */
+function pinchard_format_photo_long_date(DateTime $dt): string
+{
+	return $dt->format('l, F jS, Y @ g:i A');
+}
+
+/** @return DateTime|null */
+function pinchard_parse_stored_photo_datetime(string $datetime): ?DateTime
+{
+	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
+
+	return $dt instanceof DateTime ? $dt : null;
+}
+
+/**
+ * Resolve capture time for display — always prefer EXIF DateTimeOriginal.
+ *
+ * S3 keys look like UTC (`...T18:09:20.000Z_...`) but for most of the archive the
+ * wall-clock matches the GoPro. Near the end, many keys are a bulk-download stamp
+ * (same minute) while EXIF still has the real hourly capture times.
+ *
+ * @param array<string, mixed> $exif
+ */
+function pinchard_photo_capture_datetime(string $filenameDatetime, array $exif): ?DateTime
+{
+	$exifRaw = $exif['EXIF']['DateTimeOriginal'] ?? $exif['IFD0']['DateTime'] ?? null;
+	if (is_string($exifRaw) && $exifRaw !== '') {
+		$fromExif = DateTime::createFromFormat('Y:m:d H:i:s', $exifRaw);
+		if ($fromExif instanceof DateTime) {
+			return $fromExif;
+		}
+	}
+
+	return pinchard_parse_stored_photo_datetime($filenameDatetime);
 }
 
 /** Time-only label for compact gallery overlays (e.g. 18:09). */
@@ -185,17 +303,46 @@ function pinchard_json_ld_script(array $nodes): string
 }
 
 /**
+ * Datetime used for gallery day/month columns — EXIF capture when cached, else filename.
+ *
+ * @param array{filename?: string, date?: string, capture_date?: string} $photo
+ */
+function pinchard_photo_grouping_datetime(array $photo): ?DateTime
+{
+	$raw = $photo['capture_date'] ?? $photo['date'] ?? '';
+	if (!is_string($raw) || $raw === '') {
+		return null;
+	}
+
+	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $raw);
+
+	return $dt instanceof DateTime ? $dt : null;
+}
+
+/**
+ * Sort key for archive order — EXIF capture when cached, else filename stamp.
+ *
+ * @param array{date?: string, capture_date?: string} $photo
+ */
+function pinchard_photo_sort_key(array $photo): string
+{
+	$raw = $photo['capture_date'] ?? $photo['date'] ?? '';
+
+	return is_string($raw) ? $raw : '';
+}
+
+/**
  * Group photos chronologically by Y-m month key.
  *
- * @param list<array{filename: string, date: string, show_date?: string}> $photos
- * @return array<string, array{label: string, photos: list<array{filename: string, date: string, show_date?: string}>}>
+ * @param list<array{filename: string, date: string, show_date?: string, capture_date?: string}> $photos
+ * @return array<string, array{label: string, photos: list<array{filename: string, date: string, show_date?: string, capture_date?: string}>}>
  */
 function pinchard_group_photos_by_month(array $photos): array
 {
 	$photosByMonth = [];
 	foreach ($photos as $photo) {
-		$dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
-		if ($dt === false) {
+		$dt = pinchard_photo_grouping_datetime($photo);
+		if ($dt === null) {
 			continue;
 		}
 		$monthKey = $dt->format('Y-m');
@@ -214,21 +361,22 @@ function pinchard_group_photos_by_month(array $photos): array
 /**
  * Group photos chronologically by calendar day (Y-m-d).
  *
- * @param list<array{filename: string, date: string, show_date?: string}> $photos
- * @return array<string, array{label: string, long_label: string, month_key: string, photos: list<array{filename: string, date: string, show_date?: string}>}>
+ * @param list<array{filename: string, date: string, show_date?: string, capture_date?: string}> $photos
+ * @return array<string, array{label: string, feed_label: string, long_label: string, month_key: string, photos: list<array{filename: string, date: string, show_date?: string, capture_date?: string}>}>
  */
 function pinchard_group_photos_by_day(array $photos): array
 {
 	$photosByDay = [];
 	foreach ($photos as $photo) {
-		$dt = DateTime::createFromFormat('Y/m/d H:i:s', $photo['date']);
-		if ($dt === false) {
+		$dt = pinchard_photo_grouping_datetime($photo);
+		if ($dt === null) {
 			continue;
 		}
 		$dayKey = $dt->format('Y-m-d');
 		if (!isset($photosByDay[$dayKey])) {
 			$photosByDay[$dayKey] = [
 				'label' => $dt->format('M j'),
+				'feed_label' => strtoupper($dt->format('F')) . ' ' . $dt->format('j') . ' • ' . $dt->format('Y'),
 				'day_number' => $dt->format('j'),
 				'long_label' => $dt->format('F j, Y'),
 				'month_key' => $dt->format('Y-m'),
@@ -546,7 +694,7 @@ function pinchard_cloudberry_cabin_coords(): array
 	];
 }
 
-/** Default view for /maps/satellite/ — island and Bonavista Bay context. */
+/** Default view for /maps/ — island and Bonavista Bay context. */
 function pinchard_pinchards_island_satellite_view(): array
 {
 	return [

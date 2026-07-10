@@ -29,8 +29,7 @@ try {
     usort($array, fn ($a, $b) => $a['date'] <=> $b['date']);
 
     if ($array === []) {
-        http_response_code(503);
-        exit('Photo gallery is empty or temporarily unavailable.');
+        pinchard_unavailable_page('Photo gallery is empty or temporarily unavailable.');
     }
 
     $resolved = pinchard_resolve_gallery_photo($array, $requestedFn);
@@ -149,8 +148,17 @@ try {
         $gps_altitude = pinchard_cloudberry_gps_defaults()['altitude'];
     }
 
-    $dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
-    $converted_date = $dt !== false ? $dt->format('l, F jS, Y @ g:i A') : pinchard_h($datetime);
+    $captureDt = pinchard_photo_capture_datetime($datetime, $exif);
+    $exifRaw = $exif['EXIF']['DateTimeOriginal'] ?? $exif['IFD0']['DateTime'] ?? null;
+    if ($captureDt !== null && is_string($exifRaw) && $exifRaw !== '') {
+        pinchard_exif_dates_cache_put($filename, $captureDt);
+    }
+    $converted_date = $captureDt !== null
+        ? pinchard_format_photo_long_date($captureDt)
+        : pinchard_h($datetime);
+    $timelineDateLabel = $captureDt !== null
+        ? pinchard_show_date($captureDt)
+        : ($content['show_date'] ?? $datetime);
 
     $pinchardMapboxToken = pinchard_env_non_empty('MAPBOX_ACCESS_TOKEN');
     $cabinCoords = pinchard_cloudberry_cabin_coords();
@@ -159,8 +167,8 @@ try {
     $mapJe = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 
     $imageUrl = $cdnFull . $filename;
-    $ogDescription = $dt !== false
-        ? 'Photograph from Pinchard\'s Island — ' . $dt->format('F j, Y \a\t g:i A') . '.'
+    $ogDescription = $captureDt !== null
+        ? 'Photograph from Pinchard\'s Island — ' . $captureDt->format('F j, Y \a\t g:i A') . '.'
         : 'Photograph from Pinchard\'s Island.';
     $photoAlt = pinchard_photo_alt_text($datetime);
     $photoCitation = pinchard_citation_photo($filename, $datetime);
@@ -178,7 +186,7 @@ try {
         'name' => 'Cloudberry — ' . pinchard_photo_title($filename),
         'description' => $ogDescription,
         'contentUrl' => $imageUrl,
-        'dateCreated' => $dt !== false ? $dt->format(DateTime::ATOM) : null,
+        'dateCreated' => $captureDt !== null ? $captureDt->format(DateTime::ATOM) : null,
         'creator' => [
             '@type' => 'Person',
             'name' => 'Adam Simms',
@@ -222,23 +230,20 @@ try {
 
     pinchard_layout_nav(['active' => 'index']);
 } catch (Throwable $e) {
-    http_response_code($e instanceof \Aws\Exception\AwsException || $e instanceof RuntimeException ? 503 : 500);
-    header('Content-Type: text/plain; charset=utf-8');
     if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
+        http_response_code($e instanceof \Aws\Exception\AwsException || $e instanceof RuntimeException ? 503 : 500);
+        header('Content-Type: text/plain; charset=utf-8');
         exit($e->getMessage());
     }
-    exit('Photo viewer is temporarily unavailable.');
+    pinchard_unavailable_page(
+        'Photo viewer is temporarily unavailable.',
+        $e instanceof \Aws\Exception\AwsException || $e instanceof RuntimeException ? 503 : 500
+    );
 }
 ?>
     <h1 class="visually-hidden"><?= pinchard_h('Cloudberry — ' . pinchard_photo_title($filename)) ?></h1>
     <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse. Timeline scrubber below jumps through the archive.">
-<?php if ($galleryContext !== null): ?>
-        <div class="photo-context-nav">
-            <a href="<?= pinchard_h($galleryContext['gallery_url']) ?>">Gallery &rarr; <?= pinchard_h($galleryContext['label']) ?></a>
-        </div>
-<?php endif; ?>
-        <div class="photo-placeholder" data-large="<?= pinchard_h($imageUrl) ?>" id="preview_image">
-            <img src="images/photo/thumbnail.jpg" class="img-small" alt="<?= pinchard_h($photoAlt) ?>">
+        <div class="photo-placeholder" data-large="<?= pinchard_h($imageUrl) ?>" data-alt="<?= pinchard_h($photoAlt) ?>" id="preview_image">
             <div style="padding-bottom: 66.6%;"></div>
         </div>
 
@@ -254,7 +259,8 @@ try {
 <?php
     $timelineCount = count($viewerTimeline['entries']);
     $timelinePosition = $viewerTimeline['index'] + 1;
-    $timelineDate = $viewerTimeline['entries'][$viewerTimeline['index']]['d'];
+    $timelineDate = $timelineDateLabel;
+    $viewerTimeline['entries'][$viewerTimeline['index']]['d'] = $timelineDate;
     $timelineAria = pinchard_h('Photograph ' . $timelinePosition . ' of ' . $timelineCount . ', ' . $timelineDate);
 ?>
                 <nav class="viewer-timeline" id="viewerTimeline" aria-label="Photograph timeline">
@@ -324,7 +330,7 @@ try {
 <?php if ($pinchardMapboxToken !== null && str_starts_with($pinchardMapboxToken, 'pk.')): ?>
                 <div id="photoMap" role="img" aria-label="Map showing photograph location"></div>
 <?php elseif ($hasGps): ?>
-                <p class="text-muted">Map unavailable.</p>
+                <p class="text-muted pinchard-empty-state">Map unavailable.</p>
 <?php endif; ?>
             </div>
             </div>
@@ -339,7 +345,8 @@ $footerScripts = <<<'JS'
             cdnUrl: CDN_URL,
             filenames: VIEWER_FILENAMES,
             currentIndex: VIEWER_CURRENT_INDEX,
-            fadeMs: 500,
+            fadeMs: 400,
+            introFadeMs: 700,
             prevUrl: PREV_URL,
             nextUrl: NEXT_URL,
             prefetch: PRELOAD_URLS,

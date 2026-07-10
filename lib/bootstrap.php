@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Pinchard core bootstrap: error defaults, optional local AWS env, Composer autoload, S3 client, helpers.
- * Minisites continue to load this via ../functions_inc.php (shim at repo root).
+ * Mini-sites that need S3 (e.g. jam/) require lib/bootstrap.php; jam/ also loads lib/jam.php.
  */
 
 require_once __DIR__ . '/env.php';
@@ -57,24 +57,42 @@ if ($awsKey !== null && $awsSecret !== null) {
 	if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
 		throw new RuntimeException($msg);
 	}
-	http_response_code(503);
-	header('Content-Type: text/plain; charset=utf-8');
-	exit('Photo service is temporarily unavailable.');
+	pinchard_unavailable_page('Photo service is temporarily unavailable.');
 }
 
 $s3 = new S3Client($s3Config);
+
+/**
+ * Recompute show_date from the stored timestamp so format changes apply
+ * even when the S3 list cache still has older labels.
+ *
+ * @param list<array{filename: string, date: string, show_date?: string}> $photos
+ * @return list<array{filename: string, date: string, show_date: string}>
+ */
+function pinchard_refresh_photo_show_dates(array $photos): array
+{
+	foreach ($photos as &$photo) {
+		$dt = DateTime::createFromFormat('Y/m/d H:i:s', (string) ($photo['date'] ?? ''));
+		if ($dt !== false) {
+			$photo['show_date'] = pinchard_show_date($dt);
+		}
+	}
+	unset($photo);
+
+	return $photos;
+}
 
 function getObjectList(string $bucket): array
 {
 	$cached = pinchard_s3_list_cache_read($bucket);
 	if ($cached !== null) {
-		return $cached;
+		return pinchard_apply_exif_dates_to_photos(pinchard_refresh_photo_show_dates($cached));
 	}
 
 	$array = pinchard_s3_fetch_object_list($bucket);
 	pinchard_s3_list_cache_write($bucket, $array);
 
-	return $array;
+	return pinchard_apply_exif_dates_to_photos($array);
 }
 
 function pinchard_s3_fetch_object_list(string $bucket): array
@@ -135,5 +153,3 @@ function pinchard_s3_fetch_object_list(string $bucket): array
 	}
 	return $array;
 }
-
-require_once __DIR__ . '/jam.php';

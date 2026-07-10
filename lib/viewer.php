@@ -134,8 +134,15 @@ function pinchard_viewer_photo_payload(
 	}
 	$cameraLines[] = $resolutionLine;
 
-	$dt = DateTime::createFromFormat('Y/m/d H:i:s', $datetime);
-	$converted_date = $dt !== false ? $dt->format('l, F jS, Y @ g:i A') : pinchard_h($datetime);
+	$captureDt = pinchard_photo_capture_datetime($datetime, $exif);
+	$exifRaw = $exif['EXIF']['DateTimeOriginal'] ?? $exif['IFD0']['DateTime'] ?? null;
+	if ($captureDt !== null && is_string($exifRaw) && $exifRaw !== '') {
+		pinchard_exif_dates_cache_put($filename, $captureDt);
+	}
+	$converted_date = $captureDt !== null
+		? pinchard_format_photo_long_date($captureDt)
+		: pinchard_h($datetime);
+	$show_date = $captureDt !== null ? pinchard_show_date($captureDt) : ($content['show_date'] ?? $datetime);
 
 	$alt_array = explode('/', (string) $gps_altitude);
 	if (count($alt_array) === 2 && (float) $alt_array[1] !== 0.0) {
@@ -179,6 +186,7 @@ function pinchard_viewer_photo_payload(
 		'photoTitle' => pinchard_photo_title($filename),
 		'photoAlt' => pinchard_photo_alt_text($datetime),
 		'convertedDate' => $converted_date,
+		'showDate' => $show_date,
 		'cameraLinesHtml' => implode('<br>', $cameraLines),
 		'gpsHtml' => $gpsHtml,
 		'citation' => pinchard_citation_photo($filename, $datetime),
