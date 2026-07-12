@@ -195,5 +195,8 @@ jobs:
             --exclude 'dory/' \
             --exclude 'waves/' \
             --exclude 'secrets.local.php' \
+            --exclude 'node_modules/' \
+            --exclude 'images/photo/.cache/' \
+            --exclude '.DS_Store' \
             -e "ssh -i ${HOME}/.ssh/deploy_key -o BatchMode=yes -p 22 -l ${user}" \
             ./ "${dest}"
