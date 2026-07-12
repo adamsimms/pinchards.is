@@ -80,3 +80,35 @@ Set **`PINCHARD_DEBUG=1`** in `secrets.local.php` only when debugging (enables `
 
 - **Cost:** Revisit a small VPS (e.g. Hetzner / DigitalOcean droplet) as a potentially cheaper alternative to DreamHost for PHP + low traffic.
 - **Cloudflare:** Static site + Pages Functions / Workers could replace PHP long term; needs a dedicated test pass before migrating.
+
+## PHP version (DreamHost)
+
+DreamHost’s panel no longer offers PHP 8.1 (EOL). Use **PHP 8.3** (or 8.2+) for `www.pinchards.is` in DreamPanel → Manage Websites. Composer requires `>=8.2`; CI and deploy workflows run on 8.3. After changing the panel version, hit the viewer and gallery once to confirm EXIF and S3 still work.
+
+## Cloudflare (edge)
+
+Cloudflare sits in front of DreamHost. App-level headers live in root `.htaccess` (nosniff, frame options, referrer policy, **Content-Security-Policy-Report-Only**, CSS/JS cache). Prefer documenting panel changes here when you change them:
+
+| Setting | Expected / notes |
+|---------|------------------|
+| SSL/TLS | Full (strict) once DreamHost has a valid cert |
+| Always Use HTTPS | On |
+| Auto Minify | Off for HTML if it ever mangles PHP output; CSS/JS minify optional |
+| Cache Level | Standard; HTML from origin; static assets use short `Cache-Control` + `?v=` busting |
+| Rocket Loader | Off (conflicts with Mapbox / gallery scripts) |
+| Email Obfuscation / Scraping Protection | Optional; test About page if enabled |
+| Analytics | Prefer Cloudflare Web Analytics (auto-inject) over app-side tags |
+| Security headers | CSP is report-only in `.htaccess` first; promote to enforce after reviewing reports. HSTS is typically enabled in the Cloudflare SSL/TLS → Edge Certificates panel (not duplicated in `.htaccess`). |
+
+Image bytes are served from CloudFront (`lib/config.php`), not from the DreamHost document root — Cloudflare mainly caches the HTML/CSS/JS shell.
+
+## Disk / EXIF cache on the server
+
+Full-resolution EXIF scratch files must not accumulate. Production uses `images/photo/.cache/exif-meta/` (small JSON) and deletes JPEGs after extraction. If an old `exif-tmp/` tree is still large on DreamHost, SSH in once and run:
+
+```bash
+cd /path/to/pinchards.is
+php scripts/prune-exif-tmp.php --all
+```
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full cache layout.

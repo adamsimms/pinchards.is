@@ -1,0 +1,42 @@
+# PR quality gate — lint PHP and validate Composer before merge.
+# Deploy still runs only on push to main (see deploy.yml).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: PHP syntax check
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(find . -name '*.php' \
+            -not -path './vendor/*' \
+            -not -path './.git/*' \
+            | sort)
+          echo "Linting ${#files[@]} PHP files…"
+          for f in "${files[@]}"; do
+            php -l "$f" >/dev/null
+          done
+          echo "OK"

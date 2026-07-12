@@ -261,8 +261,18 @@
         return 240;
     }
 
+    function setViewerUnderlay(parent, src) {
+        if (!parent || !src) {
+            return;
+        }
+        parent.style.backgroundImage = 'url("' + String(src).replace(/"/g, '\\"') + '")';
+        parent.style.backgroundSize = 'cover';
+        parent.style.backgroundPosition = 'center';
+        parent.style.backgroundRepeat = 'no-repeat';
+    }
+
     function crossfadeViewer(oldImg, newImg, direction, durationMs) {
-        var duration = Math.max(0, (durationMs || 400) / 1000);
+        var duration = Math.max(0, (durationMs || 1000) / 1000);
         var parent = newImg && newImg.parentNode;
 
         if (!available || duration === 0) {
@@ -274,39 +284,43 @@
                 oldImg.parentNode.removeChild(oldImg);
             }
             if (parent && newImg && newImg.src) {
-                parent.style.backgroundImage = 'url("' + newImg.src.replace(/"/g, '\\"') + '")';
+                setViewerUnderlay(parent, newImg.src);
             }
             return Promise.resolve();
         }
 
-        // Keep a full-bleed underlay (outgoing photo as background) so nothing
-        // behind the stack can flash through while the new image fades in.
+        // Overlay dissolve only: outgoing stays fully opaque underneath.
+        // Never fade both at once — that lets the white placeholder flash through.
         if (parent && oldImg && oldImg.src) {
-            parent.style.backgroundImage = 'url("' + oldImg.src.replace(/"/g, '\\"') + '")';
-            parent.style.backgroundSize = 'cover';
-            parent.style.backgroundPosition = 'center';
+            setViewerUnderlay(parent, oldImg.src);
         }
 
         if (oldImg) {
-            gsap.set(oldImg, { opacity: 1, zIndex: 1 });
+            gsap.killTweensOf(oldImg);
+            gsap.set(oldImg, { opacity: 1, zIndex: 1, visibility: 'visible' });
+            oldImg.classList.add('loaded');
+            oldImg.style.opacity = '1';
         }
-        gsap.set(newImg, { opacity: 0, zIndex: 2, force3D: true });
+
+        gsap.killTweensOf(newImg);
         newImg.classList.add('loaded');
+        newImg.style.zIndex = '2';
 
         return new Promise(function (resolve) {
-            gsap.to(newImg, {
+            gsap.fromTo(newImg, { opacity: 0 }, {
                 opacity: 1,
                 duration: duration,
-                ease: 'sine.out',
+                ease: 'power1.inOut',
                 onComplete: function () {
                     if (oldImg && oldImg.parentNode) {
                         oldImg.parentNode.removeChild(oldImg);
                     }
                     if (parent && newImg.src) {
-                        parent.style.backgroundImage = 'url("' + newImg.src.replace(/"/g, '\\"') + '")';
+                        setViewerUnderlay(parent, newImg.src);
                     }
                     // Keep inline opacity:1 — clearing it re-triggers CSS and flashes.
-                    gsap.set(newImg, { zIndex: 2, opacity: 1 });
+                    newImg.style.opacity = '1';
+                    newImg.style.zIndex = '2';
                     resolve();
                 }
             });

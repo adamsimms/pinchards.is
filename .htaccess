@@ -7,6 +7,9 @@
 	Header set X-Content-Type-Options "nosniff"
 	Header set X-Frame-Options "SAMEORIGIN"
 	Header set Referrer-Policy "strict-origin-when-cross-origin"
+	# Report-only CSP — tighten to enforce after Cloudflare/report review.
+	# unsafe-inline remains until inline Mapbox/viewer bootstraps move to external files.
+	Header set Content-Security-Policy-Report-Only "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; img-src 'self' data: blob: https://d3kq73uimqeic8.cloudfront.net https://d35wkpjsrmtk40.cloudfront.net https://*.mapbox.com https://api.mapbox.com https://events.mapbox.com https://i.vimeocdn.com https://*.vimeocdn.com https://*.google.com https://*.googleapis.com https://*.gstatic.com; media-src 'self' https://d3kq73uimqeic8.cloudfront.net https://d35wkpjsrmtk40.cloudfront.net https://player.vimeo.com; script-src 'self' 'unsafe-inline' https://api.mapbox.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.mapbox.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://api.mapbox.com https://*.mapbox.com https://events.mapbox.com https://d3kq73uimqeic8.cloudfront.net https://d35wkpjsrmtk40.cloudfront.net; worker-src 'self' blob:; child-src 'self' blob: https://player.vimeo.com https://www.google.com https://www.google.com/maps; frame-src 'self' https://player.vimeo.com https://www.google.com https://www.google.com/maps https://maps.google.com;"
 	# Prefer short TTL + query-string busting over month-long static caches.
 	<FilesMatch "\.(css|js)$">
 		Header set Cache-Control "public, max-age=86400, must-revalidate"

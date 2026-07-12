@@ -19,11 +19,15 @@ declare(strict_types=1);
  *   convertedDate: string,
  *   cameraLinesHtml: string,
  *   gpsHtml: string,
+ *   weatherHtml: string,
  *   citation: string,
  *   mapLat: float,
  *   mapLon: float,
  *   hasGps: bool,
  *   timelineIndex: ?int,
+ *   archiveDate: string,
+ *   captureDateIso: ?string,
+ *   ogDescription: string,
  * }
  */
 function pinchard_viewer_photo_payload(
@@ -177,6 +181,13 @@ function pinchard_viewer_photo_payload(
 	$mapLat = $hasGps ? (float) $lat : $cabinCoords['lat'];
 	$mapLon = $hasGps ? (float) $lon : $cabinCoords['lon'];
 
+	$weather = pinchard_weather_for_capture($captureDt);
+	$weatherHtml = $weather['html'] ?? '';
+
+	$ogDescription = $captureDt !== null
+		? 'Photograph from Pinchard\'s Island — ' . $captureDt->format('F j, Y \a\t g:i A') . '.'
+		: 'Photograph from Pinchard\'s Island.';
+
 	return [
 		'filename' => $filename,
 		'imageUrl' => $cdnFull . $filename,
@@ -189,10 +200,14 @@ function pinchard_viewer_photo_payload(
 		'showDate' => $show_date,
 		'cameraLinesHtml' => implode('<br>', $cameraLines),
 		'gpsHtml' => $gpsHtml,
+		'weatherHtml' => $weatherHtml,
 		'citation' => pinchard_citation_photo($filename, $datetime),
 		'mapLat' => $mapLat,
 		'mapLon' => $mapLon,
 		'hasGps' => $hasGps,
 		'timelineIndex' => $timelineIndex,
+		'archiveDate' => $datetime,
+		'captureDateIso' => $captureDt !== null ? $captureDt->format(DateTime::ATOM) : null,
+		'ogDescription' => $ogDescription,
 	];
 }

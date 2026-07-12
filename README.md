@@ -46,14 +46,14 @@ Open [http://localhost:8080](http://localhost:8080). Map pages also need optiona
 | **Public assets** | `css/`, `js/`, `images/`, `favicon/`. `vendor/` is generated locally and in CI (not committed) — Bootstrap CSS plus GSAP + ScrollTrigger via `npm run vendor:frontend`. |
 | **Source / design** | Edit `css/pinchard.css` for theme styles. `design/` holds Sketch/SVG sources (not served). |
 | **Mini-sites** | `jam/` (fullscreen exhibition slideshow), `maps/` (Mapbox satellite + Google My Maps embeds), `light-house/` (Vimeo). Legacy `/map/`, `/trees/`, `/resettled/` redirect to `/maps/…`. |
-| **Scripts** | `scripts/vendor-frontend.js` copies Bootstrap/GSAP into `vendor/`. `scripts/cache-exif-dates.php` backfills capture dates from EXIF into `images/photo/.cache/` (needs AWS credentials). |
-| **Docs** | [docs/DEPLOY.md](docs/DEPLOY.md) — SSH keys, GitHub Actions secrets, hosting notes. |
+| **Scripts** | `scripts/vendor-frontend.js` copies Bootstrap/GSAP into `vendor/`. `scripts/cache-exif-dates.php` backfills capture dates from EXIF into `images/photo/.cache/`. `scripts/prune-exif-tmp.php` clears leftover EXIF temp JPEGs. |
+| **Docs** | [docs/DEPLOY.md](docs/DEPLOY.md) — SSH keys, GitHub Actions secrets, hosting notes. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — S3/EXIF/viewer data flow. [docs/PRODUCT.md](docs/PRODUCT.md) — closed-archive product boundary vs practice research. |
 
 Related projects on the live server (separate repos): [Adrift](https://github.com/adamsimms/adrift), [Dory](https://github.com/adamsimms/dory), [Waves](https://github.com/adamsimms/waves).
 
 ## Local development
 
-**Requirements:** PHP 8.1+, Composer, Node.js 20+ (for frontend vendor copies).
+**Requirements:** PHP 8.2+, Composer, Node.js 20+ (for frontend vendor copies).
 
 1. Clone the repo.
 2. Copy `secrets.local.php.example` → `secrets.local.php` in the repo root and add AWS keys (required for gallery) plus optional map tokens.

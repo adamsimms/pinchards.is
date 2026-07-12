@@ -3,13 +3,13 @@
     "description": "Pinchards.is — S3 photo gallery and minisites",
     "license": "MIT",
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "aws/aws-sdk-php": "^3.271"
     },
     "config": {
         "sort-packages": true,
         "platform": {
-            "php": "8.1.0"
+            "php": "8.2.0"
         }
     }
 }

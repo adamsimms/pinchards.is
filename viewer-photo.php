@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/lib/bootstrap.php';
-require_once __DIR__ . '/lib/viewer.php';
 
 pinchard_rate_limit('viewer-photo', 600, 3600);
 

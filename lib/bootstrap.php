@@ -19,6 +19,8 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/s3_cache.php';
+require_once __DIR__ . '/weather.php';
+require_once __DIR__ . '/viewer.php';
 
 function pinchard_root(): string
 {

@@ -7,7 +7,7 @@
     }
 
     var motion = window.pinchardMotion;
-    var FADE_MS = cfg.fadeMs != null ? cfg.fadeMs : 400;
+    var FADE_MS = cfg.fadeMs != null ? cfg.fadeMs : 1000;
     var INTRO_FADE_MS = cfg.introFadeMs != null ? cfg.introFadeMs : 700;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         FADE_MS = 0;
@@ -25,6 +25,8 @@
     var dateEl = document.getElementById('viewerPhotoDate');
     var cameraEl = document.getElementById('viewerCameraLines');
     var gpsEl = document.getElementById('viewerGpsLines');
+    var weatherArea = document.getElementById('viewerWeatherArea');
+    var weatherEl = document.getElementById('viewerWeatherLines');
     var citationBtn = document.querySelector('.detail-citation-copy');
     var hiddenTitle = document.querySelector('.viewer-page h1.visually-hidden');
 
@@ -210,6 +212,20 @@
                 gpsEl.innerHTML = payload.gpsHtml;
             }
         }
+        if (weatherEl && weatherArea) {
+            var weatherHtml = typeof payload.weatherHtml === 'string' ? payload.weatherHtml : '';
+            if (weatherHtml === '') {
+                weatherArea.classList.add('is-hidden');
+                weatherEl.innerHTML = '';
+            } else {
+                weatherArea.classList.remove('is-hidden');
+                if (canFade && typeof motion.fadeHtml === 'function') {
+                    motion.fadeHtml(weatherEl, weatherHtml);
+                } else {
+                    weatherEl.innerHTML = weatherHtml;
+                }
+            }
+        }
         if (citationBtn) {
             citationBtn.setAttribute('data-citation', payload.citation);
         }
@@ -268,72 +284,106 @@
             });
     }
 
+    function waitForImagePaint(img) {
+        if (!img) {
+            return Promise.resolve();
+        }
+        if (typeof img.decode === 'function') {
+            return img.decode().catch(function() {
+                return null;
+            });
+        }
+        if (img.complete && img.naturalWidth > 0) {
+            return Promise.resolve();
+        }
+        return new Promise(function(resolve) {
+            img.onload = function() { resolve(); };
+            img.onerror = function() { resolve(); };
+        });
+    }
+
     function crossfadeTo(url, alt) {
         return preloadUrl(url).then(function() {
+            var old = currentMainImg;
+
+            // Pin the current photo (and underlay) before the next layer appears,
+            // so the white placeholder never shows through the dissolve.
+            if (old && old.src) {
+                setPlaceholderUnderlay(old.src);
+                if (motion && motion.available && motion.gsap) {
+                    motion.gsap.killTweensOf(old);
+                }
+                old.classList.add('loaded');
+                old.style.opacity = '1';
+                old.style.zIndex = '1';
+            }
+
             var newImg = document.createElement('img');
             newImg.src = url;
             newImg.alt = alt;
             newImg.className = 'viewer-photo-main';
-            // Hide before insert so the first paint cannot flash white.
             newImg.style.opacity = '0';
             newImg.style.zIndex = '2';
             placeholder.appendChild(newImg);
 
-            var old = currentMainImg;
-            var useMotion = motion && motion.available && typeof motion.crossfadeViewer === 'function'
-                && old && FADE_MS > 0;
+            return waitForImagePaint(newImg).then(function() {
+                var useMotion = motion && motion.available && typeof motion.crossfadeViewer === 'function'
+                    && old && FADE_MS > 0;
 
-            if (useMotion) {
-                return motion.crossfadeViewer(old, newImg, navDirection, FADE_MS).then(function() {
-                    currentMainImg = newImg;
-                    placeholder.dataset.large = url;
-                });
-            }
-
-            return new Promise(function(resolve) {
-                if (old && old.src) {
-                    placeholder.style.backgroundImage = 'url("' + old.src.replace(/"/g, '\\"') + '")';
-                    placeholder.style.backgroundSize = 'cover';
-                    placeholder.style.backgroundPosition = 'center';
-                }
-                if (old) {
-                    old.style.opacity = '1';
-                    old.style.zIndex = '1';
+                if (useMotion) {
+                    return motion.crossfadeViewer(old, newImg, navDirection, FADE_MS).then(function() {
+                        currentMainImg = newImg;
+                        placeholder.dataset.large = url;
+                    });
                 }
 
-                requestAnimationFrame(function() {
+                return new Promise(function(resolve) {
+                    if (old) {
+                        old.style.opacity = '1';
+                        old.style.zIndex = '1';
+                    }
+
                     requestAnimationFrame(function() {
-                        newImg.classList.add('is-fading-in');
-                        var finished = false;
+                        requestAnimationFrame(function() {
+                            var finished = false;
 
-                        function finish() {
-                            if (finished) {
-                                return;
-                            }
-                            finished = true;
-                            if (old && old.parentNode) {
-                                old.parentNode.removeChild(old);
-                            }
-                            newImg.classList.remove('is-fading-in');
-                            newImg.classList.add('loaded');
-                            newImg.style.opacity = '1';
-                            newImg.style.zIndex = '2';
-                            placeholder.style.backgroundImage = 'url("' + url.replace(/"/g, '\\"') + '")';
-                            currentMainImg = newImg;
-                            placeholder.dataset.large = url;
-                            resolve();
-                        }
-
-                        if (old && FADE_MS > 0) {
-                            newImg.addEventListener('transitionend', function(e) {
-                                if (e.propertyName === 'opacity') {
-                                    finish();
+                            function finish() {
+                                if (finished) {
+                                    return;
                                 }
-                            }, { once: true });
-                            window.setTimeout(finish, FADE_MS + 80);
-                        } else {
-                            finish();
-                        }
+                                finished = true;
+                                if (old && old.parentNode) {
+                                    old.parentNode.removeChild(old);
+                                }
+                                newImg.classList.remove('is-fading-in');
+                                newImg.classList.add('loaded');
+                                newImg.style.transition = 'none';
+                                newImg.style.opacity = '1';
+                                newImg.style.zIndex = '2';
+                                setPlaceholderUnderlay(url);
+                                currentMainImg = newImg;
+                                placeholder.dataset.large = url;
+                                resolve();
+                            }
+
+                            if (old && FADE_MS > 0) {
+                                newImg.classList.add('loaded');
+                                newImg.classList.add('is-fading-in');
+                                // Clear the pre-insert hide so the CSS opacity transition can run.
+                                newImg.style.transition = 'opacity ' + (FADE_MS / 1000) + 's ease-in-out';
+                                newImg.style.opacity = '1';
+                                newImg.addEventListener('transitionend', function(e) {
+                                    if (e.propertyName === 'opacity') {
+                                        finish();
+                                    }
+                                }, { once: true });
+                                window.setTimeout(finish, FADE_MS + 80);
+                            } else {
+                                newImg.classList.add('loaded');
+                                newImg.style.opacity = '1';
+                                finish();
+                            }
+                        });
                     });
                 });
             });
@@ -427,11 +477,13 @@
             function show() {
                 imgLarge.classList.add('loaded');
                 if (motion && motion.available && motion.gsap && INTRO_FADE_MS > 0) {
+                    motion.gsap.killTweensOf(imgLarge);
                     motion.gsap.fromTo(imgLarge, { opacity: 0 }, {
                         opacity: 1,
                         duration: INTRO_FADE_MS / 1000,
                         ease: 'sine.out',
                         onComplete: function () {
+                            imgLarge.style.opacity = '1';
                             setPlaceholderUnderlay(largeUrl);
                         }
                     });
@@ -441,10 +493,7 @@
                 }
             }
 
-            imgLarge.onload = show;
-            if (imgLarge.complete && imgLarge.naturalWidth > 0) {
-                show();
-            }
+            waitForImagePaint(imgLarge).then(show);
             currentMainImg = imgLarge;
             prefetchAdjacent();
         });
