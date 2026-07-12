@@ -208,6 +208,41 @@ function pinchard_weather_precipitation_line(array $hour): ?string
 }
 
 /**
+ * Quiet sky/humidity line from fields already fetched for the hour cache.
+ *
+ * @param array<string, mixed> $hour
+ */
+function pinchard_weather_sky_line(array $hour): ?string
+{
+	$parts = [];
+	if (isset($hour['cloud_cover']) && is_numeric($hour['cloud_cover'])) {
+		$cloud = (float) $hour['cloud_cover'];
+		if ($cloud >= 85) {
+			$parts[] = 'Heavy cloud';
+		} elseif ($cloud >= 50) {
+			$parts[] = 'Broken cloud';
+		} elseif ($cloud >= 20) {
+			$parts[] = 'Thin cloud';
+		} else {
+			$parts[] = 'Clear skies';
+		}
+	}
+	if (isset($hour['relative_humidity_2m']) && is_numeric($hour['relative_humidity_2m'])) {
+		$rh = (float) $hour['relative_humidity_2m'];
+		if ($rh >= 85) {
+			$parts[] = 'damp air';
+		} elseif ($rh <= 35) {
+			$parts[] = 'dry air';
+		}
+	}
+	if ($parts === []) {
+		return null;
+	}
+
+	return 'Sky: ' . implode(' · ', $parts);
+}
+
+/**
  * @param array<string, mixed> $hour
  */
 function pinchard_weather_format_html(array $hour): string
@@ -247,22 +282,27 @@ function pinchard_weather_format_html(array $hour): string
 		$lines[] = pinchard_h($precipLine);
 	}
 
+	$skyLine = pinchard_weather_sky_line($hour);
+	if ($skyLine !== null) {
+		$lines[] = pinchard_h($skyLine);
+	}
+
 	return implode('<br>', $lines);
 }
 
 /**
- * Fetch one calendar day of hourly ERA5 data and merge into the hour cache.
+ * Fetch hourly ERA5 data for an inclusive local-date range.
  *
  * @return array<string, array<string, mixed>> hours keyed Y-m-d\TH
  */
-function pinchard_weather_fetch_day(string $day): array
+function pinchard_weather_fetch_range(string $startDay, string $endDay): array
 {
 	$cabin = pinchard_cloudberry_cabin_coords();
 	$query = http_build_query([
 		'latitude' => $cabin['lat'],
 		'longitude' => $cabin['lon'],
-		'start_date' => $day,
-		'end_date' => $day,
+		'start_date' => $startDay,
+		'end_date' => $endDay,
 		'hourly' => implode(',', [
 			'temperature_2m',
 			'weather_code',
@@ -280,9 +320,10 @@ function pinchard_weather_fetch_day(string $day): array
 	], '', '&', PHP_QUERY_RFC3986);
 
 	$url = 'https://archive-api.open-meteo.com/v1/archive?' . $query;
+	$timeout = $startDay === $endDay ? 8 : 30;
 	$context = stream_context_create([
 		'http' => [
-			'timeout' => 8,
+			'timeout' => $timeout,
 			'follow_location' => 1,
 			'header' => "Accept: application/json\r\nUser-Agent: pinchards.is weather cache\r\n",
 		],
@@ -346,6 +387,34 @@ function pinchard_weather_fetch_day(string $day): array
 }
 
 /**
+ * Fetch one calendar day of hourly ERA5 data.
+ *
+ * @return array<string, array<string, mixed>> hours keyed Y-m-d\TH
+ */
+function pinchard_weather_fetch_day(string $day): array
+{
+	return pinchard_weather_fetch_range($day, $day);
+}
+
+/**
+ * Merge fetched hours into the on-disk cache. Returns hours written this call.
+ *
+ * @param array<string, array<string, mixed>> $hours
+ * @return int number of hour keys now present for the requested set
+ */
+function pinchard_weather_cache_merge(array $hours): int
+{
+	if ($hours === []) {
+		return 0;
+	}
+	$cache = pinchard_weather_cache_read();
+	$cache = array_merge($cache, $hours);
+	pinchard_weather_cache_write($cache);
+
+	return count($hours);
+}
+
+/**
  * @return array{html: string, hourKey: string, data: array<string, mixed>}|null
  */
 function pinchard_weather_for_capture(?DateTime $captureDt): ?array
@@ -364,12 +433,12 @@ function pinchard_weather_for_capture(?DateTime $captureDt): ?array
 		if ($fetched === []) {
 			return null;
 		}
-		$cache = array_merge($cache, $fetched);
 		try {
-			pinchard_weather_cache_write($cache);
+			pinchard_weather_cache_merge($fetched);
 		} catch (Throwable) {
 			// Cache write failure should not hide weather for this request.
 		}
+		$cache = array_merge($cache, $fetched);
 	}
 
 	$hour = $cache[$hourKey] ?? null;

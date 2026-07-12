@@ -142,9 +142,9 @@ function pinchard_parse_stored_photo_datetime(string $datetime): ?DateTime
 /**
  * Resolve capture time for display — always prefer EXIF DateTimeOriginal.
  *
- * S3 keys look like UTC (`...T18:09:20.000Z_...`) but for most of the archive the
- * wall-clock matches the GoPro. Near the end, many keys are a bulk-download stamp
- * (same minute) while EXIF still has the real hourly capture times.
+ * EXIF is the source of truth for when the image was taken. S3 keys often carry
+ * a download/upload stamp (`...T18:09:20.000Z_...`), especially near the end of
+ * the archive where many keys share the same bulk-download minute.
  *
  * @param array<string, mixed> $exif
  */
