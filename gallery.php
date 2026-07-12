@@ -12,10 +12,14 @@ try {
     $array = getObjectList($cfg['s3_bucket_thumbnails']);
     usort($array, fn ($a, $b) => pinchard_photo_sort_key($a) <=> pinchard_photo_sort_key($b));
     $photosByDay = pinchard_group_photos_by_day($array);
+    // Desktop filmstrip sizes rows to fit this many photos in the viewport.
+    // Cap so busy days (e.g. test bursts) don't shrink thumbs to a sliver.
+    $galleryMaxPhotosPerDay = 12;
     $maxPhotosPerDay = 1;
     foreach ($photosByDay as $dayGroup) {
         $maxPhotosPerDay = max($maxPhotosPerDay, count($dayGroup['photos']));
     }
+    $maxPhotosPerDay = min($galleryMaxPhotosPerDay, $maxPhotosPerDay);
     $cloudberryArchiveSpan = pinchard_cloudberry_archive_span($array);
     $galleryDescription = pinchard_cloudberry_gallery_description($cloudberryArchiveSpan);
 } catch (RuntimeException | \Aws\Exception\AwsException $e) {

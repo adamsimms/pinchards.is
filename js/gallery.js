@@ -63,7 +63,7 @@
                     return;
                 }
                 var styles = getComputedStyle(layout);
-                var maxPhotos = parseInt(styles.getPropertyValue('--gallery-days-max-photos'), 10) || 13;
+                var maxPhotos = parseInt(styles.getPropertyValue('--gallery-days-max-photos'), 10) || 12;
                 var colPad = parseFloat(styles.getPropertyValue('--gallery-days-column-pad')) || 12;
                 var dateLine = parseFloat(styles.getPropertyValue('--gallery-days-date-line')) || 11;
                 var dateBand = dateLine + colPad + 1;
@@ -257,7 +257,12 @@
             });
 
             function columnPhotos(col) {
-                return Array.prototype.slice.call(col.querySelectorAll('.gallery-day-photo'));
+                var all = Array.prototype.slice.call(col.querySelectorAll('.gallery-day-photo'));
+                if (!isFilmstrip()) {
+                    return all;
+                }
+                var maxPhotos = parseInt(getComputedStyle(layout).getPropertyValue('--gallery-days-max-photos'), 10) || 12;
+                return all.slice(0, maxPhotos);
             }
 
             function focusPhoto(colIndex, photoIndex) {

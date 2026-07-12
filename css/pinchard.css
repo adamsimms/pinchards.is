@@ -1765,11 +1765,18 @@ body.gallery-page {
     --gallery-days-column-pad: 12px;
     --gallery-days-date-line: 11px;
     --gallery-days-date-band: calc(var(--gallery-days-date-line) + var(--gallery-days-column-pad) + 1px);
-    --gallery-days-max-photos: 13;
+    --gallery-days-max-photos: 12;
     --gallery-days-photo-height: calc((100dvh - var(--gallery-days-nav-offset) - var(--gallery-days-column-pad) - var(--gallery-days-date-band)) / var(--gallery-days-max-photos));
     --gallery-days-column-width: calc(var(--gallery-days-photo-height) * 288 / 224);
     padding-top: 0;
     overflow: hidden;
+}
+
+/* Keep desktop day columns to a fixed row budget; mobile still shows all. */
+@media (min-width: 768px) {
+    body.gallery-page .gallery-day-photo:nth-child(n+13) {
+        display: none;
+    }
 }
 
 body.gallery-page .gallery-days-layout {
