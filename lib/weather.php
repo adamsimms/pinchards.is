@@ -208,41 +208,6 @@ function pinchard_weather_precipitation_line(array $hour): ?string
 }
 
 /**
- * Quiet sky/humidity line from fields already fetched for the hour cache.
- *
- * @param array<string, mixed> $hour
- */
-function pinchard_weather_sky_line(array $hour): ?string
-{
-	$parts = [];
-	if (isset($hour['cloud_cover']) && is_numeric($hour['cloud_cover'])) {
-		$cloud = (float) $hour['cloud_cover'];
-		if ($cloud >= 85) {
-			$parts[] = 'Heavy cloud';
-		} elseif ($cloud >= 50) {
-			$parts[] = 'Broken cloud';
-		} elseif ($cloud >= 20) {
-			$parts[] = 'Thin cloud';
-		} else {
-			$parts[] = 'Clear skies';
-		}
-	}
-	if (isset($hour['relative_humidity_2m']) && is_numeric($hour['relative_humidity_2m'])) {
-		$rh = (float) $hour['relative_humidity_2m'];
-		if ($rh >= 85) {
-			$parts[] = 'damp air';
-		} elseif ($rh <= 35) {
-			$parts[] = 'dry air';
-		}
-	}
-	if ($parts === []) {
-		return null;
-	}
-
-	return 'Sky: ' . implode(' · ', $parts);
-}
-
-/**
  * @param array<string, mixed> $hour
  */
 function pinchard_weather_format_html(array $hour): string
@@ -280,11 +245,6 @@ function pinchard_weather_format_html(array $hour): string
 	$precipLine = pinchard_weather_precipitation_line($hour);
 	if ($precipLine !== null) {
 		$lines[] = pinchard_h($precipLine);
-	}
-
-	$skyLine = pinchard_weather_sky_line($hour);
-	if ($skyLine !== null) {
-		$lines[] = pinchard_h($skyLine);
 	}
 
 	return implode('<br>', $lines);
