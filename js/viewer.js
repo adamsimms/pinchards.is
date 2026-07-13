@@ -58,6 +58,16 @@
         return playing ? PLAY_FADE_MS : BROWSE_FADE_MS;
     }
 
+    var catalogByFilename = null;
+    var catalogPromise = null;
+
+    function pageBase() {
+        if (typeof cfg.basePath === 'string' && cfg.basePath !== '') {
+            return cfg.basePath.replace(/\/$/, '');
+        }
+        return '';
+    }
+
     function photoPageUrl(filename) {
         var params = new URLSearchParams();
         params.set('filename', filename);
@@ -73,7 +83,202 @@
         if (cfg.playFadeFromUrl && cfg.playFadeMs != null) {
             params.set('fade', String(cfg.playFadeMs / 1000));
         }
+        var base = pageBase();
+        if (base) {
+            return base + '/?' + params.toString();
+        }
         return 'index.php?' + params.toString();
+    }
+
+    function escapeHtml(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function formatTempC(temp) {
+        if (typeof temp !== 'number') {
+            return '';
+        }
+        var rounded = Math.round(temp * 10) / 10;
+        var text = String(rounded);
+        if (text.indexOf('.') === -1) {
+            text += '.0';
+        }
+        return (rounded < 0 ? '\u2212' + text.slice(1) : text) + ' \u00b0C';
+    }
+
+    function formatSpeed(kmh) {
+        if (typeof kmh !== 'number') {
+            return '';
+        }
+        return String(Math.round(kmh * 10) / 10);
+    }
+
+    function cameraLinesHtmlFromRecord(camera) {
+        if (!camera) {
+            return 'Make:<br>Model:<br>Focal Length:<br>Exposure:<br>Image Size:<br>Resolution:';
+        }
+        var lines = [];
+        lines.push(camera.make ? 'Make: ' + escapeHtml(camera.make) : 'Make:');
+        lines.push(camera.model ? 'Model: ' + escapeHtml(camera.model) : 'Model:');
+        lines.push(
+            typeof camera.focalLengthMm === 'number'
+                ? 'Focal Length: ' + camera.focalLengthMm.toFixed(2) + ' mm'
+                : 'Focal Length:'
+        );
+        if (camera.exposureDisplay && typeof camera.fNumber === 'number' && camera.iso != null) {
+            lines.push(
+                'Exposure: ' + escapeHtml(camera.exposureDisplay) + ' sec, f/' +
+                camera.fNumber.toFixed(1) + '; ISO ' + escapeHtml(String(camera.iso))
+            );
+        } else {
+            lines.push('Exposure:');
+        }
+        if (camera.width && camera.height) {
+            lines.push('Image Size: ' + camera.width + ' x ' + camera.height);
+        } else {
+            lines.push('Image Size:');
+        }
+        lines.push(
+            typeof camera.resolutionPpi === 'number'
+                ? 'Resolution: ' + camera.resolutionPpi.toFixed(2) + ' pixels per inch'
+                : 'Resolution:'
+        );
+        return lines.join('<br>');
+    }
+
+    function gpsHtmlFromRecord(gps) {
+        if (!gps) {
+            return '';
+        }
+        var latD = gps.latitudeDegree != null ? gps.latitudeDegree : '';
+        var latM = gps.latitudeMin != null ? gps.latitudeMin : '';
+        var latS = gps.latitudeSec != null ? gps.latitudeSec : '';
+        var lonD = gps.longitudeDegree != null ? gps.longitudeDegree : '';
+        var lonM = gps.longitudeMin != null ? gps.longitudeMin : '';
+        var lonS = gps.longitudeSec != null ? gps.longitudeSec : '';
+        var alt = typeof gps.altitudeM === 'number'
+            ? 'Altitude: ' + gps.altitudeM.toFixed(2) + ' m'
+            : 'Altitude:';
+        return 'Position: ' + latD + '&deg; ' + latM + '&acute; ' + latS + '&quot; N, '
+            + lonD + '&deg; ' + lonM + '&acute; ' + lonS + '&quot; W<br>' + alt;
+    }
+
+    function weatherHtmlFromRecord(weather) {
+        if (!weather || typeof weather.temperatureC !== 'number' || typeof weather.windSpeedKmh !== 'number') {
+            return '';
+        }
+        var lines = [];
+        lines.push(
+            'Conditions: ' + escapeHtml(formatTempC(weather.temperatureC)) +
+            ' · ' + escapeHtml(weather.conditionsLabel || 'Unknown')
+        );
+        var wind = 'Wind: ' + escapeHtml(weather.windCompass || '') + ' '
+            + escapeHtml(formatSpeed(weather.windSpeedKmh)) + ' km/h';
+        if (typeof weather.windGustsKmh === 'number') {
+            wind += ' · gusts ' + escapeHtml(formatSpeed(weather.windGustsKmh)) + ' km/h';
+        }
+        lines.push(wind);
+        var precipParts = [];
+        if (typeof weather.rainMm === 'number' && weather.rainMm > 0) {
+            precipParts.push(weather.rainMm + ' mm rain');
+        }
+        if (typeof weather.snowfallCm === 'number' && weather.snowfallCm > 0) {
+            precipParts.push(weather.snowfallCm + ' cm snow');
+        }
+        if (precipParts.length === 0 && typeof weather.precipitationMm === 'number' && weather.precipitationMm > 0) {
+            precipParts.push(weather.precipitationMm + ' mm');
+        }
+        if (precipParts.length) {
+            lines.push('Precipitation: ' + precipParts.join(' · '));
+        }
+        return lines.join('<br>');
+    }
+
+    function citationFromRecord(photo) {
+        if (!photo) {
+            return '';
+        }
+        var origin = typeof cfg.siteOrigin === 'string' && cfg.siteOrigin
+            ? cfg.siteOrigin.replace(/\/$/, '')
+            : (window.location.origin || '');
+        var path = photo.citationPath || (pageBase() + '/?filename=' + encodeURIComponent(photo.filename));
+        var when = photo.convertedDate || photo.date || '';
+        return 'Cloudberry. Automated photograph, ' + when
+            + '; photo ID ' + (photo.title || '')
+            + ' (' + photo.filename + '). '
+            + origin + path
+            + '. Accessed ' + new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + '.';
+    }
+
+    function payloadFromCatalogPhoto(photo, index) {
+        var gps = photo.gps || {};
+        return {
+            filename: photo.filename,
+            imageUrl: photo.imageUrl || imageUrl(photo.filename),
+            prevFilename: adjacentFilename(-1),
+            nextFilename: adjacentFilename(1),
+            index: index,
+            photoTitle: photo.title || '',
+            photoAlt: 'Photograph from Pinchard\'s Island',
+            convertedDate: photo.convertedDate || photo.date || '',
+            showDate: photo.showDate || '',
+            cameraLinesHtml: cameraLinesHtmlFromRecord(photo.camera),
+            gpsHtml: gpsHtmlFromRecord(gps),
+            weatherHtml: weatherHtmlFromRecord(photo.weather),
+            citation: citationFromRecord(photo),
+            mapLat: gps.lat,
+            mapLon: gps.lon,
+            hasGps: !!gps.hasGps,
+            timelineIndex: index,
+            archiveDate: photo.date,
+            captureDateIso: photo.captureDateIso,
+            ogDescription: photo.convertedDate
+                ? 'Photograph from Pinchard\'s Island — ' + photo.convertedDate + '.'
+                : 'Photograph from Pinchard\'s Island.'
+        };
+    }
+
+    function ensureCatalog() {
+        if (catalogByFilename) {
+            return Promise.resolve(catalogByFilename);
+        }
+        if (catalogPromise) {
+            return catalogPromise;
+        }
+        if (cfg.catalog && Array.isArray(cfg.catalog.photos)) {
+            catalogByFilename = Object.create(null);
+            cfg.catalog.photos.forEach(function(photo) {
+                catalogByFilename[photo.filename] = photo;
+            });
+            return Promise.resolve(catalogByFilename);
+        }
+        if (!cfg.catalogUrl) {
+            return Promise.resolve(null);
+        }
+        catalogPromise = fetch(cfg.catalogUrl)
+            .then(function(res) {
+                if (!res.ok) {
+                    throw new Error('Catalog request failed');
+                }
+                return res.json();
+            })
+            .then(function(catalog) {
+                catalogByFilename = Object.create(null);
+                (catalog.photos || []).forEach(function(photo) {
+                    catalogByFilename[photo.filename] = photo;
+                });
+                cfg.catalog = catalog;
+                return catalogByFilename;
+            })
+            .catch(function() {
+                catalogByFilename = null;
+                return null;
+            });
+        return catalogPromise;
     }
 
     function imageUrl(filename) {
@@ -305,6 +510,19 @@
             metadataRequest.abort();
             metadataRequest = null;
         }
+
+        if (cfg.catalogUrl || (cfg.catalog && Array.isArray(cfg.catalog.photos))) {
+            return ensureCatalog().then(function(byName) {
+                if (!byName || !byName[filename]) {
+                    return null;
+                }
+                var index = indexFromFilename(filename);
+                var payload = payloadFromCatalogPhoto(byName[filename], index >= 0 ? index : 0);
+                applyMetadata(payload);
+                return payload;
+            });
+        }
+
         var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
         var url = 'viewer-photo.php?filename=' + encodeURIComponent(filename);
         var options = controller ? { signal: controller.signal } : {};
