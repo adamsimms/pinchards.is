@@ -501,7 +501,7 @@ body.viewer-page .preview::after {
     border: none;
     border-radius: 0;
     background: transparent;
-    color: var(--icon-idle);
+    color: #000;
     cursor: pointer;
     font: inherit;
     line-height: 1;
@@ -511,16 +511,12 @@ body.viewer-page .preview::after {
 
 .detail_view-bar .viewer-play-toggle:hover,
 .detail_view-bar .viewer-play-toggle:focus {
-    color: var(--icon-active);
+    color: #000;
     outline: none;
 }
 
 .detail_view-bar .viewer-play-toggle:focus-visible {
-    box-shadow: 0 0 0 2px rgba(240, 95, 64, 0.35);
-}
-
-.detail_view-bar .viewer-play-toggle:not(.is-paused) {
-    color: var(--icon-active);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
 }
 
 .detail_view-bar .viewer-play-icons {
@@ -580,21 +576,21 @@ body.viewer-page .preview::after {
     cursor: pointer;
     appearance: none;
     -webkit-appearance: none;
-    background-color: var(--icon-idle);
+    background-color: #000;
     background-image: none;
-    -webkit-mask: url(../images/icon-fullscreen.svg) center / 24px 24px no-repeat;
-    mask: url(../images/icon-fullscreen.svg) center / 24px 24px no-repeat;
+    -webkit-mask: url(../images/icon-expand.svg) center / 24px 24px no-repeat;
+    mask: url(../images/icon-expand.svg) center / 24px 24px no-repeat;
 }
 
 .detail_view-bar .viewer-fullscreen-toggle:hover,
 .detail_view-bar .viewer-fullscreen-toggle:focus,
 .detail_view-bar .viewer-fullscreen-toggle.is-active {
-    background-color: var(--icon-active);
+    background-color: #000;
     outline: none;
 }
 
 .detail_view-bar .viewer-fullscreen-toggle:focus-visible {
-    box-shadow: 0 0 0 2px rgba(240, 95, 64, 0.35);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
 }
 
 .btn_arrow {
