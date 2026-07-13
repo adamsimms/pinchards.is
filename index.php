@@ -272,7 +272,7 @@ $footerScripts = <<<'JS'
             timeline: TIMELINE_DATA
         };
     </script>
-    <script src="js/viewer.js"></script>
+    <script src="VIEWER_JS_SRC"></script>
 JS;
 
 $preloadUrls = [];
@@ -285,6 +285,8 @@ if ($next_filename !== null && $next_filename !== '') {
 
 $prevUrl = ($prev_filename !== null && $prev_filename !== '') ? 'index.php?filename=' . rawurlencode($prev_filename) : '';
 $nextUrl = ($next_filename !== null && $next_filename !== '') ? 'index.php?filename=' . rawurlencode($next_filename) : '';
+
+$footerScripts = str_replace('VIEWER_JS_SRC', pinchard_h(pinchard_page_asset_url('js/viewer.js')), $footerScripts);
 
 $footerScripts = str_replace('CDN_URL', json_encode($cdnFull, $mapJe), $footerScripts);
 $footerScripts = str_replace('VIEWER_FILENAMES', json_encode($viewerFilenames, $mapJe), $footerScripts);
