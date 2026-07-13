@@ -72,3 +72,12 @@ Deferred decision at Phase 5 cutover (`cloudberry.` → `/cloudberry/archive`).
 | Sync script | [`scripts/sync-cloudberry-cf-to-r2.py`](../scripts/sync-cloudberry-cf-to-r2.py) (CloudFront → R2 REST; resumable) |
 
 Optional 1b (point live PHP CDN at R2) **not done** — DreamHost still uses CloudFront until Phase 3+.
+
+## Phase 2 notes
+
+Viewer drawer fields confirmed per-photo (`lib/viewer.php`). Catalog builder: [`scripts/build-catalog.php`](../scripts/build-catalog.php).
+
+- Completes EXIF via **Range** GET (`bytes=0-262143`) from `cloudberry-images.adamsimms.xyz` (no full JPEG download).
+- Joins `exif-dates.json` + `weather-hours.json`.
+- Emits structured [`data/catalog.json`](../data/catalog.json) (no HTML fragments) with new CDN URLs.
+- GPS: archive photos typically lack EXIF GPS → cabin defaults (same as live PHP).
