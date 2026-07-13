@@ -43,6 +43,7 @@
 
     var currentMainImg = null;
     var transitioning = false;
+    var navGeneration = 0;
     var navDirection = 1;
     var metadataRequest = null;
     var prefetchCache = Object.create(null);
@@ -379,7 +380,12 @@
         return cfg.timeline.entries[Math.max(0, Math.min(cfg.timeline.entries.length - 1, idx))];
     }
 
-    function updateTimelineUi(idx) {
+    function updateTimelineUi(idx, options) {
+        options = options || {};
+        // Autoplay metadata must not yank the scrubber while the user is dragging it.
+        if (scrubbing && !options.fromScrub) {
+            return;
+        }
         if (!timelineRange || !cfg.timeline || !cfg.timeline.entries) {
             return;
         }
@@ -568,9 +574,13 @@
         });
     }
 
-    function crossfadeTo(url, alt) {
+    function crossfadeTo(url, alt, generation) {
         var fadeMs = activeFadeMs();
+        var expectedGeneration = generation == null ? navGeneration : generation;
         return preloadUrl(url).then(function() {
+            if (expectedGeneration !== navGeneration) {
+                return;
+            }
             var old = currentMainImg;
 
             // Pin the current photo (and underlay) before the next layer appears,
@@ -594,17 +604,33 @@
             placeholder.appendChild(newImg);
 
             return waitForImagePaint(newImg).then(function() {
+                if (expectedGeneration !== navGeneration) {
+                    if (newImg.parentNode) {
+                        newImg.parentNode.removeChild(newImg);
+                    }
+                    return;
+                }
                 var useMotion = motion && motion.available && typeof motion.crossfadeViewer === 'function'
                     && old && fadeMs > 0;
 
                 if (useMotion) {
                     return motion.crossfadeViewer(old, newImg, navDirection, fadeMs).then(function() {
+                        if (expectedGeneration !== navGeneration) {
+                            return;
+                        }
                         currentMainImg = newImg;
                         placeholder.dataset.large = url;
                     });
                 }
 
                 return new Promise(function(resolve) {
+                    if (expectedGeneration !== navGeneration) {
+                        if (newImg.parentNode) {
+                            newImg.parentNode.removeChild(newImg);
+                        }
+                        resolve();
+                        return;
+                    }
                     if (old) {
                         old.style.opacity = '1';
                         old.style.zIndex = '1';
@@ -619,6 +645,13 @@
                                     return;
                                 }
                                 finished = true;
+                                if (expectedGeneration !== navGeneration) {
+                                    if (newImg.parentNode) {
+                                        newImg.parentNode.removeChild(newImg);
+                                    }
+                                    resolve();
+                                    return;
+                                }
                                 if (old && old.parentNode) {
                                     old.parentNode.removeChild(old);
                                 }
@@ -708,17 +741,60 @@
         }
     }
 
+    function cancelInFlightVisualTransition() {
+        var imgs = Array.prototype.slice.call(
+            placeholder.querySelectorAll('img.viewer-photo-main')
+        );
+        if (motion && motion.gsap) {
+            imgs.forEach(function(img) {
+                motion.gsap.killTweensOf(img);
+            });
+        }
+        var keep = null;
+        if (currentMainImg && currentMainImg.parentNode === placeholder) {
+            keep = currentMainImg;
+        } else if (imgs.length) {
+            keep = imgs[imgs.length - 1];
+        }
+        imgs.forEach(function(img) {
+            if (img !== keep && img.parentNode) {
+                img.parentNode.removeChild(img);
+            }
+        });
+        if (keep) {
+            keep.style.transition = 'none';
+            keep.style.opacity = '1';
+            keep.style.zIndex = '2';
+            keep.classList.add('loaded');
+            currentMainImg = keep;
+            if (keep.src) {
+                setPlaceholderUnderlay(keep.src);
+            }
+        }
+        transitioning = false;
+    }
+
     function navigateToFilename(filename, options) {
         options = options || {};
         var index = indexFromFilename(filename);
-        if (index < 0 || transitioning) {
+        if (index < 0) {
             return Promise.resolve(false);
         }
-        if (filename === cfg.currentFilename) {
+        if (filename === cfg.currentFilename && !options.force) {
+            return Promise.resolve(false);
+        }
+        // During long play-mode fades, block overlapping arrow nav unless interrupt
+        // (timeline scrub / forced seek).
+        if (transitioning && !options.interrupt) {
             return Promise.resolve(false);
         }
 
         clearAdvanceTimer();
+        // Invalidate any in-flight fade before visual cancel so its callbacks no-op.
+        var myGeneration = ++navGeneration;
+        if (transitioning && options.interrupt) {
+            cancelInFlightVisualTransition();
+        }
         transitioning = true;
         navDirection = index >= cfg.currentIndex ? 1 : -1;
         // Wraparound can move from last→first; keep direction forward when playing.
@@ -740,20 +816,29 @@
         syncTimelineToFilename(filename);
 
         var metaPromise = fetchMetadata(filename);
-        var fadePromise = crossfadeTo(imageUrl(filename), '');
+        var fadePromise = crossfadeTo(imageUrl(filename), '', myGeneration);
 
         return Promise.all([metaPromise, fadePromise]).then(function(results) {
+            if (myGeneration !== navGeneration) {
+                return false;
+            }
             var payload = results[0];
             if (payload && payload.photoAlt && currentMainImg) {
                 currentMainImg.alt = payload.photoAlt;
             }
             return true;
         }).catch(function() {
+            if (myGeneration !== navGeneration) {
+                return false;
+            }
             if (options.history === 'push') {
                 history.back();
             }
             return false;
         }).finally(function() {
+            if (myGeneration !== navGeneration) {
+                return;
+            }
             transitioning = false;
             if (playing && !scrubbing) {
                 scheduleAdvance();
@@ -977,7 +1062,7 @@
 
     if (timelineRange && cfg.timeline && cfg.timeline.entries && cfg.timeline.entries.length > 1) {
         timelineRange.addEventListener('input', function() {
-            updateTimelineUi(parseInt(timelineRange.value, 10));
+            updateTimelineUi(parseInt(timelineRange.value, 10), { fromScrub: true });
         });
 
         timelineRange.addEventListener('change', function() {
@@ -985,7 +1070,8 @@
             if (!entry || entry.f === cfg.currentFilename) {
                 return;
             }
-            navigateToFilename(entry.f, { history: 'push' });
+            // Interrupt long play-mode crossfades so scrub always seeks.
+            navigateToFilename(entry.f, { history: 'push', interrupt: true });
         });
 
         timelineRange.addEventListener('pointerdown', function(e) {

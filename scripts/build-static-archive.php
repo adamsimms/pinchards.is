@@ -941,8 +941,43 @@ if ($span !== null) {
 		. '. The camera system eventually failed—likely from cold, weathering, too little sun, or some combination. This website is the archive and documentation of what it captured.</p>';
 }
 
-$archiveCitationEsc = h($archiveCitation);
-$photoCitationTplEsc = h($photoCitationTpl);
+/**
+ * Match lib/partials/citation.php markup so .citation-block-text gets monospace.
+ *
+ * @param array{text: string, label?: string, hint?: string, class?: string} $options
+ */
+function citation_block_html(array $options): string
+{
+	$text = $options['text'];
+	$label = $options['label'] ?? 'Suggested citation';
+	$hint = $options['hint'] ?? 'Update the access date if you retrieved this material on a different day.';
+	$class = $options['class'] ?? '';
+	$blockClass = 'citation-block' . ($class !== '' ? ' ' . $class : '');
+	$html = '<div class="' . h($blockClass) . "\">\n";
+	$html .= "    <div class=\"citation-block-header\">\n";
+	$html .= '        <span class="citation-block-label">' . h($label) . "</span>\n";
+	$html .= '        <button type="button" class="citation-copy-btn" data-citation="' . h($text) . '" aria-label="Copy citation to clipboard">Copy</button>' . "\n";
+	$html .= "    </div>\n";
+	$html .= '    <p class="citation-block-text" tabindex="0">' . h($text) . "</p>\n";
+	if ($hint !== '') {
+		$html .= '    <p class="citation-block-hint">' . h($hint) . "</p>\n";
+	}
+	$html .= "</div>\n";
+
+	return $html;
+}
+
+$archiveCitationBlock = citation_block_html([
+	'text' => $archiveCitation,
+	'label' => 'Archive citation',
+	'hint' => 'The access date reflects the day you loaded this page.',
+	'class' => 'citation-block--spaced-below',
+]);
+$photoCitationBlock = citation_block_html([
+	'text' => $photoCitationTpl,
+	'label' => 'Individual photograph template',
+	'hint' => 'Replace bracketed fields with values from the photograph you are citing. The access date reflects the day you loaded this page.',
+]);
 
 $infoHtml = page_head('Cloudberry — About', [
 	'description' => $infoDescription,
@@ -1121,11 +1156,13 @@ $infoHtml .= <<<HTML
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Citations</h3>
                 <p>Researchers and publications are welcome to use Cloudberry photographs with attribution. The archive is complete and no longer receiving new images.</p>
-                <p>Suggested Chicago Author-Date style:</p>
+                <p>The suggested format below follows the <strong>Chicago Manual of Style, Author-Date</strong> system, adapted for a born-digital photograph archive (similar to citing a website or online collection).</p>
                 <h4>Citing the entire archive</h4>
-                <blockquote class="citation-block">{$archiveCitationEsc}</blockquote>
+                <p>Use this when referring to the project or website as a whole.</p>
+{$archiveCitationBlock}
                 <h4>Citing a specific photograph</h4>
-                <blockquote class="citation-block">{$photoCitationTplEsc}</blockquote>
+                <p>Open the image on the site, expand the details panel, and note the <strong>date and time</strong>, <strong>photo number</strong> (shown as the large title), and <strong>filename</strong> from the page URL (<code>?filename=…</code>). Substitute those values into the template below.</p>
+{$photoCitationBlock}
 
                 <h3>Keyboard shortcuts</h3>
                 <ul class="keyboard-shortcuts">
@@ -1306,11 +1343,11 @@ $redirects = <<<'TXT'
 # Cloudflare Pages redirects fragment for Cloudberry archive
 # Merge into art.adamsimms.xyz public/_redirects (or Pages redirects config).
 # Paths assume the archive is served at /cloudberry/archive/.
-/cloudberry/archive/gallery.php /cloudberry/archive/gallery 301
-/cloudberry/archive/info.php /cloudberry/archive/info 301
+/cloudberry/archive/gallery.php /cloudberry/archive/gallery/ 301
+/cloudberry/archive/info.php /cloudberry/archive/info/ 301
 /cloudberry/archive/slideshow.php /cloudberry/archive/?play=1 301
 /cloudberry/archive/slider.php /cloudberry/archive/?play=1 301
-/cloudberry/archive/index.php /cloudberry/archive 301
+/cloudberry/archive/index.php /cloudberry/archive/ 301
 
 TXT;
 write_file($OUT . '/_redirects.fragment', $redirects);

@@ -85,6 +85,8 @@ Viewer drawer fields confirmed per-photo (`lib/viewer.php`). Catalog builder: [`
 ## Phase 3 notes
 
 - [`scripts/build-static-archive.php`](../scripts/build-static-archive.php) → `dist-archive/` (gitignored) for art assemble.
-- [`js/viewer.js`](../js/viewer.js) supports `catalogUrl` + `basePath` (DreamHost still uses `viewer-photo.php`).
-- Art site: `npm run build:full` assembles into `dist/cloudberry/archive/`; maps live at `/maps`.
-- Docs on art: `docs/CLOUDBERRY-ASSEMBLE.md`.
+- [`js/viewer.js`](../js/viewer.js) supports `catalogUrl` + `basePath` (DreamHost still uses `viewer-photo.php`); scrubber interrupts play-mode fades.
+- Art site: `npm run build:full` assembles into `dist/cloudberry/archive/` (Umami inject + CSP-RO on art); maps live at `/maps`.
+- Pinchards → art rebuild: `.github/workflows/trigger-art-rebuild.yml` (`repository_dispatch` `cloudberry-archive-rebuild`; needs `ART_DISPATCH_TOKEN`).
+- Docs on art: `docs/CLOUDBERRY-ASSEMBLE.md`, `docs/PHASE3-PARITY.md`.
+- Tag `legacy-php` marks the pre–Phase 5 DreamHost PHP cutover snapshot on this repo.
