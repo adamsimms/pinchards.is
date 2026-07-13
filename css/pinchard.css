@@ -548,13 +548,13 @@ body.viewer-page .preview::after {
 }
 
 .detail_view-bar .viewer-play-icon--pause {
-    -webkit-mask-image: url(../images/icon-slideshow_pause.svg);
-    mask-image: url(../images/icon-slideshow_pause.svg);
+    -webkit-mask-image: url(../images/icon-pause.svg);
+    mask-image: url(../images/icon-pause.svg);
 }
 
 .detail_view-bar .viewer-play-icon--play {
-    -webkit-mask-image: url(../images/icon-slideshow.svg);
-    mask-image: url(../images/icon-slideshow.svg);
+    -webkit-mask-image: url(../images/icon-play.svg);
+    mask-image: url(../images/icon-play.svg);
     opacity: 1;
 }
 
@@ -645,10 +645,33 @@ body.viewer-page--kiosk .preview {
     height: 100%;
     min-height: 100vh;
     min-height: 100dvh;
+    background: #000;
 }
 
 body.viewer-page--kiosk .preview::after {
     display: none;
+}
+
+body.viewer-page--kiosk #preview_image,
+body.viewer-page--kiosk .preview .photo-placeholder {
+    top: 0;
+    bottom: 0;
+    background-color: #000;
+    background-size: 112% 112%;
+    background-position: center;
+    overflow: hidden;
+}
+
+/* Overscale slightly so archive edge defects (esp. top-right) stay off-screen. */
+body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
+    top: 50%;
+    left: 50%;
+    width: 112%;
+    height: 112%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center;
+    transform: translate(-50%, -50%);
 }
 .detail_view-divider {
     display: none;
