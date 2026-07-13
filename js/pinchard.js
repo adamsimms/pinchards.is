@@ -5,7 +5,10 @@
     var MAIN_ROUTES = {
         'index.php': true,
         'gallery.php': true,
-        'info.php': true
+        'info.php': true,
+        'gallery': true,
+        'info': true,
+        'jam': true
     };
 
     var motion = window.pinchardMotion;
@@ -19,9 +22,16 @@
 
     function routePathname(pathname) {
         var segments = pathname.split('/').filter(Boolean);
-        var base = segments.length ? segments[segments.length - 1] : 'index.php';
-        if (base.indexOf('.') === -1) {
+        if (!segments.length) {
             return 'index.php';
+        }
+        var base = segments[segments.length - 1];
+        // Clean archive URLs: /cloudberry/archive or /cloudberry/archive/gallery
+        if (base === 'archive') {
+            return 'index.php';
+        }
+        if (base.indexOf('.') === -1) {
+            return base;
         }
         return base;
     }

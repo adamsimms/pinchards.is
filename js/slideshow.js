@@ -375,7 +375,10 @@
                 setKiosk(false);
                 return;
             }
-            var galleryHref = "/gallery.php";
+            var galleryHref = (window.pinchardSlideshow && window.pinchardSlideshow.galleryUrl)
+                || (window.pinchardViewer && window.pinchardViewer.basePath
+                    ? String(window.pinchardViewer.basePath).replace(/\/$/, '') + '/gallery'
+                    : '/gallery.php');
             if (window.pinchardNavigate) {
                 window.pinchardNavigate(galleryHref);
             } else {
