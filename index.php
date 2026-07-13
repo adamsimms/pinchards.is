@@ -3,7 +3,14 @@
 declare(strict_types=1);
 
 /**
- * Pinchard photo viewer — single image with metadata drawer.
+ * Pinchard photo viewer — single image with metadata drawer and optional autoplay.
+ *
+ * Query params:
+ *   filename=…   current photograph
+ *   play=1       start autoplay (loops the archive)
+ *   display=SEC  hold time after each exhibition crossfade
+ *   fade=SEC     exhibition crossfade duration (default 8)
+ *   kiosk=1      start chrome-hidden / fullscreen mode (toggle with F)
  */
 
 require_once __DIR__ . '/lib/bootstrap.php';
@@ -16,6 +23,21 @@ if (isset($_GET['fn']) && $_GET['fn'] !== '') {
 	header('Location: ' . pinchard_absolute_url('/index.php', ['filename' => $filenameParam]), true, 301);
 	exit;
 }
+
+$playDisplay = 0.0;
+$playFade = 8.0;
+$playDisplayFromUrl = false;
+$playFadeFromUrl = false;
+if (isset($_GET['display']) && $_GET['display'] !== '') {
+	$playDisplay = max(0.1, min(600.0, (float) $_GET['display']));
+	$playDisplayFromUrl = true;
+}
+if (isset($_GET['fade']) && $_GET['fade'] !== '') {
+	$playFade = max(0.0, min(60.0, (float) $_GET['fade']));
+	$playFadeFromUrl = true;
+}
+$playOnLoad = isset($_GET['play']) && $_GET['play'] !== '' && $_GET['play'] !== '0';
+$kiosk = isset($_GET['kiosk']) && $_GET['kiosk'] !== '' && $_GET['kiosk'] !== '0';
 
 try {
 	$cfg = pinchard_config();
@@ -105,16 +127,20 @@ try {
 		$extraHead .= '    <link rel="prefetch" href="' . pinchard_h($cdnFull . $next_filename) . '" as="image">' . "\n";
 	}
 
+	$bodyClass = 'viewer-page' . ($kiosk ? ' viewer-page--kiosk' : '');
+
 	pinchard_layout_head('Cloudberry — ' . $payload['photoTitle'], [
 		'description' => $ogDescription,
 		'og_image' => $imageUrl,
 		'og_type' => 'article',
-		'body_class' => 'viewer-page',
+		'body_class' => $bodyClass,
 		'extra_head' => $extraHead,
 		'json_ld' => $jsonLd,
 	]);
 
-	pinchard_layout_nav(['active' => 'index']);
+	pinchard_layout_nav([
+		'active' => 'index',
+	]);
 } catch (Throwable $e) {
 	if (pinchard_env_non_empty('PINCHARD_DEBUG') === '1') {
 		http_response_code($e instanceof \Aws\Exception\AwsException || $e instanceof RuntimeException ? 503 : 500);
@@ -128,7 +154,7 @@ try {
 }
 ?>
     <h1 class="visually-hidden"><?= pinchard_h('Cloudberry — ' . $payload['photoTitle']) ?></h1>
-    <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse. Timeline scrubber below jumps through the archive.">
+    <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse. Space plays or pauses autoplay. F toggles fullscreen. Timeline scrubber jumps through the archive.">
         <div class="photo-placeholder" data-large="<?= pinchard_h($imageUrl) ?>" data-alt="<?= pinchard_h($photoAlt) ?>" id="preview_image">
             <div style="padding-bottom: 66.6%;"></div>
         </div>
@@ -138,6 +164,12 @@ try {
                 <a href="index.php?filename=<?= pinchard_h($prev_filename ?? '') ?>" class="viewer-photo-prev<?= ($prev_filename === null || $prev_filename === '') ? ' is-hidden' : '' ?>" aria-label="Previous photograph"<?= ($prev_filename === null || $prev_filename === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
                     <span class="arrow left" aria-hidden="true"></span>
                 </a>
+                <button type="button" class="viewer-play-toggle is-paused" id="viewerPlayToggle" aria-label="Play slideshow">
+                    <span class="viewer-play-icons" aria-hidden="true">
+                        <span class="viewer-play-icon viewer-play-icon--pause"></span>
+                        <span class="viewer-play-icon viewer-play-icon--play"></span>
+                    </span>
+                </button>
                 <a href="index.php?filename=<?= pinchard_h($next_filename ?? '') ?>" class="viewer-photo-next<?= ($next_filename === null || $next_filename === '') ? ' is-hidden' : '' ?>" aria-label="Next photograph"<?= ($next_filename === null || $next_filename === '') ? ' aria-hidden="true" tabindex="-1"' : '' ?>>
                     <span class="arrow right" aria-hidden="true"></span>
                 </a>
@@ -169,6 +201,7 @@ try {
                     </div>
                 </nav>
 <?php endif; ?>
+                <button type="button" class="viewer-fullscreen-toggle" id="viewerFullscreenToggle" aria-label="Enter fullscreen" aria-pressed="false"></button>
                 <button type="button" class="btn_arrow" id="detailToggle" aria-expanded="false" aria-controls="detailDrawerContent" aria-label="Show photograph details"></button>
             </div>
             <hr class="detail_view-divider" aria-hidden="true">
@@ -226,6 +259,12 @@ $footerScripts = <<<'JS'
             currentIndex: VIEWER_CURRENT_INDEX,
             fadeMs: 1000,
             introFadeMs: 700,
+            playDisplayMs: PLAY_DISPLAY_MS,
+            playFadeMs: PLAY_FADE_MS,
+            playDisplayFromUrl: PLAY_DISPLAY_FROM_URL,
+            playFadeFromUrl: PLAY_FADE_FROM_URL,
+            playOnLoad: PLAY_ON_LOAD,
+            kioskOnLoad: KIOSK_ON_LOAD,
             prevUrl: PREV_URL,
             nextUrl: NEXT_URL,
             prefetch: PRELOAD_URLS,
@@ -250,6 +289,12 @@ $nextUrl = ($next_filename !== null && $next_filename !== '') ? 'index.php?filen
 $footerScripts = str_replace('CDN_URL', json_encode($cdnFull, $mapJe), $footerScripts);
 $footerScripts = str_replace('VIEWER_FILENAMES', json_encode($viewerFilenames, $mapJe), $footerScripts);
 $footerScripts = str_replace('VIEWER_CURRENT_INDEX', json_encode($viewerCurrentIndex, $mapJe), $footerScripts);
+$footerScripts = str_replace('PLAY_DISPLAY_MS', json_encode((int) round($playDisplay * 1000), $mapJe), $footerScripts);
+$footerScripts = str_replace('PLAY_FADE_MS', json_encode((int) round($playFade * 1000), $mapJe), $footerScripts);
+$footerScripts = str_replace('PLAY_DISPLAY_FROM_URL', json_encode($playDisplayFromUrl, $mapJe), $footerScripts);
+$footerScripts = str_replace('PLAY_FADE_FROM_URL', json_encode($playFadeFromUrl, $mapJe), $footerScripts);
+$footerScripts = str_replace('PLAY_ON_LOAD', json_encode($playOnLoad, $mapJe), $footerScripts);
+$footerScripts = str_replace('KIOSK_ON_LOAD', json_encode($kiosk, $mapJe), $footerScripts);
 $footerScripts = str_replace('PREV_URL', json_encode($prevUrl, $mapJe), $footerScripts);
 $footerScripts = str_replace('NEXT_URL', json_encode($nextUrl, $mapJe), $footerScripts);
 $footerScripts = str_replace('PRELOAD_URLS', json_encode($preloadUrls, $mapJe), $footerScripts);

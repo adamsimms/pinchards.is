@@ -6,7 +6,7 @@ require_once __DIR__ . '/page-shell.php';
 require_once __DIR__ . '/nav.php';
 
 /**
- * Shared layout for index, gallery, info, and slideshow pages.
+ * Shared layout for index, gallery, and info pages.
  *
  * @param array{
  *   description?: string,
@@ -28,8 +28,7 @@ function pinchard_layout_head(string $title, array $options = []): void
 
 /**
  * @param array{
- *   active?: 'index'|'gallery'|'info'|'slideshow'|null,
- *   show_slideshow?: bool,
+ *   active?: 'index'|'gallery'|'info'|null,
  *   kiosk?: bool,
  * } $options
  */

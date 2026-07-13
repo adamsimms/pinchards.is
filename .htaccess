@@ -23,5 +23,6 @@
 	RewriteRule ^trees/?$ /maps/trees/ [R=301,L]
 	RewriteRule ^resettled/?$ /maps/resettled/ [R=301,L]
 	RewriteRule ^gallery-days\.php$ /gallery.php [R=301,L]
-	RewriteRule ^slider\.php$ /slideshow.php [R=301,L]
+	RewriteRule ^slider\.php$ /index.php?play=1 [R=301,L,QSA]
+	RewriteRule ^slideshow\.php$ /index.php?play=1 [R=301,L,QSA]
 </IfModule>

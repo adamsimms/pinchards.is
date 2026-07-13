@@ -41,7 +41,7 @@ Open [http://localhost:8080](http://localhost:8080). Map pages also need optiona
 
 | Area | Purpose |
 |------|---------|
-| **Core pages** | `index.php`, `gallery.php`, `info.php`, `slideshow.php`, `viewer-photo.php` at repo root (web document root). Legacy `/gallery-days.php` and `/slider.php` redirect via `.htaccess`. |
+| **Core pages** | `index.php`, `gallery.php`, `info.php`, `viewer-photo.php` at repo root (web document root). Legacy `/gallery-days.php`, `/slider.php`, and `/slideshow.php` redirect via `.htaccess` / PHP. |
 | **`lib/`** | `bootstrap.php` (AWS + S3), `config.php` (bucket + CDN URLs), `env.php` (secrets loader). Pages and mini-sites load `lib/bootstrap.php` (or `lib/env.php` for maps-only pages). |
 | **Public assets** | `css/`, `js/`, `images/`, `favicon/`. `vendor/` is generated locally and in CI (not committed) — Bootstrap CSS plus GSAP + ScrollTrigger via `npm run vendor:frontend`. |
 | **Source / design** | Edit `css/pinchard.css` for theme styles. `design/` holds Sketch/SVG sources (not served). |

@@ -23,10 +23,9 @@ Photos are **not** in git. The repo is the PHP/CSS/JS shell; media lives in S3 b
 
 | Surface | Entry | Notes |
 |---------|-------|--------|
-| Photo viewer | `index.php` | Timeline + detail drawer; Mapbox when token present |
+| Photo viewer | `index.php` | Timeline + detail drawer; autoplay / kiosk via `play`, `display`, `fade`, `kiosk`; Mapbox when token present |
 | Day gallery | `gallery.php` + `js/gallery.js` | Filmstrip (desktop) / vertical days (mobile) |
 | About | `info.php` | Narrative + embeds |
-| Slideshow | `slideshow.php` | Autoplay surface |
 | JSON photo API | `viewer-photo.php` | Rate-limited; powers in-viewer navigation |
 | Maps / light-house / jam | `maps/`, `light-house/`, `jam/` | Mini-sites; jam is `noindex` |
 

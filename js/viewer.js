@@ -7,18 +7,25 @@
     }
 
     var motion = window.pinchardMotion;
-    var FADE_MS = cfg.fadeMs != null ? cfg.fadeMs : 1000;
+    var BROWSE_FADE_MS = cfg.fadeMs != null ? cfg.fadeMs : 1000;
     var INTRO_FADE_MS = cfg.introFadeMs != null ? cfg.introFadeMs : 700;
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        FADE_MS = 0;
+    var PLAY_FADE_MS = cfg.playFadeMs != null ? cfg.playFadeMs : 8000;
+    var PLAY_DISPLAY_MS = cfg.playDisplayMs != null ? cfg.playDisplayMs : 0;
+    var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) {
+        BROWSE_FADE_MS = 0;
         INTRO_FADE_MS = 0;
+        PLAY_FADE_MS = 0;
     }
+
     var placeholder = document.getElementById('preview_image');
     var viewer = document.getElementById('photoViewer');
     var drawer = document.getElementById('detailDrawer');
     var toggle = document.getElementById('detailToggle');
     var prevLink = document.querySelector('.viewer-photo-prev');
     var nextLink = document.querySelector('.viewer-photo-next');
+    var playToggle = document.getElementById('viewerPlayToggle');
+    var fullscreenToggle = document.getElementById('viewerFullscreenToggle');
     var timelineRange = document.getElementById('viewerTimelineRange');
     var timelinePosition = document.getElementById('viewerTimelinePosition');
     var titleEl = document.getElementById('viewerPhotoTitle');
@@ -39,12 +46,34 @@
     var navDirection = 1;
     var metadataRequest = null;
     var prefetchCache = Object.create(null);
+    var playing = false;
+    var scrubbing = false;
+    var advanceTimer = null;
+    var kioskActive = document.body.classList.contains('viewer-page--kiosk');
 
     cfg.currentIndex = typeof cfg.currentIndex === 'number' ? cfg.currentIndex : 0;
     cfg.currentFilename = cfg.filenames[cfg.currentIndex] || cfg.currentFilename || '';
 
+    function activeFadeMs() {
+        return playing ? PLAY_FADE_MS : BROWSE_FADE_MS;
+    }
+
     function photoPageUrl(filename) {
-        return 'index.php?filename=' + encodeURIComponent(filename);
+        var params = new URLSearchParams();
+        params.set('filename', filename);
+        if (playing) {
+            params.set('play', '1');
+        }
+        if (kioskActive) {
+            params.set('kiosk', '1');
+        }
+        if (cfg.playDisplayFromUrl && cfg.playDisplayMs != null) {
+            params.set('display', String(cfg.playDisplayMs / 1000));
+        }
+        if (cfg.playFadeFromUrl && cfg.playFadeMs != null) {
+            params.set('fade', String(cfg.playFadeMs / 1000));
+        }
+        return 'index.php?' + params.toString();
     }
 
     function imageUrl(filename) {
@@ -62,6 +91,21 @@
 
     function filenameFromIndex(index) {
         return cfg.filenames[index] || null;
+    }
+
+    function adjacentFilename(offset) {
+        var len = cfg.filenames.length;
+        if (len === 0) {
+            return null;
+        }
+        if (playing) {
+            return cfg.filenames[(cfg.currentIndex + offset + len) % len];
+        }
+        var nextIndex = cfg.currentIndex + offset;
+        if (nextIndex < 0 || nextIndex >= len) {
+            return null;
+        }
+        return cfg.filenames[nextIndex];
     }
 
     function indexFromFilename(filename) {
@@ -82,12 +126,12 @@
     }
 
     function prefetchAdjacent() {
-        var prev = filenameFromIndex(cfg.currentIndex - 1);
-        var next = filenameFromIndex(cfg.currentIndex + 1);
-        if (prev) {
+        var prev = adjacentFilename(-1);
+        var next = adjacentFilename(1);
+        if (prev && prev !== cfg.currentFilename) {
             preloadUrl(imageUrl(prev));
         }
-        if (next) {
+        if (next && next !== cfg.currentFilename) {
             preloadUrl(imageUrl(next));
         }
     }
@@ -110,8 +154,12 @@
     }
 
     function updateNavLinks() {
-        var prev = filenameFromIndex(cfg.currentIndex - 1);
-        var next = filenameFromIndex(cfg.currentIndex + 1);
+        var prev = adjacentFilename(-1);
+        var next = adjacentFilename(1);
+        if (playing && cfg.filenames.length < 2) {
+            prev = null;
+            next = null;
+        }
         cfg.prevUrl = prev ? photoPageUrl(prev) : '';
         cfg.nextUrl = next ? photoPageUrl(next) : '';
         setNavLinkState(prevLink, prev);
@@ -175,7 +223,7 @@
         mapState.marker.setLngLat([payload.mapLon, payload.mapLat]);
         mapState.map.easeTo({
             center: [payload.mapLon, payload.mapLat],
-            duration: FADE_MS
+            duration: activeFadeMs()
         });
     }
 
@@ -303,6 +351,7 @@
     }
 
     function crossfadeTo(url, alt) {
+        var fadeMs = activeFadeMs();
         return preloadUrl(url).then(function() {
             var old = currentMainImg;
 
@@ -328,10 +377,10 @@
 
             return waitForImagePaint(newImg).then(function() {
                 var useMotion = motion && motion.available && typeof motion.crossfadeViewer === 'function'
-                    && old && FADE_MS > 0;
+                    && old && fadeMs > 0;
 
                 if (useMotion) {
-                    return motion.crossfadeViewer(old, newImg, navDirection, FADE_MS).then(function() {
+                    return motion.crossfadeViewer(old, newImg, navDirection, fadeMs).then(function() {
                         currentMainImg = newImg;
                         placeholder.dataset.large = url;
                     });
@@ -366,18 +415,18 @@
                                 resolve();
                             }
 
-                            if (old && FADE_MS > 0) {
+                            if (old && fadeMs > 0) {
                                 newImg.classList.add('loaded');
                                 newImg.classList.add('is-fading-in');
                                 // Clear the pre-insert hide so the CSS opacity transition can run.
-                                newImg.style.transition = 'opacity ' + (FADE_MS / 1000) + 's ease-in-out';
+                                newImg.style.transition = 'opacity ' + (fadeMs / 1000) + 's ease-in-out';
                                 newImg.style.opacity = '1';
                                 newImg.addEventListener('transitionend', function(e) {
                                     if (e.propertyName === 'opacity') {
                                         finish();
                                     }
                                 }, { once: true });
-                                window.setTimeout(finish, FADE_MS + 80);
+                                window.setTimeout(finish, fadeMs + 80);
                             } else {
                                 newImg.classList.add('loaded');
                                 newImg.style.opacity = '1';
@@ -392,11 +441,52 @@
 
     function updateHistory(filename, mode) {
         var url = photoPageUrl(filename);
-        var state = { filename: filename };
+        var state = { filename: filename, play: playing, kiosk: kioskActive };
         if (mode === 'replace') {
             history.replaceState(state, '', url);
         } else if (mode === 'push') {
             history.pushState(state, '', url);
+        }
+    }
+
+    function clearAdvanceTimer() {
+        if (advanceTimer !== null) {
+            clearTimeout(advanceTimer);
+            advanceTimer = null;
+        }
+    }
+
+    function scheduleAdvance() {
+        clearAdvanceTimer();
+        if (!playing || scrubbing || transitioning || cfg.filenames.length < 2) {
+            return;
+        }
+        advanceTimer = setTimeout(function() {
+            advanceAutoplay();
+        }, PLAY_DISPLAY_MS);
+    }
+
+    function advanceAutoplay() {
+        if (!playing || scrubbing || transitioning) {
+            return;
+        }
+        navigateByOffset(1, { history: 'replace' });
+    }
+
+    function setPlaying(nextPlaying, options) {
+        options = options || {};
+        playing = !!nextPlaying;
+        clearAdvanceTimer();
+        if (playToggle) {
+            playToggle.classList.toggle('is-paused', !playing);
+            playToggle.setAttribute('aria-label', playing ? 'Pause slideshow' : 'Play slideshow');
+        }
+        updateNavLinks();
+        if (options.syncUrl !== false) {
+            updateHistory(cfg.currentFilename, 'replace');
+        }
+        if (playing && !scrubbing && !transitioning) {
+            scheduleAdvance();
         }
     }
 
@@ -406,12 +496,17 @@
         if (index < 0 || transitioning) {
             return Promise.resolve(false);
         }
-        if (filename === cfg.currentFilename && options.history !== 'replace') {
+        if (filename === cfg.currentFilename) {
             return Promise.resolve(false);
         }
 
+        clearAdvanceTimer();
         transitioning = true;
         navDirection = index >= cfg.currentIndex ? 1 : -1;
+        // Wraparound can move from last→first; keep direction forward when playing.
+        if (playing && options.wrapDir) {
+            navDirection = options.wrapDir;
+        }
         cfg.currentIndex = index;
         cfg.currentFilename = filename;
         updateNavLinks();
@@ -442,17 +537,23 @@
             return false;
         }).finally(function() {
             transitioning = false;
+            if (playing && !scrubbing) {
+                scheduleAdvance();
+            }
         });
     }
 
     function navigateByOffset(offset, options) {
-        var target = filenameFromIndex(cfg.currentIndex + offset);
+        var target = adjacentFilename(offset);
         if (!target) {
             return Promise.resolve(false);
         }
         options = options || {};
         if (!options.history) {
             options.history = 'push';
+        }
+        if (playing) {
+            options.wrapDir = offset >= 0 ? 1 : -1;
         }
         return navigateToFilename(target, options);
     }
@@ -513,23 +614,141 @@
         toggle.setAttribute('aria-label', open ? 'Hide photograph details' : 'Show photograph details');
     }
 
+    function requestBrowserFullscreen() {
+        var el = document.documentElement;
+        var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+        if (req) {
+            try {
+                var result = req.call(el);
+                if (result && typeof result.catch === 'function') {
+                    result.catch(function() { /* user denied or unavailable */ });
+                }
+            } catch (err) {
+                /* ignore */
+            }
+        }
+    }
+
+    function exitBrowserFullscreen() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            return;
+        }
+        var exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if (exit) {
+            try {
+                var result = exit.call(document);
+                if (result && typeof result.catch === 'function') {
+                    result.catch(function() { /* ignore */ });
+                }
+            } catch (err) {
+                /* ignore */
+            }
+        }
+    }
+
+    function updateFullscreenToggle() {
+        if (!fullscreenToggle) {
+            return;
+        }
+        fullscreenToggle.classList.toggle('is-active', kioskActive);
+        fullscreenToggle.setAttribute('aria-pressed', kioskActive ? 'true' : 'false');
+        fullscreenToggle.setAttribute('aria-label', kioskActive ? 'Exit fullscreen' : 'Enter fullscreen');
+    }
+
+    function setKiosk(active, options) {
+        options = options || {};
+        if (active === kioskActive) {
+            return;
+        }
+        kioskActive = active;
+        document.body.classList.toggle('viewer-page--kiosk', active);
+        updateFullscreenToggle();
+        if (active) {
+            setDrawerOpen(false);
+        }
+        if (options.syncUrl !== false) {
+            updateHistory(cfg.currentFilename, 'replace');
+        }
+        if (options.browserFullscreen !== false) {
+            if (active) {
+                requestBrowserFullscreen();
+            } else {
+                exitBrowserFullscreen();
+            }
+        }
+    }
+
+    function toggleKiosk() {
+        setKiosk(!kioskActive);
+    }
+
     if (drawer && toggle) {
         toggle.addEventListener('click', function() {
             setDrawerOpen(!drawer.classList.contains('open'));
         });
     }
 
+    if (playToggle) {
+        playToggle.addEventListener('click', function() {
+            setPlaying(!playing);
+        });
+    }
+
+    if (fullscreenToggle) {
+        fullscreenToggle.addEventListener('click', function() {
+            toggleKiosk();
+        });
+    }
+
+    document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement && kioskActive) {
+            setKiosk(false, { browserFullscreen: false });
+        }
+    });
+    document.addEventListener('webkitfullscreenchange', function() {
+        if (!document.webkitFullscreenElement && kioskActive) {
+            setKiosk(false, { browserFullscreen: false });
+        }
+    });
+
     document.addEventListener('keydown', function(e) {
-        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT' || e.target.isContentEditable)) {
             return;
         }
-        if (e.key === 'ArrowLeft' && cfg.currentIndex > 0) {
+
+        if (e.key === 'Escape') {
+            if (kioskActive) {
+                e.preventDefault();
+                setKiosk(false);
+            }
+            return;
+        }
+
+        if (e.key === 'f' || e.key === 'F') {
+            e.preventDefault();
+            toggleKiosk();
+            return;
+        }
+
+        if (e.key === ' ' || e.key === 'Spacebar') {
+            e.preventDefault();
+            setPlaying(!playing);
+            return;
+        }
+
+        if (e.key === 'ArrowLeft') {
+            if (!adjacentFilename(-1)) {
+                return;
+            }
             e.preventDefault();
             navigateByOffset(-1);
-        } else if (e.key === 'ArrowRight' && cfg.currentIndex < cfg.filenames.length - 1) {
+        } else if (e.key === 'ArrowRight') {
+            if (!adjacentFilename(1)) {
+                return;
+            }
             e.preventDefault();
             navigateByOffset(1);
-        } else if (e.key === 'ArrowUp' && drawer && toggle && !drawer.classList.contains('open')) {
+        } else if (e.key === 'ArrowUp' && drawer && toggle && !drawer.classList.contains('open') && !kioskActive) {
             e.preventDefault();
             setDrawerOpen(true);
         } else if (e.key === 'ArrowDown' && drawer && toggle && drawer.classList.contains('open')) {
@@ -553,14 +772,36 @@
 
         timelineRange.addEventListener('pointerdown', function(e) {
             e.stopPropagation();
+            scrubbing = true;
+            clearAdvanceTimer();
+        });
+
+        timelineRange.addEventListener('pointerup', function() {
+            scrubbing = false;
+            if (playing && !transitioning) {
+                scheduleAdvance();
+            }
+        });
+
+        timelineRange.addEventListener('pointercancel', function() {
+            scrubbing = false;
+            if (playing && !transitioning) {
+                scheduleAdvance();
+            }
         });
 
         timelineRange.addEventListener('touchstart', function(e) {
             e.stopPropagation();
+            scrubbing = true;
+            clearAdvanceTimer();
         }, { passive: true });
 
         timelineRange.addEventListener('touchend', function(e) {
             e.stopPropagation();
+            scrubbing = false;
+            if (playing && !transitioning) {
+                scheduleAdvance();
+            }
         }, { passive: true });
 
         var timelineNav = document.getElementById('viewerTimeline');
@@ -594,9 +835,11 @@
         if (Math.abs(dx) < 50) {
             return;
         }
-        if (dx > 0 && cfg.currentIndex > 0) {
-            navigateByOffset(-1);
-        } else if (dx < 0 && cfg.currentIndex < cfg.filenames.length - 1) {
+        if (dx > 0) {
+            if (playing || cfg.currentIndex > 0) {
+                navigateByOffset(-1);
+            }
+        } else if (playing || cfg.currentIndex < cfg.filenames.length - 1) {
             navigateByOffset(1);
         }
     }, { passive: true });
@@ -606,6 +849,14 @@
         var filename = params.get('filename');
         if (!filename) {
             return;
+        }
+        var nextPlay = params.get('play') === '1';
+        var nextKiosk = params.get('kiosk') === '1';
+        if (nextPlay !== playing) {
+            setPlaying(nextPlay, { syncUrl: false });
+        }
+        if (nextKiosk !== kioskActive) {
+            setKiosk(nextKiosk, { syncUrl: false, browserFullscreen: false });
         }
         if (filename === cfg.currentFilename) {
             return;
@@ -621,5 +872,15 @@
 
     initInitialPhoto();
     updateNavLinks();
+    updateFullscreenToggle();
     updateHistory(cfg.currentFilename, 'replace');
+
+    if (cfg.playOnLoad) {
+        setPlaying(true, { syncUrl: false });
+    }
+
+    if (cfg.kioskOnLoad && kioskActive) {
+        // PHP already applied body class; request browser fullscreen after gesture-friendly load.
+        requestBrowserFullscreen();
+    }
 })();

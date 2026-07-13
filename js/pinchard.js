@@ -5,7 +5,6 @@
     var MAIN_ROUTES = {
         'index.php': true,
         'gallery.php': true,
-        'slideshow.php': true,
         'info.php': true
     };
 

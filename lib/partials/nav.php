@@ -36,12 +36,11 @@ function pinchard_nav_maps_dropdown(?string $active): void
 }
 
 /**
- * Global site navigation — Cloudberry logo left; gallery, slideshow, maps, info right.
+ * Global site navigation — Cloudberry logo left; gallery, maps, info right.
  *
  * @param array{
- *   active?: 'index'|'gallery'|'slideshow'|'info'|null,
+ *   active?: 'index'|'gallery'|'info'|null,
  *   maps_active?: 'satellite'|'trees'|'resettled'|null,
- *   show_slideshow?: bool,
  *   kiosk?: bool,
  * } $options
  */
@@ -53,17 +52,14 @@ function pinchard_site_nav(array $options = []): void
 
 	$active = $options['active'] ?? null;
 	$mapsActive = $options['maps_active'] ?? null;
-	$showSlideshow = $options['show_slideshow'] ?? true;
 
 	// Page links stay unversioned; only static assets use mtime cache-busting.
 	$indexHref = '/index.php';
 	$galleryHref = '/gallery.php';
-	$slideshowHref = '/slideshow.php';
 	$infoHref = '/info.php';
 
 	$galleryClass = 'link-to-gallery nav_gallery' . ($active === 'gallery' ? ' active' : '');
 	$infoClass = 'nav_info' . ($active === 'info' ? ' active' : '');
-	$slideshowClass = 'nav_slideshow' . ($active === 'slideshow' ? ' active' : '');
 	?>
     <nav id="mainNav" class="navbar navbar-default fixed-top" aria-label="Site">
         <div class="nav-bar-inner">
@@ -75,18 +71,6 @@ function pinchard_site_nav(array $options = []): void
             </div>
             <div class="nav-bar-end">
                 <a href="<?= $galleryHref ?>" class="<?= pinchard_h($galleryClass) ?>" aria-label="Browse photo gallery"></a>
-<?php if ($showSlideshow): ?>
-<?php if ($active === 'slideshow'): ?>
-                <button type="button" class="nav-slideshow-control" id="navSlideshowToggle" aria-label="Pause slideshow">
-                    <span class="nav-slideshow-icons" aria-hidden="true">
-                        <span class="nav-slideshow-icon nav-slideshow-icon--pause"></span>
-                        <span class="nav-slideshow-icon nav-slideshow-icon--play"></span>
-                    </span>
-                </button>
-<?php else: ?>
-                <a href="<?= $slideshowHref ?>" class="<?= pinchard_h($slideshowClass) ?>" aria-label="Watch slideshow"></a>
-<?php endif; ?>
-<?php endif; ?>
 <?php pinchard_nav_maps_dropdown($mapsActive); ?>
                 <a class="<?= pinchard_h($infoClass) ?>" href="<?= $infoHref ?>" aria-label="About Cloudberry"></a>
             </div>

@@ -76,7 +76,7 @@
         if (!nav || !available) {
             return;
         }
-        var icons = nav.querySelectorAll('.nav_gallery, .nav_slideshow, .nav_info, .nav_maps, .nav-slideshow-control');
+        var icons = nav.querySelectorAll('.nav_gallery, .nav_info, .nav_maps');
         gsap.killTweensOf(nav);
         // Box-shadow + icon scale only — never animate layout props (minHeight) while scrolling.
         gsap.to(nav, {

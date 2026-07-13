@@ -300,7 +300,6 @@ aside {
 
 /* Nav icons: one SVG per glyph, color via mask + tokens */
 .navbar-default .nav_gallery,
-.navbar-default .nav_slideshow,
 .navbar-default .nav_info,
 .navbar-default .nav_maps {
     display: block;
@@ -322,10 +321,6 @@ aside {
     -webkit-mask-image: url(../images/icon-gallery.svg);
     mask-image: url(../images/icon-gallery.svg);
 }
-.navbar-default .nav_slideshow {
-    -webkit-mask-image: url(../images/icon-slideshow.svg);
-    mask-image: url(../images/icon-slideshow.svg);
-}
 .navbar-default .nav_info {
     -webkit-mask-image: url(../images/icon-info.svg);
     mask-image: url(../images/icon-info.svg);
@@ -338,9 +333,6 @@ aside {
 .navbar-default .nav_gallery:hover,
 .navbar-default .nav_gallery:focus,
 .navbar-default .nav_gallery.active,
-.navbar-default .nav_slideshow:hover,
-.navbar-default .nav_slideshow:focus,
-.navbar-default .nav_slideshow.active,
 .navbar-default .nav_info:hover,
 .navbar-default .nav_info:focus,
 .navbar-default .nav_info.active,
@@ -349,91 +341,6 @@ aside {
 .navbar-default .nav_maps[aria-expanded="true"],
 .navbar-default .nav_maps.is-active {
     background-color: var(--icon-active);
-}
-
-.navbar-default .nav-slideshow-control {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--nav-icon-hit);
-    height: var(--nav-icon-hit);
-    min-width: var(--nav-icon-hit);
-    min-height: var(--nav-icon-hit);
-    margin: 0;
-    padding: 0;
-    border: none;
-    border-radius: 0;
-    background: transparent;
-    text-decoration: none;
-    flex-shrink: 0;
-    box-sizing: border-box;
-    color: var(--icon-active);
-    cursor: pointer;
-    font: inherit;
-    line-height: 1;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-.navbar-default .nav-slideshow-control:hover,
-.navbar-default .nav-slideshow-control:focus {
-    text-decoration: none;
-    outline: none;
-}
-
-.navbar-default .nav-slideshow-control:focus-visible {
-    box-shadow: 0 0 0 2px rgba(240, 95, 64, 0.35);
-}
-
-.navbar-default .nav-slideshow-control.is-paused:focus-visible {
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
-}
-
-.navbar-default .nav-slideshow-control .nav-slideshow-icons {
-    position: relative;
-    display: block;
-    width: var(--nav-icon-size);
-    height: var(--nav-icon-size);
-    flex-shrink: 0;
-}
-
-.navbar-default .nav-slideshow-control .nav-slideshow-icon {
-    position: absolute;
-    inset: 0;
-    display: block;
-    background-color: currentColor;
-    background-image: none;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-    opacity: 0;
-    transition: opacity 0.25s ease;
-}
-
-.navbar-default .nav-slideshow-control .nav-slideshow-icon--pause {
-    -webkit-mask-image: url(../images/icon-slideshow_pause.svg);
-    mask-image: url(../images/icon-slideshow_pause.svg);
-    opacity: 1;
-}
-
-.navbar-default .nav-slideshow-control .nav-slideshow-icon--play {
-    -webkit-mask-image: url(../images/icon-slideshow.svg);
-    mask-image: url(../images/icon-slideshow.svg);
-}
-
-.navbar-default .nav-slideshow-control.is-paused .nav-slideshow-icon--pause {
-    opacity: 0;
-}
-
-.navbar-default .nav-slideshow-control.is-paused .nav-slideshow-icon--play {
-    opacity: 1;
-}
-
-.navbar-default .nav-slideshow-date {
-    display: none;
 }
 
 /* Union */
@@ -582,9 +489,117 @@ body.viewer-page .preview::after {
     pointer-events: none;
     z-index: 1;
 }
+.detail_view-bar .viewer-play-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--icon-idle);
+    cursor: pointer;
+    font: inherit;
+    line-height: 1;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.detail_view-bar .viewer-play-toggle:hover,
+.detail_view-bar .viewer-play-toggle:focus {
+    color: var(--icon-active);
+    outline: none;
+}
+
+.detail_view-bar .viewer-play-toggle:focus-visible {
+    box-shadow: 0 0 0 2px rgba(240, 95, 64, 0.35);
+}
+
+.detail_view-bar .viewer-play-toggle:not(.is-paused) {
+    color: var(--icon-active);
+}
+
+.detail_view-bar .viewer-play-icons {
+    position: relative;
+    display: block;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.detail_view-bar .viewer-play-icon {
+    position: absolute;
+    inset: 0;
+    display: block;
+    background-color: currentColor;
+    background-image: none;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.detail_view-bar .viewer-play-icon--pause {
+    -webkit-mask-image: url(../images/icon-slideshow_pause.svg);
+    mask-image: url(../images/icon-slideshow_pause.svg);
+}
+
+.detail_view-bar .viewer-play-icon--play {
+    -webkit-mask-image: url(../images/icon-slideshow.svg);
+    mask-image: url(../images/icon-slideshow.svg);
+    opacity: 1;
+}
+
+.detail_view-bar .viewer-play-toggle:not(.is-paused) .viewer-play-icon--play {
+    opacity: 0;
+}
+
+.detail_view-bar .viewer-play-toggle:not(.is-paused) .viewer-play-icon--pause {
+    opacity: 1;
+}
+
+.detail_view-bar .viewer-fullscreen-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: var(--icon-idle);
+    background-image: none;
+    -webkit-mask: url(../images/icon-fullscreen.svg) center / 24px 24px no-repeat;
+    mask: url(../images/icon-fullscreen.svg) center / 24px 24px no-repeat;
+}
+
+.detail_view-bar .viewer-fullscreen-toggle:hover,
+.detail_view-bar .viewer-fullscreen-toggle:focus,
+.detail_view-bar .viewer-fullscreen-toggle.is-active {
+    background-color: var(--icon-active);
+    outline: none;
+}
+
+.detail_view-bar .viewer-fullscreen-toggle:focus-visible {
+    box-shadow: 0 0 0 2px rgba(240, 95, 64, 0.35);
+}
+
 .btn_arrow {
     position: relative;
-    width: 100%;
+    width: 48px;
     height: 3rem;
     min-height: 48px;
     background-color: white;
@@ -609,9 +624,6 @@ body.viewer-page .preview::after {
     mask: url('../images/arrow.svg') center / 22px 22px no-repeat;
     transition: background-color 0.2s ease;
 }
-.detail_view.has-timeline .btn_arrow {
-    width: 48px;
-}
 .detail_view-bar {
     display: flex;
     align-items: center;
@@ -619,6 +631,24 @@ body.viewer-page .preview::after {
     min-height: 48px;
     flex-shrink: 0;
     background-color: white;
+}
+
+body.viewer-page--kiosk .navbar-default,
+body.viewer-page--kiosk .detail_view {
+    display: none !important;
+}
+
+body.viewer-page--kiosk .preview {
+    padding-top: 0;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+body.viewer-page--kiosk .preview::after {
+    display: none;
 }
 .detail_view-divider {
     display: none;
@@ -1114,9 +1144,23 @@ option {
     }
 
     .detail_view-bar .viewer-photo-prev,
-    .detail_view-bar .viewer-photo-next {
+    .detail_view-bar .viewer-photo-next,
+    .detail_view-bar .viewer-play-toggle,
+    .detail_view-bar .viewer-fullscreen-toggle,
+    .detail_view-bar .btn_arrow {
         width: 44px;
         height: 44px;
+        min-height: 44px;
+    }
+
+    .detail_view-bar .viewer-play-icons {
+        width: 22px;
+        height: 22px;
+    }
+
+    .detail_view-bar .viewer-fullscreen-toggle {
+        -webkit-mask-size: 22px 22px;
+        mask-size: 22px 22px;
     }
 
     .detail_view-bar .arrow {
@@ -2686,7 +2730,7 @@ body.jam-page .slideshow-viewport img.is-fading-out {
         transition: none;
     }
 
-    .navbar-default .nav-slideshow-control .nav-slideshow-icon,
+    .detail_view-bar .viewer-play-icon,
     body.gallery-page .gallery-day-photo .photo-box-caption,
     body.gallery-page .gallery-day-photo .photo-box-caption-content,
     body.gallery-page .gallery-day-photo.is-loaded img.gallery-photo {
