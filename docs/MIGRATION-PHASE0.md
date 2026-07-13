@@ -81,3 +81,10 @@ Viewer drawer fields confirmed per-photo (`lib/viewer.php`). Catalog builder: [`
 - Joins `exif-dates.json` + `weather-hours.json`.
 - Emits structured [`data/catalog.json`](../data/catalog.json) (no HTML fragments) with new CDN URLs.
 - GPS: archive photos typically lack EXIF GPS → cabin defaults (same as live PHP).
+
+## Phase 3 notes
+
+- [`scripts/build-static-archive.php`](../scripts/build-static-archive.php) → `dist-archive/` (gitignored) for art assemble.
+- [`js/viewer.js`](../js/viewer.js) supports `catalogUrl` + `basePath` (DreamHost still uses `viewer-photo.php`).
+- Art site: `npm run build:full` assembles into `dist/cloudberry/archive/`; maps live at `/maps`.
+- Docs on art: `docs/CLOUDBERRY-ASSEMBLE.md`.
