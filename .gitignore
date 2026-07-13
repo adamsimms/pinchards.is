@@ -10,3 +10,4 @@ cookies.txt
 secrets.local.php
 images/photo/.cache/
 images/photo/tmp.jpg
+dist-archive/
