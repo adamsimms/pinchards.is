@@ -45,7 +45,7 @@ cd pinchards.is
 npm install && npm run vendor:frontend
 ```
 
-Maps and local tooling may need tokens in a local secrets file (see `secrets.local.php.example` — do not commit secrets).
+Maps and local tooling may need tokens in a local secrets example file at the repo root — do not commit secrets.
 
 ## Docs
 
