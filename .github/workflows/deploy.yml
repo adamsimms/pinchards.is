@@ -1,4 +1,5 @@
-# Push to main → sync to DreamHost via rsync over SSH (GitHub Actions).
+# Phase 5 retired — DreamHost rsync disabled (redirects → art.adamsimms.xyz).
+# workflow_dispatch kept for emergency rollback only; push no longer deploys.
 #
 # Repository secrets (Settings → Secrets and variables → Actions):
 #   Deploy: FTP_SERVER, FTP_USERNAME, FTP_SERVER_DIR, SSH_DEPLOY_KEY
@@ -13,9 +14,6 @@
 name: Deploy
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       dry_run:

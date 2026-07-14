@@ -1,10 +1,12 @@
-# pinchard.is
+# pinchards.is (Cloudberry archive source)
 
-[![Deploy](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/deploy.yml)
+[![CI](https://github.com/adamsimms/pinchards.is/actions/workflows/ci.yml/badge.svg)](https://github.com/adamsimms/pinchards.is/actions/workflows/ci.yml)
 
-[www.pinchards.is](https://www.pinchards.is) — **Cloudberry**, a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and [...]
+**Canonical site:** [art.adamsimms.xyz/cloudberry/archive](https://art.adamsimms.xyz/cloudberry/archive/) — this repo builds the static archive that assembles into that path. `www.pinchards.is` redirects there (Phase 5).
 
-This repository is the website source — gallery, about page, maps, and exhibition pages that present those photographs online.
+Cloudberry is a long-running photographic archive of off-the-grid life on Pinchard's Island, Newfoundland: landscape, people, boats, seasons, and [...].
+
+This repository is the archive source — static builder, catalog, gallery/viewer assets — not the live document root.
 
 ## Artist Statement
 
@@ -81,6 +83,9 @@ The app loads the first readable file from this list (see `lib/env.php`):
 
 ## Deploy
 
-Production deploys run on push to `main` via [GitHub Actions](.github/workflows/deploy.yml) → rsync over SSH to DreamHost. The workflow runs `composer install --no-dev` and `npm ci && npm run ve[...]
+Production hosting is **art.adamsimms.xyz** (assemble-at-deploy). Pushing to this repo triggers `repository_dispatch` → art Pages rebuild when `ART_DISPATCH_TOKEN` is set.
 
-See **[docs/DEPLOY.md](docs/DEPLOY.md)** for SSH key setup, repository secrets, and hosting notes.
+DreamHost rsync is **retired** (Phase 5). The deploy workflow is `workflow_dispatch` only for emergency rollback. See art [docs/PHASE5-CUTOVER.md](https://github.com/adamsimms/art.adamsimms.xyz/blob/main/docs/PHASE5-CUTOVER.md).
+
+Historical DreamHost notes remain in **[docs/DEPLOY.md](docs/DEPLOY.md)**.
+
