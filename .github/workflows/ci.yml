@@ -1,4 +1,4 @@
-# PR quality gate — lint PHP and validate Composer before merge.
+# PR quality gate — lint and validate Composer before merge.
 # Deploy still runs only on push to main (see deploy.yml).
 name: CI
 
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: Setup toolchain
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -28,14 +28,14 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: PHP syntax check
+      - name: Syntax check
         run: |
           set -euo pipefail
           mapfile -t files < <(find . -name '*.php' \
             -not -path './vendor/*' \
             -not -path './.git/*' \
             | sort)
-          echo "Linting ${#files[@]} PHP files…"
+          echo "Linting ${#files[@]} source files…"
           for f in "${files[@]}"; do
             php -l "$f" >/dev/null
           done

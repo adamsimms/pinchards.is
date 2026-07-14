@@ -1,6 +1,6 @@
 # Practice Forward Brief — Cloudberry / Pinchard's Island lane
 
-> **Not an engineering backlog.** Cloudberry on pinchards.is remains a closed archive
+> **Not an engineering backlog.** Cloudberry remains a closed archive
 > product; see [PRODUCT.md](PRODUCT.md). This brief is artistic research for possible
 > future chapters or sibling work.
 
@@ -344,7 +344,7 @@ lane and honor wonder / sublimity / tenderness.
 - Field guide: *How to Get to Pinchard's Island*
 - Statements: pinchards-island, cloudberry, resettlement, sublime, adrift, light-house,
   mug-up, cabin, driftwood, about (adamsim.ms)
-- Live site context: [README.md](../README.md), [info.php](../info.php)
+- Live site context: [README.md](../README.md), [art About](https://art.adamsimms.xyz/cloudberry/archive/info/)
 
 *Companion document: [new-practice-chapter.md](new-practice-chapter.md) — directions beyond
 Newfoundland-as-subject.*

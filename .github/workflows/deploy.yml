@@ -1,16 +1,9 @@
-# Phase 5 retired — DreamHost rsync disabled (redirects → art.adamsimms.xyz).
-# workflow_dispatch kept for emergency rollback only; push no longer deploys.
+# Emergency publish only — production is art.adamsimms.xyz (assemble-at-deploy).
+# Do not re-enable automatic push publish.
 #
-# Repository secrets (Settings → Secrets and variables → Actions):
-#   Deploy: FTP_SERVER, FTP_USERNAME, FTP_SERVER_DIR, SSH_DEPLOY_KEY
-#   Runtime (uploaded outside the web document root on each deploy):
-#     AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (required)
-#     AWS_DEFAULT_REGION, GOOGLE_MAPS_API_KEY, MAPBOX_ACCESS_TOKEN (optional)
-#
-# One-time setup: generate an ed25519 deploy key, append the public key to
-# ~/.ssh/authorized_keys on the server, and store the private key as SSH_DEPLOY_KEY.
-# FTP_SERVER should be the SSH hostname (often your domain or psNNNN.dreamhost.com).
-# FTP_SERVER_DIR must be the absolute remote path, e.g. /home/USER/pinchards.is
+# Repository secrets (if ever used for emergency sync):
+#   FTP_SERVER, FTP_USERNAME, FTP_SERVER_DIR, SSH_DEPLOY_KEY
+#   Optional map tokens as needed
 name: Deploy
 
 on:

@@ -4,7 +4,7 @@
 
 ## Test plan
 
-- [ ] Tested locally (describe how: `php -S`, pages visited, etc.)
+- [ ] Verified locally or via art assemble / Pages preview
 - [ ] No secrets or credentials in the diff
 - [ ] CSS/JS changes checked in a browser (if applicable)
 

@@ -3,6 +3,6 @@ contact_links:
   - name: Security vulnerability
     url: https://github.com/adamsimms/pinchards.is/blob/main/SECURITY.md
     about: Report security issues privately — do not open a public issue.
-  - name: Live site — About / contact
-    url: https://www.pinchards.is/info.php
+  - name: Live archive — About / contact
+    url: https://art.adamsimms.xyz/cloudberry/archive/info/
     about: Citation, photographs, and general site questions.

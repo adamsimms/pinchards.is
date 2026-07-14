@@ -1,49 +1,41 @@
-# Architecture
+# Architecture — Cloudberry (art assemble)
 
-How Cloudberry serves photographs on [pinchards.is](https://www.pinchards.is).
-
-## Request path
+Canonical presentation: [art.adamsimms.xyz/cloudberry/archive](https://art.adamsimms.xyz/cloudberry/archive/).
 
 ```
-Browser → Cloudflare → DreamHost (PHP 8.2+) → S3 list / EXIF helpers
-                              ↓
-                    CloudFront (full + thumbnail JPEGs)
+Browser → art.adamsimms.xyz (Cloudflare Pages)
+            ├── /cloudberry/archive/   ← static HTML/JS/CSS + catalog.json (from this repo)
+            ├── R2 cloudberry-images|thumbs
+            └── /maps/*               ← also assembled / authored on art
 ```
 
-Photos are **not** in git. The repo is the PHP/CSS/JS shell; media lives in S3 buckets `shutter-island` (full) and `shutter-island-thumbnails`, fronted by CloudFront URLs in `lib/config.php`.
+`pinchards.is` is a **redirect Worker** onto those art paths (citations / bookmarks).
 
-## Core data flow
+## Media
 
-1. **S3 object list** — `getObjectList()` in `lib/bootstrap.php` lists thumbnail keys, derives archive timestamps from filenames, and caches the list for 30 days under `images/photo/.cache/s3-list-*.json` (`lib/s3_cache.php`). Override with `PINCHARD_S3_LIST_CACHE_TTL` (seconds; `0` disables).
-2. **Capture dates** — EXIF `DateTimeOriginal` overlays filename dates via `images/photo/.cache/exif-dates.json`. Backfill with `php scripts/cache-exif-dates.php`.
-3. **Viewer metadata** — `pinchard_viewer_photo_payload()` in `lib/viewer.php` is the single source for camera/GPS/weather HTML used by `index.php` and `viewer-photo.php` (JSON API).
-4. **EXIF extraction** — On cache miss, PHP downloads the full JPEG once, reads EXIF, writes a small JSON file under `images/photo/.cache/exif-meta/`, then **deletes** the JPEG. Leftover temps in `exif-tmp/` are pruned by TTL (default 1 hour) or `php scripts/prune-exif-tmp.php --all`.
+Photos are **not** in git. Full and thumbnail JPEGs live in R2, public hostnames:
 
-## Page map
+- `cloudberry-images.adamsimms.xyz`
+- `cloudberry-thumbs.adamsimms.xyz`
 
-| Surface | Entry | Notes |
-|---------|-------|--------|
-| Photo viewer | `index.php` | Timeline + detail drawer; autoplay / kiosk via `play`, `display`, `fade`, `kiosk`; Mapbox when token present |
-| Day gallery | `gallery.php` + `js/gallery.js` | Filmstrip (desktop) / vertical days (mobile) |
-| About | `info.php` | Narrative + embeds |
-| JSON photo API | `viewer-photo.php` | Rate-limited; powers in-viewer navigation |
-| Maps / light-house / jam | `maps/`, `light-house/`, `jam/` | Mini-sites; jam is `noindex` |
+## Catalog and viewer
 
-## Secrets
+1. **Catalog** — builders under `scripts/` produce the catalog JSON / nest used by the static viewer.
+2. **Static archive** — builders under `scripts/` write `dist-archive/` for art assemble.
+3. **Viewer** — `js/viewer.js` reads the catalog (`catalogUrl` / `basePath`) on the art host; deep links use `?filename=`.
 
-Loaded by `lib/env.php` in order: `PINCHARD_SECRETS_FILE` → `~/.config/pinchards.is/secrets.local.php` → repo-root `secrets.local.php`. Deploy uploads the production file **outside** the document root (see [DEPLOY.md](DEPLOY.md)).
+Capture-date and weather caches under `images/photo/.cache/` feed the builder where still used.
 
-## Caching layers
+## Surfaces (as published on art)
 
-| Layer | What | TTL / busting |
-|-------|------|----------------|
-| Cloudflare / browser | CSS/JS | 1 day + `?v=mtime` query strings |
-| S3 list JSON | Bucket keys | 30 days |
-| EXIF dates JSON | Capture times | Persistent until rewritten |
-| EXIF meta JSON | Full EXIF blobs | Persistent; tiny vs JPEGs |
-| EXIF temp JPEGs | Download scratch | Deleted after read; TTL prune for leftovers |
-| `viewer-photo.php` | JSON responses | `Cache-Control: max-age=300` |
+| Surface | Path on art |
+|---------|-------------|
+| Viewer | `/cloudberry/archive/` |
+| Gallery | `/cloudberry/archive/gallery/` |
+| About | `/cloudberry/archive/info/` |
+| Jam / kiosk | `/cloudberry/archive/jam/` |
+| Maps | `/maps`, `/maps/trees`, `/maps/resettled` |
 
-## Product boundary
+## Shipping
 
-This site is a **closed archive** product. Artistic research in `docs/practice-*.md` may inform future sibling work; it is not an engineering backlog to turn Cloudberry into a remix/CMS platform. See [PRODUCT.md](PRODUCT.md).
+Art CI checks out this repo, builds the static archive, copies into Pages `dist`, deploys. Optional `repository_dispatch` from this repo triggers that workflow. Details: art [CLOUDBERRY-ASSEMBLE.md](https://github.com/adamsimms/art.adamsimms.xyz/blob/main/docs/CLOUDBERRY-ASSEMBLE.md).

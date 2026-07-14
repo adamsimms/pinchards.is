@@ -1,59 +1,24 @@
 # Contributing
 
-Thanks for your interest in **pinchards.is**. This is a personal archive site, but small, focused improvements are welcome.
+Thanks for your interest in **Cloudberry** (`pinchards.is` source → art.adamsimms.xyz). This is a personal archive; small, focused improvements are welcome.
 
-## Good first contributions
+## Setup
 
-- Documentation fixes and clarifications
-- Accessibility (keyboard nav, alt text, contrast, semantic HTML)
-- Performance (image lazy-loading, CSS/JS cleanup)
-- Bug fixes with a clear reproduction steps
+See the [README](README.md). You do not need gallery credentials to edit JS, CSS, or static templates used in the archive build.
 
-## Before you start
+## Conventions
 
-1. **Search existing issues** — someone may already be working on it.
-2. **Open an issue** for non-trivial changes so we can agree on approach before you invest time.
-3. **Keep scope small** — one logical change per pull request.
-
-## Development setup
-
-See the [README Quick start](README.md#quick-start). You do not need production AWS credentials to edit templates, CSS, or static pages — only the S3-backed gallery and map features require keys.
-
-```bash
-composer install
-npm install
-npm run vendor:frontend
-php -S localhost:8080
-```
-
-## Code conventions
-
-Match the existing style in the files you touch:
-
-- **PHP:** 8.2+, `declare(strict_types=1);` in new files, tabs for indentation, helper functions in `lib/helpers.php`.
-- **CSS:** Edit `css/pinchard.css`; the site uses DM Sans via Google Fonts.
-- **JavaScript:** Vanilla JS in `js/` (`pinchard.js`, `viewer.js`, `gallery.js`, `slideshow.js`, `gsap-motion.js`) — no jQuery. Keep mini-site scripts self-contained when they must differ from the main site.
-- **Secrets:** Never commit `secrets.local.php` or API keys. Use placeholders in examples only.
+- **JS / CSS:** Match existing style in `js/` and `css/`. Prefer catalog-driven viewer changes that work under `/cloudberry/archive/` on art.
+- **Secrets:** Never commit secrets files or API keys. Use placeholders in examples only.
+- **Production:** Do not assume a live document root in this repo — verify against art Pages / local art assemble.
 
 ## Pull requests
 
-1. Fork the repo and create a branch from `main`.
-2. Make your changes with a clear commit message (what and why).
-3. Test locally if you can (especially PHP pages you modified).
-4. Open a PR against `main` with:
-   - A short summary of the change
-   - How you tested it
-   - Screenshots for visible UI changes
+1. Branch from `main`.
+2. Keep diffs focused.
+3. CI should stay green.
+4. Prefer linking a preview from art when UI changes matter.
 
-Maintainers deploy by merging to `main`; you do not need server access.
+## Contact
 
-## What we are not looking for
-
-- Large rewrites or framework migrations without prior discussion
-- Changes to live photograph content or citation text without owner approval
-- Adding heavy dependencies for minor convenience
-- Commits that include vendored `vendor/` output (CI builds it)
-
-## Questions
-
-Open a [GitHub issue](https://github.com/adamsimms/pinchards.is/issues) or use the contact details on the live [About](https://www.pinchards.is/info.php) page.
+Open a [GitHub issue](https://github.com/adamsimms/pinchards.is/issues) or use the contact details on the live [About](https://art.adamsimms.xyz/cloudberry/archive/info/) page.

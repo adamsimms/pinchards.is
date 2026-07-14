@@ -30,15 +30,15 @@ body:
     id: url
     attributes:
       label: URL or page
-      placeholder: https://www.pinchards.is/info.php
+      placeholder: https://art.adamsimms.xyz/cloudberry/archive/info/
 
   - type: dropdown
     id: environment
     attributes:
       label: Environment
       options:
-        - Live site (pinchards.is)
+        - Live site (art.adamsimms.xyz)
         - Local development
-        - GitHub Actions deploy
+        - GitHub Actions / art assemble
     validations:
       required: true
