@@ -1026,11 +1026,11 @@ $infoHtml .= <<<HTML
 
                 <p>The photographs depict a view of Pinchard's Island from a small, family-owned cabin named "Precious Memories." The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
+                <img src="{$imgInfo('precious-moments.jpg')}" class="img-fluid info_img" alt="Precious Memories cabin" width="1500" height="1000" loading="lazy" decoding="async">
+
                 <p>The view was static—in the sense that the camera always captured the same frame; however, the lighting of the frame could vary drastically from one image to another. They extended the habit of glancing out the cabin window at the surrounding landscape.</p>
 
 {$spanParagraph}
-
-                <img src="{$imgInfo('precious-moments.jpg')}" class="img-fluid info_img" alt="Precious Memories cabin" width="1500" height="1000" loading="lazy" decoding="async">
 
                 <h3>Okay, but why Pinchard's Island?</h3>
 
@@ -1073,7 +1073,7 @@ $infoHtml .= <<<HTML
 
                 <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank" rel="noopener noreferrer"><img src="{$imgInfo('cloudberry-system.jpg')}" class="img-fluid info_img info-system-diagram" alt="Cloudberry system diagram" width="1600" height="957" loading="lazy" decoding="async"></a>
 
-                <h3>What we used:</h3>
+                <h3>Hardware</h3>
 
                 <div class="hardware-accordion">
                     <details class="hardware-details">
@@ -1114,7 +1114,6 @@ $infoHtml .= <<<HTML
                     </details>
                 </div>
 
-                <img src="{$imgInfo('boat.jpg')}" class="img-fluid info_img" alt="Boat approaching Pinchard's Island" width="1400" height="918" loading="lazy" decoding="async">
                 <h3>Installation</h3>
                 <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments.</p>
 
@@ -1214,6 +1213,7 @@ $infoHtml .= <<<HTML
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Contact</h3>
                 <p><a href="mailto:hello@adamsimms.xyz" class="link">hello@adamsimms.xyz</a></p>
+                <img src="{$imgInfo('boat.jpg')}" class="img-fluid info_img" alt="Boat approaching Pinchard's Island" width="1400" height="918" loading="lazy" decoding="async">
                 <div class="copyright">
                     Copyright &copy; 2017&ndash;{$copyrightYear}
                 </div>

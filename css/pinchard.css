@@ -2368,6 +2368,10 @@ body.info-page .hardware-accordion .hardware-details summary {
     cursor: pointer;
     list-style: none;
     position: relative;
+    color: inherit;
+    background-color: #fff;
+    border-bottom: 1px solid transparent;
+    transition: color 0.3s ease, background-color 0.3s ease, border-bottom-color 0.3s ease;
 }
 
 body.info-page .hardware-accordion .hardware-details summary::-webkit-details-marker {
@@ -2379,29 +2383,62 @@ body.info-page .hardware-accordion .hardware-details summary::after {
     position: absolute;
     right: 18px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) rotate(0deg);
     font-family: 'DM Sans', sans-serif;
     font-weight: 400;
     font-size: 1.35rem;
     line-height: 1;
     color: #666;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s ease;
 }
 
 body.info-page .hardware-accordion .hardware-details[open] summary {
     color: #F05F40;
     background-color: #fff8f6;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 
 body.info-page .hardware-accordion .hardware-details[open] summary::after {
-    content: '−';
+    content: '+';
+    transform: translateY(-50%) rotate(45deg);
     color: #F05F40;
 }
 
 body.info-page .hardware-accordion .hardware-details-body {
+    box-sizing: border-box;
     font-size: 17px;
     line-height: 1.55;
     padding: 16px 20px;
+}
+
+/* Native <details> height animation when GSAP is unavailable (Chromium 131+). */
+@supports (interpolate-size: allow-keywords) {
+    html:not(.js-gsap) body.info-page .hardware-accordion .hardware-details {
+        interpolate-size: allow-keywords;
+    }
+
+    html:not(.js-gsap) body.info-page .hardware-accordion .hardware-details::details-content {
+        block-size: 0;
+        overflow: hidden;
+        transition:
+            block-size 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+            content-visibility 0.4s allow-discrete;
+    }
+
+    html:not(.js-gsap) body.info-page .hardware-accordion .hardware-details[open]::details-content {
+        block-size: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.info-page .hardware-accordion .hardware-details summary,
+    body.info-page .hardware-accordion .hardware-details summary::after {
+        transition: none;
+    }
+
+    html:not(.js-gsap) body.info-page .hardware-accordion .hardware-details::details-content {
+        transition: none;
+    }
 }
 
 body.info-page .hardware-accordion .hardware-details-body h4 {

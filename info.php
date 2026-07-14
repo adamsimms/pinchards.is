@@ -64,13 +64,13 @@ pinchard_layout_nav(['active' => 'info']);
 
                 <p>The photographs depict a view of Pinchard's Island from a small, family-owned cabin named "Precious Memories." The island, only accessible by boat for a few weeks of the year, is home to a few cabins that resettled residents use while picking bake apples (the local term for cloudberries) during the summer months.</p>
 
+                <img src="images/info/precious-moments.jpg" class="img-fluid info_img" alt="Precious Memories cabin" width="1500" height="1000" loading="lazy" decoding="async">
+
                 <p>The view was static—in the sense that the camera always captured the same frame; however, the lighting of the frame could vary drastically from one image to another. They extended the habit of glancing out the cabin window at the surrounding landscape.</p>
 
                 <?php if ($cloudberryArchiveSpan !== null): ?>
                 <p>Cloudberry operated from <?= pinchard_h($cloudberryArchiveSpan['start']) ?> through <?= pinchard_h($cloudberryArchiveSpan['end']) ?>. The camera system eventually failed—likely from cold, weathering, too little sun, or some combination. This website is the archive and documentation of what it captured.</p>
                 <?php endif; ?>
-
-                <img src="images/info/precious-moments.jpg" class="img-fluid info_img" alt="Precious Memories cabin" width="1500" height="1000" loading="lazy" decoding="async">
 
                 <h3>Okay, but why Pinchard's Island?</h3>
 
@@ -113,7 +113,7 @@ pinchard_layout_nav(['active' => 'info']);
 
                 <a href="https://www.figma.com/file/GvUAbr6vcpJ2Ruk1T1q4e20Z/Shutter-Island?node-id=35%3A116" target="_blank" rel="noopener noreferrer"><img src="images/info/cloudberry-system.jpg" class="img-fluid info_img info-system-diagram" alt="Cloudberry system diagram" width="1600" height="957" loading="lazy" decoding="async"></a>
 
-                <h3>What we used:</h3>
+                <h3>Hardware</h3>
 
                 <div class="hardware-accordion">
                     <details class="hardware-details">
@@ -143,7 +143,7 @@ pinchard_layout_nav(['active' => 'info']);
                                 <ol>
                                     <li>Woke up the GoPro via WiFi.</li>
                                     <li>Downloaded and deleted the latest images from the GoPro.</li>
-                                    <li>Uploaded the images to an Amazon Web Services S3 bucket and deleted the images from the Raspberry Pi.</li>
+                                    <li>Uploaded the images to cloud object storage and deleted the images from the Raspberry Pi.</li>
                                     <li>Put the GoPro into standby mode and shut down the Raspberry Pi to conserve power.</li>
                                 </ol>
                                 <p><a href="http://www.uugear.com/product/wittypi2/" target="_blank" rel="noopener noreferrer">WittyPi 2</a></p>
@@ -189,13 +189,12 @@ pinchard_layout_nav(['active' => 'info']);
                         <summary>Remote access &amp; cloud storage</summary>
                         <div class="hardware-details-body">
                                 <p><a href="http://www.dataplicity.com/" target="_blank" rel="noopener noreferrer">Dataplicity</a> allowed remote CLI access to the Raspberry Pi.</p>
-                                <p><a href="https://aws.amazon.com/" target="_blank" rel="noopener noreferrer">Amazon Web Services</a> S3 stored photographs; CloudFront delivered images to this website.</p>
+                                <p>Cloud object storage held the photographs during capture; a CDN delivered them to visitors. Gallery media now lives on Cloudflare R2 (<code>cloudberry-images.adamsimms.xyz</code> / <code>cloudberry-thumbs.adamsimms.xyz</code>).</p>
                                 <p><a href="https://github.com/KonradIT/goprowifihack" target="_blank" rel="noopener noreferrer">GoPro WiFi Hack</a> from KonradIT enabled remote camera control.</p>
                         </div>
                     </details>
                 </div>
 
-                <img src="images/info/boat.jpg" class="img-fluid info_img" alt="Boat approaching Pinchard's Island" width="1400" height="918" loading="lazy" decoding="async">
                 <h3>Installation</h3>
                 <p>During the second week of August, we embarked on our journey to install Cloudberry. The first task was to bring all of the solar power components to the island, which was a task that required four people to load the housing unit, batteries, and solar panel. It took approximately two days for Roger and Adam to install the entire system with constant readjustments.</p>
 
@@ -314,6 +313,7 @@ pinchard_layout_nav(['active' => 'info']);
             <div class="row justify-content-center"><div class="col-12 col-md-10 col-lg-8">
                 <h3>Contact</h3>
                 <p><a href="mailto:hello@adamsimms.xyz" class="link">hello@adamsimms.xyz</a></p>
+                <img src="images/info/boat.jpg" class="img-fluid info_img" alt="Boat approaching Pinchard's Island" width="1400" height="918" loading="lazy" decoding="async">
                 <div class="copyright">
                     Copyright &copy; 2017&ndash;<?= $copyrightYear ?>
                 </div>

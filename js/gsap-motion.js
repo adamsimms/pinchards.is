@@ -668,20 +668,29 @@
             return;
         }
 
+        var openEase = 'power2.out';
+        var closeEase = 'power2.inOut';
+        var openDur = 0.42;
+        var closeDur = 0.34;
+        var bodyPadY = 16;
+
         function closeDetails(details) {
             var body = details.querySelector('.hardware-details-body');
             if (!body || !details.open) {
                 return;
             }
+            gsap.killTweensOf(body);
             gsap.to(body, {
                 height: 0,
+                paddingTop: 0,
+                paddingBottom: 0,
                 opacity: 0,
                 overflow: 'hidden',
-                duration: 0.28,
-                ease: 'power1.in',
+                duration: closeDur,
+                ease: closeEase,
                 onComplete: function () {
                     details.open = false;
-                    gsap.set(body, { clearProps: 'height,opacity,overflow' });
+                    gsap.set(body, { clearProps: 'height,paddingTop,paddingBottom,opacity,overflow' });
                 }
             });
         }
@@ -691,16 +700,29 @@
             if (!body) {
                 return;
             }
+            gsap.killTweensOf(body);
             details.open = true;
-            gsap.fromTo(body, { height: 0, opacity: 0, overflow: 'hidden' }, {
-                height: 'auto',
-                opacity: 1,
-                duration: 0.35,
-                ease: 'power2.out',
-                onComplete: function () {
-                    gsap.set(body, { clearProps: 'overflow' });
+            gsap.fromTo(
+                body,
+                {
+                    height: 0,
+                    paddingTop: 0,
+                    paddingBottom: 0,
+                    opacity: 0,
+                    overflow: 'hidden'
+                },
+                {
+                    height: 'auto',
+                    paddingTop: bodyPadY,
+                    paddingBottom: bodyPadY,
+                    opacity: 1,
+                    duration: openDur,
+                    ease: openEase,
+                    onComplete: function () {
+                        gsap.set(body, { clearProps: 'height,paddingTop,paddingBottom,opacity,overflow' });
+                    }
                 }
-            });
+            );
         }
 
         items.forEach(function (details) {
