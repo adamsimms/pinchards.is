@@ -48,6 +48,24 @@ h6 {
   font-family: "DM Sans", sans-serif;
   font-weight: 700;
 }
+/* Screen-reader-only titles (Bootstrap utility). Keep local so a11y
+   headings stay hidden even if vendor/bootstrap fails to load. */
+.visually-hidden,
+.visually-hidden-focusable:not(:focus):not(:focus-within) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.visually-hidden-focusable:not(:focus):not(:focus-within):not(caption),
+.visually-hidden:not(caption) {
+  clip-path: inset(50%) !important;
+}
 p {
   font-size: 16px;
   line-height: 1.5;
@@ -628,6 +646,9 @@ body.viewer-page .preview::after {
     flex-shrink: 0;
     background-color: white;
 }
+.detail_view.open .detail_view-bar {
+    border-bottom: 1px solid #e8e8e8;
+}
 
 body.viewer-page--kiosk .navbar-default,
 body.viewer-page--kiosk .detail_view {
@@ -706,6 +727,30 @@ body.viewer-page--kiosk .photo-placeholder img.viewer-photo-main {
     flex: 1;
     min-height: 0;
     max-height: inherit;
+}
+/* Side-by-side metadata + map on desktop (do not rely on Bootstrap grid loading). */
+.detail_view .detail_drawer-inner > .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin: 0;
+}
+.detail_view .detail_container,
+.detail_view .mapcontainer {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 100%;
+}
+@media (min-width: 768px) {
+    .detail_view .detail_container {
+        flex: 0 0 41.6667%;
+        max-width: 41.6667%;
+    }
+    .detail_view .mapcontainer {
+        flex: 0 0 58.3333%;
+        max-width: 58.3333%;
+    }
 }
 .detail_view .detail_container {
     padding: 32px;

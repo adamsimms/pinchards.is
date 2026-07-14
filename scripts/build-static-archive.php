@@ -580,6 +580,15 @@ if (!mkdir($OUT, 0755, true) && !is_dir($OUT)) {
 	exit(1);
 }
 
+$bootstrapCss = $REPO . '/vendor/bootstrap/css/bootstrap.css';
+$gsapJs = $REPO . '/vendor/gsap/gsap.min.js';
+if (!is_readable($bootstrapCss) || !is_readable($gsapJs)) {
+	fwrite(STDERR, "Missing vendor assets (run: npm ci && npm run vendor:frontend).\n");
+	fwrite(STDERR, "  expected: vendor/bootstrap/css/bootstrap.css\n");
+	fwrite(STDERR, "  expected: vendor/gsap/gsap.min.js\n");
+	exit(1);
+}
+
 $assetCopied = 0;
 $assetCopied += copy_tree($REPO . '/css', $OUT . '/css');
 $assetCopied += copy_tree($REPO . '/js', $OUT . '/js');
@@ -587,6 +596,11 @@ $assetCopied += copy_tree($REPO . '/images', $OUT . '/images');
 $assetCopied += copy_tree($REPO . '/favicon', $OUT . '/favicon');
 $assetCopied += copy_tree($REPO . '/vendor/bootstrap', $OUT . '/vendor/bootstrap');
 $assetCopied += copy_tree($REPO . '/vendor/gsap', $OUT . '/vendor/gsap');
+
+if (!is_readable($OUT . '/vendor/bootstrap/css/bootstrap.css') || !is_readable($OUT . '/vendor/gsap/gsap.min.js')) {
+	fwrite(STDERR, "Vendor copy failed — Bootstrap/GSAP missing from output.\n");
+	exit(1);
+}
 
 if (!is_dir($OUT . '/data') && !mkdir($OUT . '/data', 0755, true)) {
 	fwrite(STDERR, "Could not create data/\n");
