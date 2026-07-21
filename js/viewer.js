@@ -1174,8 +1174,18 @@
         });
     }
 
-    initInitialPhoto();
-    updateNavLinks();
+    // Static archive ships one index.html (default = last photo). Honor ?filename=
+    // deep links from the gallery before replaceState locks the URL to boot state.
+    var bootParams = new URLSearchParams(window.location.search);
+    var urlFilename = bootParams.get('filename');
+    var deepLinkIndex = urlFilename ? indexFromFilename(urlFilename) : -1;
+
+    if (deepLinkIndex >= 0 && urlFilename !== cfg.currentFilename) {
+        navigateToFilename(urlFilename, { history: 'none', force: true });
+    } else {
+        initInitialPhoto();
+        updateNavLinks();
+    }
     updateFullscreenToggle();
     updateHistory(cfg.currentFilename, 'replace');
 
