@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use Cloudberry or this archive source, please cite it using these metadata."
+type: dataset
+title: "Cloudberry (Pinchard's Island Photography Archive)"
+abstract: >-
+  A long-running photographic archive of off-the-grid life on Pinchard's Island,
+  Newfoundland. A solar-powered camera at a family cabin captures the same view
+  continuously and uploads images via cellular network. This repository is the
+  catalog and static archive source for the published Cloudberry archive.
+authors:
+  - family-names: Simms
+    given-names: Adam
+    email: hello@adamsimms.xyz
+  - family-names: Gabereaux
+    given-names: Angela
+license: MIT
+date-released: "2017-05-01"
+url: "https://art.adamsimms.xyz/cloudberry/archive/"
+repository-code: "https://github.com/adamsimms/pinchards.is"
+keywords:
+  - photography
+  - archive
+  - Newfoundland
+  - Pinchard's Island
+  - Cloudberry
+  - remote sensing
+  - art
