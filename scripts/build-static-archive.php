@@ -448,6 +448,8 @@ function page_head(string $title, array $options = []): string
 	$html .= '    <title>' . h($title) . "</title>\n";
 	$html .= "    <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n";
 	$html .= "    <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>\n";
+	$html .= "    <link rel=\"preconnect\" href=\"https://cloudberry-images.adamsimms.xyz\" crossorigin>\n";
+	$html .= "    <link rel=\"preconnect\" href=\"https://cloudberry-thumbs.adamsimms.xyz\" crossorigin>\n";
 	$html .= "    <link href=\"https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap\" rel=\"stylesheet\">\n";
 	$html .= '    <link href="' . $bootstrap . "\" rel=\"stylesheet\">\n";
 	$html .= '    <link href="' . $css . "\" rel=\"stylesheet\">\n";
@@ -485,8 +487,8 @@ function page_nav(?string $active = null): string
 {
 	global $BASE;
 	$indexHref = $BASE . '/';
-	$galleryHref = $BASE . '/gallery';
-	$infoHref = $BASE . '/info';
+	$galleryHref = $BASE . '/gallery/';
+	$infoHref = $BASE . '/info/';
 
 	$galleryClass = 'link-to-gallery nav_gallery' . ($active === 'gallery' ? ' active' : '');
 	$infoClass = 'nav_info' . ($active === 'info' ? ' active' : '');
@@ -652,26 +654,27 @@ $nextFilename = $currentIndex < $photoCount - 1 ? $filenames[$currentIndex + 1] 
 $prevUrl = $prevFilename !== null ? $BASE . '/?filename=' . rawurlencode($prevFilename) : '';
 $nextUrl = $nextFilename !== null ? $BASE . '/?filename=' . rawurlencode($nextFilename) : '';
 
-$ogDescription = $convertedDate !== ''
-	? 'Photograph from Pinchard\'s Island — ' . $convertedDate . '.'
-	: 'Photograph from Pinchard\'s Island.';
+// One indexable URL for the archive; ?filename= states stay shareable but consolidate.
+$archiveDescription = 'Cloudberry — hourly photographs of Pinchard\'s Island, Newfoundland, from a solar-powered off-grid camera.';
+
+$viewUrl = $cdnFull . 'view/' . $filename;
+$thumbUrl = (string) ($current['thumbUrl'] ?? ($cdnThumbs . $filename));
 
 $extraHead = '';
-if ($hasMapbox) {
-	$extraHead .= '    <link href="https://api.mapbox.com/mapbox-gl-js/v' . $mapboxVersion . "/mapbox-gl.css\" rel=\"stylesheet\">\n";
-}
+// LCP: preload the 1280w view derivative (not the 4MB master). Mapbox CSS loads on drawer open.
+$extraHead .= '    <link rel="preload" as="image" href="' . h($viewUrl) . "\" fetchpriority=\"high\">\n";
 if ($prevFilename !== null) {
-	$extraHead .= '    <link rel="prefetch" href="' . h($cdnFull . $prevFilename) . "\" as=\"image\">\n";
+	$extraHead .= '    <link rel="prefetch" href="' . h($cdnFull . 'view/' . $prevFilename) . "\" as=\"image\">\n";
 }
 if ($nextFilename !== null) {
-	$extraHead .= '    <link rel="prefetch" href="' . h($cdnFull . $nextFilename) . "\" as=\"image\">\n";
+	$extraHead .= '    <link rel="prefetch" href="' . h($cdnFull . 'view/' . $nextFilename) . "\" as=\"image\">\n";
 }
 
 $viewerHtml = page_head('Cloudberry — ' . $photoTitle, [
-	'description' => $ogDescription,
+	'description' => $archiveDescription,
 	'og_image' => $imageUrl,
-	'og_type' => 'article',
-	'canonical' => $SITE . $BASE . '/?filename=' . rawurlencode($filename),
+	'og_type' => 'website',
+	'canonical' => $SITE . $BASE . '/',
 	'body_class' => 'viewer-page',
 	'extra_head' => $extraHead,
 ]);
@@ -688,6 +691,8 @@ $nextAria = $nextFilename === null ? ' aria-hidden="true" tabindex="-1"' : '';
 $imgIcon = static fn (string $name): string => h($BASE . '/images/' . $name);
 
 $imageUrlEsc = h($imageUrl);
+$viewUrlEsc = h($viewUrl);
+$thumbUrlEsc = h($thumbUrl);
 $photoAltEsc = h($photoAlt);
 $prevUrlEsc = h($prevUrl);
 $nextUrlEsc = h($nextUrl);
@@ -707,8 +712,9 @@ $iconWeather = $imgIcon('icon-weather.svg');
 $viewerHtml .= '    <h1 class="visually-hidden">' . h('Cloudberry — ' . $photoTitle) . "</h1>\n";
 $viewerHtml .= <<<HTML
     <div class="preview" id="photoViewer" tabindex="0" aria-label="Photograph viewer. Use arrow keys or swipe to browse. Space plays or pauses autoplay. F toggles fullscreen. Timeline scrubber jumps through the archive.">
-        <div class="photo-placeholder" data-large="{$imageUrlEsc}" data-alt="{$photoAltEsc}" id="preview_image">
+        <div class="photo-placeholder" data-large="{$viewUrlEsc}" data-full="{$imageUrlEsc}" data-thumb="{$thumbUrlEsc}" data-alt="{$photoAltEsc}" id="preview_image">
             <div style="padding-bottom: 66.6%;"></div>
+            <img class="viewer-photo-main loaded" src="{$viewUrlEsc}" alt="{$photoAltEsc}" width="1280" height="960" decoding="async" fetchpriority="high">
         </div>
 
         <div class="detail_view has-timeline" id="detailDrawer">
@@ -802,10 +808,10 @@ HTML;
 
 $prefetch = [];
 if ($prevFilename !== null) {
-	$prefetch[] = $cdnFull . $prevFilename;
+	$prefetch[] = $cdnFull . 'view/' . $prevFilename;
 }
 if ($nextFilename !== null) {
-	$prefetch[] = $cdnFull . $nextFilename;
+	$prefetch[] = $cdnFull . 'view/' . $nextFilename;
 }
 
 $viewerBoot = [
@@ -813,6 +819,8 @@ $viewerBoot = [
 	'catalogUrl' => $BASE . '/data/catalog.json',
 	'siteOrigin' => $SITE,
 	'cdnUrl' => $cdnFull,
+	'cdnViewUrl' => $cdnFull . 'view/',
+	'cdnThumbUrl' => $cdnThumbs,
 	'filenames' => $filenames,
 	'currentIndex' => $currentIndex,
 	'currentFilename' => $filename,
@@ -843,20 +851,52 @@ if ($hasMapbox) {
 	$tokenJson = json_encode($mapboxToken, $je);
 	$lonJson = json_encode($mapLon, $je);
 	$latJson = json_encode($mapLat, $je);
-	$footerScripts .= '    <script src="https://api.mapbox.com/mapbox-gl-js/v' . $mapboxVersion . "/mapbox-gl.js\"></script>\n";
+	$mapboxCss = json_encode('https://api.mapbox.com/mapbox-gl-js/v' . $mapboxVersion . '/mapbox-gl.css', $je);
+	$mapboxJs = json_encode('https://api.mapbox.com/mapbox-gl-js/v' . $mapboxVersion . '/mapbox-gl.js', $je);
 	$footerScripts .= <<<JS
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var map = new mapboxgl.Map({
-                accessToken: {$tokenJson},
-                container: 'photoMap',
-                style: 'mapbox://styles/mapbox/satellite-v9',
-                center: [{$lonJson}, {$latJson}],
-                zoom: 14
-            });
-            var marker = new mapboxgl.Marker().setLngLat([{$lonJson}, {$latJson}]).addTo(map);
-            window.pinchardPhotoMap = { map: map, marker: marker };
-        });
+        (function() {
+            var loaded = false;
+            var mapboxCss = {$mapboxCss};
+            var mapboxJs = {$mapboxJs};
+            function loadMapbox() {
+                if (loaded) return;
+                loaded = true;
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = mapboxCss;
+                document.head.appendChild(link);
+                var script = document.createElement('script');
+                script.src = mapboxJs;
+                script.onload = function() {
+                    if (!window.mapboxgl || !document.getElementById('photoMap')) return;
+                    var map = new mapboxgl.Map({
+                        accessToken: {$tokenJson},
+                        container: 'photoMap',
+                        style: 'mapbox://styles/mapbox/satellite-v9',
+                        center: [{$lonJson}, {$latJson}],
+                        zoom: 14
+                    });
+                    var marker = new mapboxgl.Marker().setLngLat([{$lonJson}, {$latJson}]).addTo(map);
+                    window.pinchardPhotoMap = { map: map, marker: marker };
+                    if (map.resize) map.resize();
+                };
+                document.head.appendChild(script);
+            }
+            window.pinchardLoadPhotoMap = loadMapbox;
+            var toggle = document.getElementById('detailToggle');
+            var drawer = document.getElementById('detailDrawer');
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    // Drawer opens on this click; load map as soon as details are requested.
+                    loadMapbox();
+                }, { once: true });
+            }
+            // If details start open for any reason, still load.
+            if (drawer && drawer.classList.contains('open')) {
+                loadMapbox();
+            }
+        })();
     </script>
 
 JS;
@@ -884,7 +924,7 @@ $galleryDescription = 'Browse the Cloudberry archive'
 
 $galleryHtml = page_head('Cloudberry — Photo Gallery', [
 	'description' => $galleryDescription,
-	'canonical' => $SITE . $BASE . '/gallery',
+	'canonical' => $SITE . $BASE . '/gallery/',
 	'body_class' => 'gallery-page',
 ]);
 $galleryHtml .= page_nav('gallery');
@@ -900,6 +940,8 @@ $galleryHtml .= '        <div class="gallery-feed-date" id="galleryFeedDate" ari
 $galleryHtml .= '        <div class="gallery-days-scroll" id="galleryDaysScroll" tabindex="0" aria-label="Photo gallery. On phones, scroll vertically by day. On larger screens, drag or scroll horizontally across days. Arrow keys move between photographs.">' . "\n";
 $galleryHtml .= '            <div class="gallery-days-track" id="galleryDaysTrack">' . "\n";
 
+$galleryEagerBudget = 12;
+$galleryEagerUsed = 0;
 foreach ($photosByDay as $dayKey => $dayGroup) {
 	$galleryHtml .= '                <section class="gallery-day-column" id="day-' . h($dayKey) . '" aria-label="' . h($dayGroup['long_label']) . '" data-feed-label="' . h($dayGroup['feed_label']) . "\">\n";
 	$galleryHtml .= '                    <div class="gallery-day-label" title="' . h($dayGroup['long_label']) . "\">\n";
@@ -919,7 +961,14 @@ foreach ($photosByDay as $dayKey => $dayGroup) {
 		}
 		$timeLabel = gallery_time_label($photo);
 		$galleryHtml .= '                        <a href="' . h($href) . "\" class=\"gallery-day-photo photoBox\">\n";
-		$galleryHtml .= '                            <img class="gallery-photo img-fluid" data-src="' . h($thumb) . '" alt="' . h($alt) . "\" width=\"288\" height=\"224\" decoding=\"async\">\n";
+		$eager = $galleryEagerUsed < $galleryEagerBudget;
+		if ($eager) {
+			$galleryEagerUsed++;
+			$priority = $galleryEagerUsed <= 4 ? ' fetchpriority="high"' : '';
+			$galleryHtml .= '                            <img class="gallery-photo img-fluid" src="' . h($thumb) . '" alt="' . h($alt) . "\" width=\"288\" height=\"224\" decoding=\"async\" loading=\"eager\"{$priority}>\n";
+		} else {
+			$galleryHtml .= '                            <img class="gallery-photo img-fluid" data-src="' . h($thumb) . '" alt="' . h($alt) . "\" width=\"288\" height=\"224\" decoding=\"async\" loading=\"lazy\">\n";
+		}
 		$galleryHtml .= "                            <div class=\"photo-box-caption\">\n";
 		$galleryHtml .= '                                <div class="photo-box-caption-content">' . h($timeLabel) . "</div>\n";
 		$galleryHtml .= "                            </div>\n";
@@ -939,8 +988,8 @@ write_file($OUT . '/gallery/index.html', $galleryHtml);
 // info/index.html
 // ---------------------------------------------------------------------------
 
-$infoDescription = 'Cloudberry was a solar-powered, off-the-grid photography project that documented Pinchard\'s Island, Newfoundland'
-	. ($span !== null ? ' (' . $span['range_compact'] . ') — one photograph per hour.' : ' — one photograph per hour.');
+$infoDescription = 'Cloudberry: solar-powered hourly photographs of Pinchard\'s Island, Newfoundland'
+	. ($span !== null ? ' (' . $span['range_compact'] . ').' : '.');
 $imgInfo = static fn (string $file): string => h($BASE . '/images/info/' . $file);
 $imgPeople = static fn (string $file): string => h($BASE . '/images/people/' . $file);
 $copyrightYear = (int) date('Y');
@@ -995,7 +1044,7 @@ $photoCitationBlock = citation_block_html([
 
 $infoHtml = page_head('Cloudberry — About', [
 	'description' => $infoDescription,
-	'canonical' => $SITE . $BASE . '/info',
+	'canonical' => $SITE . $BASE . '/info/',
 	'body_class' => 'info-page',
 ]);
 $infoHtml .= page_nav('info');
@@ -1330,7 +1379,7 @@ if ($jamJson === false) {
 
 $jamHtml = page_head('Cloudberry Jam', [
 	'description' => 'Fullscreen exhibition slideshow from the Cloudberry archive — for projection and direct-link playback only.',
-	'canonical' => $SITE . $BASE . '/jam',
+	'canonical' => $SITE . $BASE . '/jam/',
 	'robots' => 'noindex, nofollow',
 	'body_class' => 'jam-page jam-page--fill',
 ]);
@@ -1362,6 +1411,9 @@ $redirects = <<<'TXT'
 /cloudberry/archive/slideshow.php /cloudberry/archive/?play=1 301
 /cloudberry/archive/slider.php /cloudberry/archive/?play=1 301
 /cloudberry/archive/index.php /cloudberry/archive/ 301
+/cloudberry/archive/gallery /cloudberry/archive/gallery/ 308
+/cloudberry/archive/info /cloudberry/archive/info/ 308
+/cloudberry/archive/jam /cloudberry/archive/jam/ 308
 
 TXT;
 write_file($OUT . '/_redirects.fragment', $redirects);
